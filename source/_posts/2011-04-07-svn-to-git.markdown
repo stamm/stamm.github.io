@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Перенос svn-репозитария в git"
+date: 2011-04-07 18:33
+comments: true
+categories: 
+- git
+- svn
+---
+
+Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)
+
+Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.
+
+{% codeblock lang:bash %}
+#!/usr/bin/env bash
+authors=$(svn log -q | grep -e '^r' | awk 'BEGIN { FS = "|" } ; { print $2 }' | sort | uniq)
+for author in ${authors}; do
+  echo "${author} = ${author} <email>";
+done
+{% endcodeblock %}
+
+Сохраняем вывод в какой-нибудь файл (/home/user/svn-authors.txt) и проставляем у всех авторов email. Иногда первый коммит совершается из консоли и он получается от неизвестного пользователя, поэтому стоит добавить строку об этом неизвестном пользователе, иначе экспорт в git не сработает.
+
+{% codeblock %}
+(no author) = Name Surname < email >
+{% endcodeblock %}
+
+И вот собственно скрипт. Он вытягивает репозиторий из svn (используя файл соотношения авторов с email), проставляет тэги и пушит изменения на удалённый git-репозитарий. В данном случае вытягивается исходники yii и пушаться на github.
+
+{% codeblock lang:bash %}
+#!/usr/bin/env bash
+
+AUTHOR_FILE="/home/user/svn-authors.txt"
+SVN_PATH="http://yii.googlecode.com/svn/"
+cd /path/to/git/repo
+
+git svn clone -s --authors-file=$AUTHOR_FILE $SVN_PATH .
+git merge remotes/trunk > /dev/null 2>&1
+
+git for-each-ref refs/remotes/tags | cut -d / -f 4- |
+while read ref
+do
+     git tag -a "$ref" "refs/remotes/tags/$ref" > /dev/null 2>&1
+done
+git push --all > /dev/null 2>&1
+git push --tags > /dev/null 2>&1
+{% endcodeblock %}
+
+Этот скрипт можно поставить в крон. Скрипт не будет вытягивать весь svn-репозиторий заново (если уже был раз вытянут), а только изменения.
+
+Можно даже [использовать git совместно с svn](http://linsovet.com/git-svn-sync-changes).
+
+Используемые ссылки: http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git
