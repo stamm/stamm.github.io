@@ -95,7 +95,7 @@ listen = 127.0.0.1:9306:mysql41
 
 Включаем в настройках yii компонент sphinx
 
-{% codeblock %}
+{% codeblock lang:php %}
 sphinx' => array(
     'class' => 'system.db.CDbConnection',
     'connectionString' => 'mysql:host=127.0.0.1;port=9306',
@@ -104,7 +104,7 @@ sphinx' => array(
 
 Теперь мы можем делать запросы:
 
-{% codeblock %}
+{% codeblock lang:php %}
 $sSql = 'SELECT post_id
     FROM main
     WHERE
