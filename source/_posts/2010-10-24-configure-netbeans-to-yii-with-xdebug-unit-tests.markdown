@@ -23,7 +23,7 @@ Selenium позволяет проводить тесты, почти полно
 - Сервер (ip: 192.168.0.3) Debian или другой linux-сервер [с настроенным nginx, php5-fpm, xdebug](/debian-4-configure-web-server-nginx-apache-mysql-postgresql/)
 - Компьютер разработчика (ip: 192.168.0.2) Ubuntu 10.10 с установленным [NetBeans 7.0m2](http://netbeans.org/downloads/index.html)
 
-Сайт будет располагаться в /var/www/yii/www, а yii в /var/www/yii-lib/yii
+Сайт будет располагаться в **/var/www/yii/www**, а yii в **/var/www/yii-lib/yii**
 
 Действия на сервере
 Создаём папку, где будет располагаться сайт.
@@ -34,7 +34,7 @@ chown www-data.www-data /var/www/yii/{tmp,www}
 chmod 0700 /var/www/yii/{tmp,www}
 {% endcodeblock %}
 
-Создаём конфиг для php5-fpm. Файл: /etc/php5/fpm/pool.d/yii.conf
+Создаём конфиг для php5-fpm. Файл: **/etc/php5/fpm/pool.d/yii.conf**
 {% codeblock %}
 [yii]
 listen = /var/run/php5-fpm/yii.sock
@@ -75,7 +75,7 @@ php_admin_value[upload_tmp_dir] = /var/www/yii/tmp
 php_admin_value[session.save_path] = /var/www/yii/tmp
 {% endcodeblock %}
 
-Конфигурация сайта для nginx. Файл: /etc/nginx/sites-available/yii
+Конфигурация сайта для nginx. Файл: **/etc/nginx/sites-available/yii**
 
 {% codeblock %}
 upstream yii {
@@ -166,7 +166,7 @@ chown -R www-data.www-data /var/www/yii/www
 aptitude install php5-xdebug
 {% endcodeblock %}
 
-Настраиваем xdebug для работы отладки /etc/php5/fpm/conf.d/xdebug.ini
+Настраиваем xdebug для работы отладки **/etc/php5/fpm/conf.d/xdebug.ini**
 
 {% codeblock %}
 zend_extension=/usr/lib/php5/20090626+lfs/xdebug.so
@@ -198,24 +198,155 @@ sudo chown ВЫ.ВЫ /mnt/www
 sshfs www-data@192.168.0.3:/var/www /mnt/www
 {% endcodeblock %}
 
-Прописываем в /etc/hosts
-
+Прописываем в **/etc/hosts**
 
 {% codeblock %}
 192.168.0.3 yii.local
 {% endcodeblock %}
 
-Phpunit
+### Phpunit
+
 Устанавливаем
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-1.png)
+
+
+### Selenium
+
+[Скачиваем Selenium RC](http://seleniumhq.org/download/). Распаковываем и запускаем:
 
 {% codeblock %}
+java -jar selenium/selenium-server-1.0.3/selenium-server.jar
 {% endcodeblock %}
+
+
+### Netbeans
+
+Устанавливаем [NetBeans](http://netbeans.org/downloads/index.html) (в моём случае это NetBeans 7.0m2). Ставим плагин **Selenium Module for PHP** (Tools → Plugins → Available Plugins).
+
+Немного настраиваем (Tools → Options):
+
+Php → General Ставим порт 9009 для xdebug и снимаем галку с опции **Stop at First Line**.
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-2.png)
+
+Php → Unit Testing Указываем путь до phpunit: /usr/bin/phpunit
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-31.png)
+
+Miscellaneous → Files Исключаем файл yiilite.php, чтобы при автокомплите подсказки не дублировались **^(yiilite.php|CVS|**
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-16.png)
+
+Создаём новый проект:
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-4.png)
+
+Указываем пути, название проект. Meta-файлы сохраняем в другой директории.
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-5.png)
+
+Указываем url проекта: http://yii.local/
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-6.png)
+
+Теперь вызываем настройки проекта.
+
+Указываем директорию тестов (File → Project properties → Sources → Test Folder)
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-8.png)
+
+Задаём маппинг пути (File → Project properties → Run configuration → Advanced). Тут не видно, но указано, что /var/www доступно в /mnt/www.
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-9.png)
+
+Указываем директорию с yii: **/mnt/www/yii-lib/yii** (File → Project properties → PHP Include Path)
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-10.png)
+
+Папки, которые будут игнорироваться: **/mnt/www/yii/www/protected/runtime** (File → Project properties → Ignored Folders → Add Folder).
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-11.png)
+
+Настройка phpunit (File → Project properties → PhpUnit).
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-12.png)
+
+Открываем файлы index.php, index-test.php, protected/tests/bootstrap.php и заменяем **/yii-1.1.4.r2429/** на **/yii/**
+
+Удалить из **protected/tests/phpunit.xml** тест под IE
 
 {% codeblock %}
+<browser name="Internet Explorer" browser="*iexplore" />
 {% endcodeblock %}
+
+Меняем константу TEST_BASE_URL в файле protected/tests/WebTestCase.php:
 
 {% codeblock %}
+define('TEST_BASE_URL','http://yii.local/index-test.php');
 {% endcodeblock %}
 
-[Скачиваем последний дистрибутив Debian](http://www.debian.org/CD/torrent-cd/)
-![Схема сети](/images/debian-1-install/schema.png)
+Правим тест **protected/tests/functional/SiteTest.php (баг)**:
+
+Заменяем $this->clickAndWait('link=Logout'); на $this->clickAndWait('link=Logout (demo)');
+
+Теперь можно запустить тест Selenium
+
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-13.png)
+
+Появиться окошко выбора папки с этими тестами, указываем: /mnt/www/yii/www/protected/tests/functional
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-14.png)
+
+Будут всплывать окошки с firefox'ом и в конце концов появиться результат:
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-15.png)
+
+
+
+### Phpunit
+
+Можно запускать phpunit тесты прямо с сервера или с рабочего компьютера, но придётся установить php и все используемые библиотеки (php5-pgsql, php5-mysql, etc). Рассмотрим 2-ой вариант. На компьютере разработчика установить phpunit и php5: Для phpunit теста можно установить свои параметры для yii в protected/config/test.php поверх стандартных (например, коннект к базе). Напишем простейший тест для проверки авторизации. Файл protected/tests/unit/AuthTest.php:
+
+{% codeblock %}
+< ?php
+class AuthTest extends CTestCase
+{
+  public function testAuth()
+  {
+    $login = new LoginForm;
+    $login->username = 'demo';
+    $login->password = 'demo';
+    $this->assertTrue($login->login());
+  }
+}
+{% endcodeblock %}
+
+Для выполнения теста в Netbeans нажимаем Alt+F6. При этом выполняться все тесты: и phpunit и selenium.
+
+![phpunit](/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-17.png)
+
+
+Можно выбрать AuthTest.php и нажать Shift+F6, тогда тестирование выполниться только из этого файла. Также можно выполнять phpunit тесты прямо с сервера (aptitude install phpunit):
+
+
+{% codeblock %}
+cd /var/www/yii/www/protected/tests/
+phpunit unit/AuthTest.php
+PHPUnit 3.4.14 by Sebastian Bergmann.
+
+.
+
+Time: 0 seconds, Memory: 7.25Mb
+
+OK (1 test, 1 assertion)
+{% endcodeblock %}
+
+
+
+Также можно написать тесты, не использую базу данных, подменив некоторые таблицы fixtures - ассоциативным массивом, имитирующим записи в таблице.
+
+Дебагинг кода
+Тесты написаны, теперь можно дебажить код. Открываем index.php, на любой строке добавляем breakpoint (Ctrl+F8). Запускаем дебагинг (Ctrl+F5). Теперь можно "пройтись" по коду клавишами F7 (Step Into) и F8 (Step Over). Это очень помогает понять как же работает сам yii, а так же "качественно" дебажить код, видя текущие переменные, watches, Call stack.
+
+Советую всем прочитать книгу [Agile Web Application Development with Yii1.1 and PHP5](http://www.amazon.com/dp/1847199585?tag=gii20f-20&camp=0&creative=0&linkCode=as1&creativeASIN=1847199585&adid=0BHF2HS6FNS82M85KJQT) всем, кто работает с yii. Книга поднимет уровень и в правильном написании кода для yii, и английского языка.
