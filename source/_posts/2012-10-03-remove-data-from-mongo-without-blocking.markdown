@@ -38,8 +38,6 @@ categories:
 На outsource-site — «мягкие» правила.
 
 {% codeblock %}
-[sh]
-
 repo    gitolite-admin
         RW+     =   id_rsa
 
