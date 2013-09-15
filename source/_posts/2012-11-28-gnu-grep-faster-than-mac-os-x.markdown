@@ -12,7 +12,7 @@ categories:
 
 Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.
 
-{% codeblock%}
+{% codeblock %}
 $ brew install grep
 $ time /usr/bin/grep "GET /out" nginx-access_log.2 | wc -l
 140858
