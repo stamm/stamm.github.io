@@ -4,7 +4,7 @@ title: "Парад ссылок №1"
 date: 2013-02-11 19:43
 comments: true
 categories:
--php
+- php
 - ruby
 - js
 - парад ссылок
