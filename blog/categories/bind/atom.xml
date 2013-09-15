@@ -4,7 +4,7 @@
   <title><![CDATA[Category: bind | Блог Загирова Рустама]]></title>
   <link href="http://stamm.github.io/blog/categories/bind/atom.xml" rel="self"/>
   <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:29:08+04:00</updated>
+  <updated>2013-09-15T19:34:00+04:00</updated>
   <id>http://stamm.github.io/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
@@ -482,7 +482,7 @@
 <p>Теперь можно зайти на сервер по ssh с десктопа. На компьютере у меня Ubuntu 10.04, поэтому я захожу на сервер командой:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>ssh &lt;a href="&#109;&#x61;&#105;&#x6c;&#116;&#x6f;&#x3a;&#114;&#111;&#x6f;&#116;&#x40;&#x31;&#x39;&#50;&#46;&#49;&#x36;&#x38;&#x2e;&#x31;&#x2e;&#x32;&#53;&#52;">&#x72;&#x6f;&#x6f;&#x74;&#64;&#49;&#x39;&#x32;&#x2e;&#49;&#x36;&#56;&#x2e;&#x31;&#46;&#x32;&#53;&#52;&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ssh &lt;a href="&#109;&#x61;&#x69;&#108;&#x74;&#x6f;&#58;&#114;&#x6f;&#x6f;&#x74;&#x40;&#x31;&#57;&#50;&#46;&#49;&#x36;&#x38;&#46;&#x31;&#x2e;&#x32;&#x35;&#x34;">&#x72;&#x6f;&#x6f;&#x74;&#64;&#x31;&#x39;&#x32;&#46;&#49;&#54;&#x38;&#46;&#49;&#x2e;&#x32;&#x35;&#52;&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Принимаем rsa ключ и вводим пароль. Всё, мы на сервере.</p>
 
