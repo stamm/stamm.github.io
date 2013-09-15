@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: grep | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/grep/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
+    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <updated>2012-11-28T19:40:00+04:00</updated>
+    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep'а в 10 раз</a></p>
+
+<p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install grep
+</span><span class='line'>$ time /usr/bin/grep &ldquo;GET /out&rdquo; nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>/usr/bin/grep &ldquo;GET /out&rdquo; nginx-access_log.2 26.49s user 0.28s system 97% cpu 27.443 total wc -l 0.03s user 0.02s system 0% cpu 27.443 total&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$ tmp time grep &ldquo;GET /out&rdquo; nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>grep &ldquo;GET /out&rdquo; nginx-access_log.2 0.58s user 0.15s system 98% cpu 0.748 total wc -l 0.03s user 0.01s system 6% cpu 0.747 total</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

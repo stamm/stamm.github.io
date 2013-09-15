@@ -1,0 +1,1196 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/blog/page/3">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/nginx-configs/">Nginx конфиги</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-06T18:36:00+04:00" pubdate data-updated="true">2011-05-06</time>
+        
+         | <a href="/nginx-configs/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, что достойно <a href="http://sysoev.ru/nginx/docs/faq.html">всяческого порицания</a> по словам автора nginx Игоря Сысоева. Выложу используемые мной конфиги для различных систем (redmine, chive)</p>
+
+<h2>Redmine:</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream thin {
+</span><span class='line'>  server unix:/tmp/redmine.0.sock;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  listen 80;
+</span><span class='line'>  server_name redmine.zagirov.name;
+</span><span class='line'>  root /usr/share/redmine/public/;
+</span><span class='line'>  access_log /var/log/nginx/redmine.access.log;
+</span><span class='line'>  error_log /var/log/nginx/redmine.error.log;
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>    proxy_set_header X-Real-IP $remote_addr;
+</span><span class='line'>    proxy_set_header Host $host;
+</span><span class='line'>    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+</span><span class='line'>    include proxy.conf;
+</span><span class='line'>    proxy_pass http://thin;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  error_page 500 502 503 504 /500.html;
+</span><span class='line'>  error_page 404 403 /404.html;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><a href="http://www.chive-project.com/">Chive</a> &ndash; отличный аналог phpmyadmin</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /chive/ {
+</span><span class='line'>  try_files $uri $uri/ /chive/index.php?$request_uri&$args;
+</span><span class='line'>  location ~ ^/chive/(protected|yii)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /chive/(assets|css|images|js|themes)/ {
+</span><span class='line'>    expires 1y;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location = /chive/index.php {
+</span><span class='line'>    fastcgi_pass admin_zagirov_backend;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>    fastcgi_param   QUERY_STRING        $query_string&__chive_rewrite_on=1;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Конфиг для мною обожаемого Yii:</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream yii-clean.zagirov.name {
+</span><span class='line'>  server unix:/var/run/php5-fpm/yii-clean.zagirov.name.sock;
+</span><span class='line'>}
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;
+</span><span class='line'>
+</span><span class='line'>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  fastcgi_read_timeout 6000;
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.ht|index-test.php){
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  location ~ /(assets|css|themes/new/css)/ {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>    location / {
+</span><span class='line'>    try_files $uri $uri/ /index.php?$request_uri&$args;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location /index.php {
+</span><span class='line'>    fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name test.yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;
+</span><span class='line'>
+</span><span class='line'>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.test.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.test.error.log warn;
+</span><span class='line'>
+</span><span class='line'>  gzip off;
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index-test.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  fastcgi_read_timeout 6000;
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.ht|index.php)
+</span><span class='line'>  {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  location ~ /(assets|css|themes/new/css)/ {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>    try_files $uri $uri/ /index-test.php?$request_uri&$args;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location /index-test.php {
+</span><span class='line'>    fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/svn-to-git/">Перенос Svn-репозитария в Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-07T18:33:00+04:00" pubdate data-updated="true">2011-04-07</time>
+        
+         | <a href="/svn-to-git/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)</p>
+
+<p>Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/bin/env bash</span>
+</span><span class='line'><span class="nv">authors</span><span class="o">=</span><span class="k">$(</span>svn log -q | grep -e <span class="s1">&#39;^r&#39;</span> | awk <span class="s1">&#39;BEGIN { FS = &quot;|&quot; } ; { print $2 }&#39;</span> | sort | uniq<span class="k">)</span>
+</span><span class='line'><span class="k">for </span>author in <span class="k">${</span><span class="nv">authors</span><span class="k">}</span>; <span class="k">do</span>
+</span><span class='line'><span class="k">  </span><span class="nb">echo</span> <span class="s2">&quot;${author} = ${author} &lt;email&gt;&quot;</span>;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Сохраняем вывод в какой-нибудь файл (/home/user/svn-authors.txt) и проставляем у всех авторов email. Иногда первый коммит совершается из консоли и он получается от неизвестного пользователя, поэтому стоит добавить строку об этом неизвестном пользователе, иначе экспорт в git не сработает.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(no author) = Name Surname &lt; email ></span></code></pre></td></tr></table></div></figure>
+
+
+<p>И вот собственно скрипт. Он вытягивает репозиторий из svn (используя файл соотношения авторов с email), проставляет тэги и пушит изменения на удалённый git-репозитарий. В данном случае вытягивается исходники yii и пушаться на github.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c">#!/usr/bin/env bash</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">AUTHOR_FILE</span><span class="o">=</span><span class="s2">&quot;/home/user/svn-authors.txt&quot;</span>
+</span><span class='line'><span class="nv">SVN_PATH</span><span class="o">=</span><span class="s2">&quot;http://yii.googlecode.com/svn/&quot;</span>
+</span><span class='line'><span class="nb">cd</span> /path/to/git/repo
+</span><span class='line'>
+</span><span class='line'>git svn clone -s --authors-file<span class="o">=</span><span class="nv">$AUTHOR_FILE</span> <span class="nv">$SVN_PATH</span> .
+</span><span class='line'>git merge remotes/trunk &gt; /dev/null 2&gt;&amp;1
+</span><span class='line'>
+</span><span class='line'>git <span class="k">for</span>-each-ref refs/remotes/tags | cut -d / -f 4- |
+</span><span class='line'><span class="k">while </span><span class="nb">read </span>ref
+</span><span class='line'><span class="k">do</span>
+</span><span class='line'><span class="k">     </span>git tag -a <span class="s2">&quot;$ref&quot;</span> <span class="s2">&quot;refs/remotes/tags/$ref&quot;</span> &gt; /dev/null 2&gt;&amp;1
+</span><span class='line'><span class="k">done</span>
+</span><span class='line'>git push --all &gt; /dev/null 2&gt;&amp;1
+</span><span class='line'>git push --tags &gt; /dev/null 2&gt;&amp;1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Этот скрипт можно поставить в крон. Скрипт не будет вытягивать весь svn-репозиторий заново (если уже был раз вытянут), а только изменения.</p>
+
+<p>Можно даже <a href="http://linsovet.com/git-svn-sync-changes">использовать git совместно с svn</a>.</p>
+
+<p>Используемые ссылки: <a href="http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git">http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/default-text-editor/">Установить текстовый редактор по-умолчанию</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-12T18:32:00+03:00" pubdate data-updated="true">2011-03-12</time>
+        
+         | <a href="/default-text-editor/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Установить mcedit текстовым редактором по-умолчанию в системе:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo update-alternatives --set editor /usr/bin/mcedit</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Выбрать редактор из списка:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo update-alternatives --config editor</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/continuous-integration-jenkins-yii-git/">Непрерывная интеграция: Jenkins + Yii + Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-06T18:24:00+03:00" pubdate data-updated="true">2011-03-06</time>
+        
+         | <a href="/continuous-integration-jenkins-yii-git/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Услышав шумиху про некую систему интеграционного тестирования hudson, который переименовали в jenkins, я захотел узнать что это и как это можно использовать. Для чего собственно он нужен? В кратце: он вытягивает последнюю версию из git/svn-репозитория и выполняет определённые действия (тестирует, выкладывает на другой сервер, делает отчёты). Всё это происходит автоматически: можно задать время, когда будет выполнятся задания. Можно почитать про <a href="http://habrahabr.ru/blogs/testing/108928/">пример использования jenkins</a>.</p>
+
+<p>Задача такая: Выполнение unit тестов для yii с отображением покрытия кода</p>
+
+<p>Все действия проводятся на сервере debian squeeze от root.</p>
+
+<h3>Установка jenkins</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo "deb http://pkg.jenkins-ci.org/debian binary/" > /etc/apt/sources.list.d/jenkins.list
+</span><span class='line'>wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+</span><span class='line'>aptitude update
+</span><span class='line'>aptitude install jenkins</span></code></pre></td></tr></table></div></figure>
+
+
+<p>По адресу <a href="http://serverName:8080/">http://serverName:8080/</a> должен открыться jenkins.</p>
+
+<h3>Установка плагинов</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /tmp
+</span><span class='line'>wget http://localhost:8080/jnlpJars/jenkins-cli.jar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если от jenkins нужно, чтобы выполнял unit-тесты и делал code coverage, то достаточно установить несколько плагинов, но на самом деле их очень много.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin xunit && \
+</span><span class='line'>java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin clover && \
+</span><span class='line'>java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin git</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Перезапускаем jenkins:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s http://localhost:8080 safe-restart</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Настройка проекта</h3>
+
+<p>Создаём проект. Открываем Новая задача → Имя: Yii. Выбираем &ldquo;Создать задачу со свободной конфигурацией&rdquo; → Сохранить.</p>
+
+<p>Меняем файл <a href="https://github.com/stamm/jenkins-yii/raw/master/phpunit.xml">protected/tests/phpunit.xml</a></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;phpunit bootstrap="bootstrap.php"
+</span><span class='line'>   colors="false"
+</span><span class='line'>   convertErrorsToExceptions="true"
+</span><span class='line'>   convertNoticesToExceptions="true"
+</span><span class='line'>   convertWarningsToExceptions="true"
+</span><span class='line'>   stopOnFailure="false">
+</span><span class='line'>
+</span><span class='line'>  &lt;selenium>
+</span><span class='line'>    &lt;browser name="Internet Explorer" browser="*iexplore" />
+</span><span class='line'>    &lt;browser name="Firefox" browser="*firefox" />
+</span><span class='line'>  &lt;/selenium>
+</span><span class='line'>
+</span><span class='line'>  &lt;logging>
+</span><span class='line'>    &lt;log type="coverage-html" target="../../build/coverage" title="prj"
+</span><span class='line'>     charset="UTF-8" yui="true" highlight="true"
+</span><span class='line'>     lowUpperBound="35" highLowerBound="70"/>
+</span><span class='line'>    &lt;log type="coverage-clover" target="../../build/logs/clover.xml"/>
+</span><span class='line'>    &lt;log type="junit" target="../../build/logs/junit.xml" logIncompleteSkipped="false"/>
+</span><span class='line'>  &lt;/logging>
+</span><span class='line'>&lt;/phpunit></span></code></pre></td></tr></table></div></figure>
+
+
+<p>../../build &ndash; должен указывать на папку build в корневой папке репозитория, создавать её не нужно.</p>
+
+<p>Теперь создаём конфиги, скачивая из <a href="https://github.com/Stamm/jenkins-yii/:">https://github.com/Stamm/jenkins-yii/:</a></p>
+
+<ul>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/config.xml">config.xml</a></li>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/build.xml">build.xml</a></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rm /var/lib/jenkins/jobs/yii/config.xml
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/config.xml --no-check-certificate https://github.com/Stamm/jenkins-yii/raw/master/config.xml
+</span><span class='line'>sudo -u jenkins mkdir /var/lib/jenkins/jobs/yii/workspace
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/workspace/build.xml --no-check-certificate https://github.com/Stamm/jenkins-yii/raw/master/build.xml</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Чтобы наши конфиги подхватились идём в настройки jenkins и кликаем по ссылке &ldquo;Пересчитать настройки из файла&rdquo;. В настройках проекта yii указываем git репозиторий до нашего проекта. Можно даже указать локальный путь, но должны быть права для пользователя jenkins. Добавляем <a href="https://github.com/stamm/jenkins-yii/raw/master/ExampleTest.xml">файл теста</a> в protected/unit/</p>
+
+<p>Теперь запускаем сборку. Вот как примерно это выглядит.</p>
+
+<p><img src="/images/continuous-integration-jenkins-yii-git/jenkins-board.png" alt="jenkis board" /></p>
+
+<h3>Уведомления по email</h3>
+
+<p>В конфиге jenkins указываем параметры для подключения к SMTP. Если настроен sendmail или exim, то нужно указать только от кого отсылать письмо. И теперь в настройках проекта yii указываем кому слать письмо об упавших тестах.</p>
+
+<h3>Авто-сборка</h3>
+
+<p>Можно настроить, чтобы сборки проводились автоматически. Для этого в настройках проекта yii ставим галку у Собирать периодически и в появившемся тестовом поле указываем время запуска в формате cron. Или сделать hook в git:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/bin/sh
+</span><span class='line'>
+</span><span class='line'>echo "Running jenkins"
+</span><span class='line'>wget http://serverName:8080/job/yii/build > /dev/null 2>&1</span></code></pre></td></tr></table></div></figure>
+
+
+<p>P.S. Я показал только малую часть того, что может делать jenkins. Он может создавать документацию по коду, проверять на наличие дублирования в коде, проверять стиль кодирования и многое, многое другое. Примеры более сложных конфигов <a href="https://github.com/sebastianbergmann/php-jenkins-template/raw/master/config.xml">config.xml</a> и <a href="https://github.com/sebastianbergmann/php-object-freezer/raw/master/build.xml">build.xml</a></p>
+
+<p>Используемые ссылки:</p>
+
+<ul>
+<li><a href="http://www.rustyrobot.org/2011/02/continuous-integration.html">http://www.rustyrobot.org/2011/02/continuous-integration.html</a></li>
+<li><a href="http://jenkins-php.org/">http://jenkins-php.org/</a></li>
+<li><a href="http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/">http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/</a></li>
+<li><a href="http://habrahabr.ru/blogs/testing/108928/">http://habrahabr.ru/blogs/testing/108928/</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/correct-return-header-on-service/">Правильная отдача заголовков при технических работах на сайте</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-01T01:35:00+03:00" pubdate data-updated="true">2011-03-01</time>
+        
+         | <a href="/correct-return-header-on-service/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Есть ситуация: проводятся какие-то технические работы на сайте и нужно сайт правильно закрыть. Это нужно чтобы поисковики знали, что сайт не доступен, а не добавляли страницы в индекс или помечали страницы как удалённые.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    listen 80 default;
+</span><span class='line'>    server_name _;
+</span><span class='line'>    root /var/www/default/www;
+</span><span class='line'>    charset utf-8;
+</span><span class='line'>    error_page 404 403 =503 /503.html;
+</span><span class='line'>    location = /503.html {
+</span><span class='line'>        add_header Retry-After "Sun, 27 Feb 2011 23:59:59";
+</span><span class='line'>    }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Строка error_page 404 403 =503 /503.html означает, что перенаправляем все запросы с ошибками 404 и 403 на файл 503.html, попутно меняя код ответа на 503. И при запросе файла 503.html отдаём заголовок Retry-After, чтобы поисковики знали, когда можно опять запросить страницу. Вместо даты можно указать количество секунд перед следующей попыткой. В файле 503.html можно написать что-нибудь осмысленное для пользователей и даже встроить флэш-игру, чтобы не было скучно.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860/">Ubuntu 11.04 Alpha 2. Asus EeePC 1000H. Не работает Wifi RaLink 2790 (RT2860)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-26T16:26:00+03:00" pubdate data-updated="true">2011-02-26</time>
+        
+         | <a href="/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Нашёл как исправить баг с глючащим wifi в моём нетбуке Asus EeePC 1000H. Карточка RaLink 2790 (RT2860). Нетбук подключался к wifi, получал ip-адрес по DHCP, но ничего не работало. Потом разрывалось соединение и заново подключалось с тем же печальным эффектом. Решение подсмотрел тут. Комманда lspci -vv выдала</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>01:00.0 Network controller: RaLink RT2860
+</span><span class='line'>Subsystem: RaLink Device 2790
+</span><span class='line'>Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
+</span><span class='line'>Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast &gt;TAbort- &lt;TAbort- &lt;MAbort- &gt;SERR- &lt;PERR- INTx-
+</span><span class='line'>Latency: 0, Cache Line Size: 32 bytes
+</span><span class='line'>Interrupt: pin A routed to IRQ 19
+</span><span class='line'>Region 0: Memory at fbef0000 (32-bit, non-prefetchable) [size=64K]
+</span><span class='line'>Capabilities: &lt;access denied&gt;
+</span><span class='line'>Kernel driver in use: rt2800pci
+</span><span class='line'>Kernel modules: rt2860sta, rt2800pci</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Нужно отключить модуль rt2800pci и использовать модуль rt2860. Добавляем в конец файла /etc/modprobe.d/blacklist.conf:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>blacklist rt2800pci</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yii-behaviors/">Yii: поведения (Behaviors)</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-21T16:23:00+03:00" pubdate data-updated="true">2011-02-21</time>
+        
+         | <a href="/yii-behaviors/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Поведения в yii позволяют применять некоторые методы к уже существующему объекту из другого класса. Для чего могут понадобиться поведения? Рассмотрим &ldquo;жизненный&rdquo; пример. Нужно получить какие-то данные по залогиненному пользователю. Можно, конечно, использовать что-то вроде:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">User</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findByPk</span><span class="p">(</span><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>А можно использовать поведения и добавить метод в Yii::app()&ndash;>user protected/components/WebUser.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">class</span> <span class="nc">WebUser</span> <span class="k">extends</span> <span class="nx">CBehavior</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">getData</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getOwner</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nx">User</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findByPk</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getOwner</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="k">FALSE</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Добавляем в конфиг protected/config/main.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="s1">&#39;user&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;loginUrl&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/login&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="c1">// enable cookie-based authentication</span>
+</span><span class='line'>  <span class="s1">&#39;allowAutoLogin&#39;</span><span class="o">=&gt;</span><span class="k">true</span><span class="p">,</span>
+</span><span class='line'>  <span class="s1">&#39;behaviors&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;WebUser&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>      <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;WebUser&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>  <span class="p">)</span>
+</span><span class='line'><span class="p">),</span>
+</span><span class='line'><span class="o">...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь можно использовать так:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">user</span><span class="o">-&gt;</span><span class="na">data</span><span class="o">-&gt;</span><span class="na">posts</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/project-in-utf8-mysql-in-cp1251/">Проект в Utf8, Mysql-база в Cp1251</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-05T16:22:00+03:00" pubdate data-updated="true">2011-02-05</time>
+        
+         | <a href="/project-in-utf8-mysql-in-cp1251/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Бывает так, что исходники проекта в utf8, а данные в базе хранятся в cp1251. Чтобы MySQL сам занимался переводом в другую кодировку, но после коннекта выполнить команды:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$db->query('SET NAMES cp1251');
+</span><span class='line'>$db->query('SET CHARACTER SET utf8');</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/voice-remind-in-ubuntu-gnu-linux/">Голосовое напоминание в Ubuntu Gnu/Linux</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-17T16:20:00+03:00" pubdate data-updated="true">2011-01-17</time>
+        
+         | <a href="/voice-remind-in-ubuntu-gnu-linux/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Сидя за компом забываешь кое-что сделать, например, выключить плиту. В линуксе это можно реализовать так:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo "нужная комманда" | at 07:00</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Примеры: Сказать голосом через 10 минут, что нужно выключить плиту:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ echo "espeak -v ru 'Выключи плиту'" | at `date -d '+10 minute' +%H:%M`</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Пора выходить:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ echo "espeak -v ru 'Пока выходить'" | at 20:00</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Весело получается ;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/3g-internet-in-ubuntu/">3G интернет в Ubuntu</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-15T16:16:00+03:00" pubdate data-updated="true">2011-01-15</time>
+        
+         | <a href="/3g-internet-in-ubuntu/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Хочу показать насколько просто настраивать 3G интернет в Ubuntu. Имеется huawei E1550 от МТС и Ubuntu 10.10. Хочу обратить внимание, что это всё работает &ldquo;из коробки&rdquo;.</p>
+
+<p><img src="/images/3g-internet-in-ubuntu/3g-1.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-2.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-3.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-4.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-5.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-6.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-7.png" alt="3g-internet-in-ubuntu" /></p>
+
+<p>Всё, интернет подключен ;)</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/4/">&larr; Старее</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Новее &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

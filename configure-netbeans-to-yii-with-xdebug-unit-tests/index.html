@@ -1,0 +1,719 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Настройка Netbeans для yii с поддержкой xdebug, тестов phpunit и selenium - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="После прочтения книги Agile Web Application Development with Yii 1.1 and PHP5 захотелось рассказать о настройке NetBeans для работы с yii, включая &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Настройка Netbeans для Yii с поддержкой Xdebug, тестов Phpunit и Selenium</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-24T14:05:00+04:00" pubdate data-updated="true">2010-10-24</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>После прочтения книги <a href="http://www.amazon.com/dp/1847199585?tag=gii20f-20&amp;camp=0&amp;creative=0&amp;linkCode=as1&amp;creativeASIN=1847199585&amp;adid=0BHF2HS6FNS82M85KJQT">Agile Web Application Development with Yii 1.1 and PHP5</a> захотелось рассказать о настройке NetBeans для работы с yii, включая поддержку unit-тестов + тесты через selenium.</p>
+
+<p>Selenium позволяет проводить тесты, почти полностью эмулируя действия через браузер: кликать по ссылкам, вводить текст.</p>
+
+<p>Это очень мощно!
+Имеются:
+&ndash; Сервер (ip: 192.168.0.3) Debian или другой linux-сервер <a href="/debian-4-configure-web-server-nginx-apache-mysql-postgresql/">с настроенным nginx, php5-fpm, xdebug</a>
+&ndash; Компьютер разработчика (ip: 192.168.0.2) Ubuntu 10.10 с установленным <a href="http://netbeans.org/downloads/index.html">NetBeans 7.0m2</a></p>
+
+<p>Сайт будет располагаться в <strong>/var/www/yii/www</strong>, а yii в <strong>/var/www/yii-lib/yii</strong></p>
+
+<p>Действия на сервере
+Создаём папку, где будет располагаться сайт.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir -p /var/www/yii/{logs,tmp,www}
+</span><span class='line'>chown www-data.www-data /var/www/yii/{tmp,www}
+</span><span class='line'>chmod 0700 /var/www/yii/{tmp,www}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём конфиг для php5-fpm. Файл: <strong>/etc/php5/fpm/pool.d/yii.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>[yii]
+</span><span class='line'>listen = /var/run/php5-fpm/yii.sock
+</span><span class='line'>listen.owner = www-data
+</span><span class='line'>listen.group = www-data
+</span><span class='line'>listen.mode = 0660
+</span><span class='line'>
+</span><span class='line'>user = www-data
+</span><span class='line'>group = www-data
+</span><span class='line'>
+</span><span class='line'>pm = dynamic
+</span><span class='line'>pm.max_children = 50
+</span><span class='line'>pm.start_servers = 1
+</span><span class='line'>pm.min_spare_servers = 1
+</span><span class='line'>pm.max_spare_servers = 5
+</span><span class='line'>pm.max_requests = 500
+</span><span class='line'>
+</span><span class='line'>pm.status_path = /status
+</span><span class='line'>ping.path = /ping
+</span><span class='line'>ping.response = pong
+</span><span class='line'>; Это значение стоит увеличить при активном использовании xdebug, иначе скрипт отвалится. Также нужно соответственно изменить в nginx параметр fastcgi_read_timeout.
+</span><span class='line'>request_terminate_timeout = 5m
+</span><span class='line'>request_slowlog_timeout = 2s
+</span><span class='line'>slowlog = /var/www/yii/logs/php-fpm.slow.log
+</span><span class='line'>chdir = /var/www/yii/www
+</span><span class='line'>catch_workers_output = yes
+</span><span class='line'>
+</span><span class='line'>env[TMP] = /var/www/yii/tmp
+</span><span class='line'>env[TMPDIR] = /var/www/yii/tmp
+</span><span class='line'>env[TEMP] = /var/www/yii/tmp
+</span><span class='line'>
+</span><span class='line'>php_flag[display_errors] = on
+</span><span class='line'>php_admin_value[error_log] = /var/www/yii/logs/fpm-php.log
+</span><span class='line'>php_admin_flag[log_errors] = on
+</span><span class='line'>
+</span><span class='line'>php_admin_value[open_basedir] = /var/www/yii/www:/var/www/yii/tmp:/var/www/yii/yii
+</span><span class='line'>php_admin_value[upload_tmp_dir] = /var/www/yii/tmp
+</span><span class='line'>php_admin_value[session.save_path] = /var/www/yii/tmp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Конфигурация сайта для nginx. Файл: <strong>/etc/nginx/sites-available/yii</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream yii {
+</span><span class='line'>  server unix:/var/run/php5-fpm/yii.sock;
+</span><span class='line'>}
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name yii.local;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;
+</span><span class='line'>
+</span><span class='line'>  access_log /var/www/yii/logs/nginx.access.log gzip;
+</span><span class='line'>  error_log /var/www/yii/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>  # ОБЯЗАТЕЛЬНО нужно отключить gzip, потому что тесты selenium не будет работать
+</span><span class='line'>  gzip off;
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 1m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>
+</span><span class='line'>  # Это значение стоит увеличить при активном использовании xdebug, иначе скрипт отвалится. Также нужно соответственно изменить в php5-fpm параметр request_terminate_timeout.
+</span><span class='line'>  fastcgi_read_timeout 600;
+</span><span class='line'>  root /var/www/yii/www;
+</span><span class='line'>  index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  location ~ /.ht
+</span><span class='line'>  {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.git|protected)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(assets|css)/ {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>    try_files $uri $uri/ @php;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ \.php$ {
+</span><span class='line'>    try_files $uri @php;
+</span><span class='line'>    fastcgi_pass yii;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME /var/www/yii/www$fastcgi_script_name;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location @php {
+</span><span class='line'>    fastcgi_pass yii;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME /var/www/yii/www/index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_NAME /index.php;
+</span><span class='line'>    fastcgi_param QUERY_STRING q=$uri&$args;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Включаем сайт, путём линкования в папку sites-enabled.</p>
+
+<p>Скачивание yii</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># Скачиваем исходники yii
+</span><span class='line'>cd /usr/local/src
+</span><span class='line'>wget http://yii.googlecode.com/files/yii-1.1.4.r2429.tar.gz
+</span><span class='line'>mkdir -p /var/www/yii-lib/
+</span><span class='line'>tar xvfz yii-1.1.4.r2429.tar.gz -C /var/www/yii-lib/
+</span><span class='line'>cd /var/www/yii-lib/
+</span><span class='line'># Делаем линк на текущую версию
+</span><span class='line'>ln -s yii-1.1.4.r2429 yii
+</span><span class='line'># Меняем пользователя и группу
+</span><span class='line'>chown -R www-data.www-data /var/www/yii-lib/
+</span><span class='line'># Создаём веб-приложение
+</span><span class='line'>/var/www/yii-lib/yii/framework/yiic webapp /var/www/yii/www/
+</span><span class='line'>Create a Web application under '/var/www/yii/www'? [Yes|No] Y
+</span><span class='line'># Меняем пользователя и группу
+</span><span class='line'>chown -R www-data.www-data /var/www/yii/www</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Устанавливаем php5-xdebug</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install php5-xdebug</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Настраиваем xdebug для работы отладки <strong>/etc/php5/fpm/conf.d/xdebug.ini</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>zend_extension=/usr/lib/php5/20090626+lfs/xdebug.so
+</span><span class='line'>
+</span><span class='line'>xdebug.remote_enable=on
+</span><span class='line'>xdebug.remote_handler=dbgp
+</span><span class='line'>xdebug.remote_mode=req
+</span><span class='line'># Ip-адрес компьютера разработчика
+</span><span class='line'>xdebug.remote_host=192.168.0.2
+</span><span class='line'>xdebug.remote_log="/var/log/xdebug.log"
+</span><span class='line'># По-умолчанию, используется 9000 порт, но он у меня уже занят.
+</span><span class='line'>xdebug.remote_port=9009
+</span><span class='line'>xdebug.idekey=netbeans-xdebug</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Рестартим fpm и apache:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>invoke-rc.d php5-fpm restart
+</span><span class='line'>invoke-rc.d apache2 restart</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Настройка компьютера разработчика
+Я монтирую всю папку /var/www к себе. Это очень удобно, т.к. не нужно скачивать все файлы с сайта. Нужен пакет sshfs.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo mkdir -p /mnt/www
+</span><span class='line'>sudo chown ВЫ.ВЫ /mnt/www
+</span><span class='line'>sshfs www-data@192.168.0.3:/var/www /mnt/www</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Прописываем в <strong>/etc/hosts</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>192.168.0.3 yii.local</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Phpunit</h3>
+
+<p>Устанавливаем
+<img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-1.png" alt="phpunit" /></p>
+
+<h3>Selenium</h3>
+
+<p><a href="http://seleniumhq.org/download/">Скачиваем Selenium RC</a>. Распаковываем и запускаем:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar selenium/selenium-server-1.0.3/selenium-server.jar</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Netbeans</h3>
+
+<p>Устанавливаем <a href="http://netbeans.org/downloads/index.html">NetBeans</a> (в моём случае это NetBeans 7.0m2). Ставим плагин <strong>Selenium Module for PHP</strong> (Tools → Plugins → Available Plugins).</p>
+
+<p>Немного настраиваем (Tools → Options):</p>
+
+<p>Php → General Ставим порт 9009 для xdebug и снимаем галку с опции <strong>Stop at First Line</strong>.</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-2.png" alt="phpunit" /></p>
+
+<p>Php → Unit Testing Указываем путь до phpunit: /usr/bin/phpunit</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-31.png" alt="phpunit" /></p>
+
+<p>Miscellaneous → Files Исключаем файл yiilite.php, чтобы при автокомплите подсказки не дублировались <strong>^(yiilite.php|CVS|</strong></p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-16.png" alt="phpunit" /></p>
+
+<p>Создаём новый проект:</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-4.png" alt="phpunit" /></p>
+
+<p>Указываем пути, название проект. Meta-файлы сохраняем в другой директории.</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-5.png" alt="phpunit" /></p>
+
+<p>Указываем url проекта: <a href="http://yii.local/">http://yii.local/</a></p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-6.png" alt="phpunit" /></p>
+
+<p>Теперь вызываем настройки проекта.</p>
+
+<p>Указываем директорию тестов (File → Project properties → Sources → Test Folder)</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-8.png" alt="phpunit" /></p>
+
+<p>Задаём маппинг пути (File → Project properties → Run configuration → Advanced). Тут не видно, но указано, что /var/www доступно в /mnt/www.</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-9.png" alt="phpunit" /></p>
+
+<p>Указываем директорию с yii: <strong>/mnt/www/yii-lib/yii</strong> (File → Project properties → PHP Include Path)</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-10.png" alt="phpunit" /></p>
+
+<p>Папки, которые будут игнорироваться: <strong>/mnt/www/yii/www/protected/runtime</strong> (File → Project properties → Ignored Folders → Add Folder).</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-11.png" alt="phpunit" /></p>
+
+<p>Настройка phpunit (File → Project properties → PhpUnit).</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-12.png" alt="phpunit" /></p>
+
+<p>Открываем файлы index.php, index-test.php, protected/tests/bootstrap.php и заменяем <strong>/yii-1.1.4.r2429/</strong> на <strong>/yii/</strong></p>
+
+<p>Удалить из <strong>protected/tests/phpunit.xml</strong> тест под IE</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;browser name="Internet Explorer" browser="*iexplore" /></span></code></pre></td></tr></table></div></figure>
+
+
+<p>Меняем константу TEST_BASE_URL в файле protected/tests/WebTestCase.php:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>define('TEST_BASE_URL','http://yii.local/index-test.php');</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Правим тест <strong>protected/tests/functional/SiteTest.php (баг)</strong>:</p>
+
+<p>Заменяем $this->clickAndWait(&lsquo;link=Logout&rsquo;); на $this->clickAndWait(&lsquo;link=Logout (demo)&rsquo;);</p>
+
+<p>Теперь можно запустить тест Selenium</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-13.png" alt="phpunit" /></p>
+
+<p>Появиться окошко выбора папки с этими тестами, указываем: /mnt/www/yii/www/protected/tests/functional</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-14.png" alt="phpunit" /></p>
+
+<p>Будут всплывать окошки с firefox&#8217;ом и в конце концов появиться результат:</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-15.png" alt="phpunit" /></p>
+
+<h3>Phpunit</h3>
+
+<p>Можно запускать phpunit тесты прямо с сервера или с рабочего компьютера, но придётся установить php и все используемые библиотеки (php5-pgsql, php5-mysql, etc). Рассмотрим 2-ой вариант. На компьютере разработчика установить phpunit и php5: Для phpunit теста можно установить свои параметры для yii в protected/config/test.php поверх стандартных (например, коннект к базе). Напишем простейший тест для проверки авторизации. Файл protected/tests/unit/AuthTest.php:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt; ?php
+</span><span class='line'>class AuthTest extends CTestCase
+</span><span class='line'>{
+</span><span class='line'>  public function testAuth()
+</span><span class='line'>  {
+</span><span class='line'>    $login = new LoginForm;
+</span><span class='line'>    $login->username = 'demo';
+</span><span class='line'>    $login->password = 'demo';
+</span><span class='line'>    $this->assertTrue($login->login());
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для выполнения теста в Netbeans нажимаем Alt+F6. При этом выполняться все тесты: и phpunit и selenium.</p>
+
+<p><img src="/images/configure-netbeans-to-yii-with-xdebug-unit-tests/netbeans_yii-17.png" alt="phpunit" /></p>
+
+<p>Можно выбрать AuthTest.php и нажать Shift+F6, тогда тестирование выполниться только из этого файла. Также можно выполнять phpunit тесты прямо с сервера (aptitude install phpunit):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /var/www/yii/www/protected/tests/
+</span><span class='line'>phpunit unit/AuthTest.php
+</span><span class='line'>PHPUnit 3.4.14 by Sebastian Bergmann.
+</span><span class='line'>
+</span><span class='line'>.
+</span><span class='line'>
+</span><span class='line'>Time: 0 seconds, Memory: 7.25Mb
+</span><span class='line'>
+</span><span class='line'>OK (1 test, 1 assertion)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Также можно написать тесты, не использую базу данных, подменив некоторые таблицы fixtures &ndash; ассоциативным массивом, имитирующим записи в таблице.</p>
+
+<p>Дебагинг кода
+Тесты написаны, теперь можно дебажить код. Открываем index.php, на любой строке добавляем breakpoint (Ctrl+F8). Запускаем дебагинг (Ctrl+F5). Теперь можно &ldquo;пройтись&rdquo; по коду клавишами F7 (Step Into) и F8 (Step Over). Это очень помогает понять как же работает сам yii, а так же &ldquo;качественно&rdquo; дебажить код, видя текущие переменные, watches, Call stack.</p>
+
+<p>Советую всем прочитать книгу <a href="http://www.amazon.com/dp/1847199585?tag=gii20f-20&amp;camp=0&amp;creative=0&amp;linkCode=as1&amp;creativeASIN=1847199585&amp;adid=0BHF2HS6FNS82M85KJQT">Agile Web Application Development with Yii1.1 and PHP5</a> всем, кто работает с yii. Книга поднимет уровень и в правильном написании кода для yii, и английского языка.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-24T14:05:00+04:00" pubdate data-updated="true">2010-10-24</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/netbeans/'>netbeans</a>, <a class='category' href='/blog/categories/php/'>php</a>, <a class='category' href='/blog/categories/php5/'>php5</a>, <a class='category' href='/blog/categories/php5-fpm/'>php5-fpm</a>, <a class='category' href='/blog/categories/phpunit/'>phpunit</a>, <a class='category' href='/blog/categories/selenium/'>selenium</a>, <a class='category' href='/blog/categories/xdebug/'>xdebug</a>, <a class='category' href='/blog/categories/yii/'>yii</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests/" data-via="" data-counturl="http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/mysql-query-console/" title="Previous Post: MySQL запросы через консоль">&laquo; MySQL запросы через консоль</a>
+      
+      
+        <a class="basic-alignment right" href="/write-extension-to-google-chrome/" title="Next Post: Пишем расширение под Google Chrome">Пишем расширение под Google Chrome &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests/';
+        var disqus_url = 'http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

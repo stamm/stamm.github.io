@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: firewall | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/firewall/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Debian. Часть 3. Настройка iptables: NAT, фаервол]]></title>
+    <link href="http://stamm.github.io/debian-3-setting-iptables-forward-nat-firewall/"/>
+    <updated>2010-07-28T00:59:00+04:00</updated>
+    <id>http://stamm.github.io/debian-3-setting-iptables-forward-nat-firewall</id>
+    <content type="html"><![CDATA[<p>Фаервол нам нужен для ограничения подключения из вне, NATа, а также проброса портов. Для удоства написал скрипт на bash. Вставляем в файл /etc/init.d/rc.firewall</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/bash&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>IPTABLES=&ldquo;/sbin/iptables&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>######### Config&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>LNETS=&ldquo;eth1 eth2 wlan0&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>DESKTOP=&ldquo;192.168.1.1&rdquo;
+</span><span class='line'>DESKTOP_OPEN_PORT=&ldquo;8010 9000&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>DESKTOP2=&ldquo;192.168.2.1&rdquo;
+</span><span class='line'>DESKTOP2_OPEN_PORT=&ldquo;9003&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>HOME_MASKS=&ldquo;192.168.1.0/24 192.168.2.0/24 192.168.3.0/24&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>PROVIDER=&ldquo;eth0&rdquo;
+</span><span class='line'>PROVIDER_IP=&ldquo;10.0.4.59&rdquo;
+</span><span class='line'>PROVIDER_MASK=&ldquo;10.0.0.0/8&rdquo;
+</span><span class='line'>INET=&ldquo;ppp+&rdquo;
+</span><span class='line'>WHITE_IP=&ldquo;77.77.77.77&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>OPEN_PORTS=&ldquo;22,80&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>echo 1 > /proc/sys/net/ipv4/conf/default/rp_filter
+</span><span class='line'>echo 1 > /proc/sys/net/ipv4/ip_forward
+</span><span class='line'>modprobe ip_conntrack
+</span><span class='line'>modprobe ip_conntrack_ftp
+</span><span class='line'>modprobe nf_nat_pptp
+</span><span class='line'>modprobe nf_conntrack_pptp
+</span><span class='line'>modprobe nf_conntrack_proto_gre
+</span><span class='line'>modprobe nf_nat_proto_gre
+</span><span class='line'>modprobe iptable_nat
+</span><span class='line'>modprobe ip_nat_ftp
+</span><span class='line'>modprobe ipt_LOG&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -P INPUT ACCEPT
+</span><span class='line'>$IPTABLES -P OUTPUT ACCEPT
+</span><span class='line'>$IPTABLES -P FORWARD DROP&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -F
+</span><span class='line'>$IPTABLES -X
+</span><span class='line'>$IPTABLES -t nat -F PREROUTING
+</span><span class='line'>$IPTABLES -t nat -F POSTROUTING&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>###### DELETE IF ALL WORKING FINE ######&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>$IPTABLES -A INPUT -j ACCEPT&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>mtu for vpn magick command, mega debian epic fail&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -o $INET -A FORWARD -p tcp &mdash;tcp-flags SYN,RST SYN -m tcpmss &mdash;mss 800:1536 -j TCPMSS &mdash;clamp-mss-to-pmtu&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>DENY SECTIONS&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -p tcp ! &mdash;syn -m state &mdash;state NEW -j DROP
+</span><span class='line'>$IPTABLES -A INPUT -p tcp &mdash;tcp-flags SYN,ACK SYN,ACK -m state &mdash;state NEW -j DROP&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>local interface, allow all&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -i lo -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>ALLOW PACKETS IF CONNECTION ESTABLISHED&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -m state &mdash;state ESTABLISHED,RELATED -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>access from white ip&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -s $WHITE_IP -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>access from home net&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $HOME_MASKS; do
+</span><span class='line'>$IPTABLES -A INPUT -s $i -j ACCEPT
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>defence for ssh for server&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -p tcp -m state &mdash;state NEW &mdash;dport 22 -m recent &mdash;update &mdash;seconds 20 -j DROP
+</span><span class='line'>$IPTABLES -A INPUT -p tcp -m state &mdash;state NEW &mdash;dport 22 -m recent &mdash;set -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>open ports for server&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -p tcp &mdash;syn -m multiport &mdash;destination-ports $OPEN_PORTS -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>### FORWARD&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A FORWARD -m state &mdash;state ESTABLISHED,RELATED -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>forward each home eth to provider eth and ppp+&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $LNETS; do
+</span><span class='line'>  $IPTABLES -A FORWARD -i $INET -o $i -j ACCEPT
+</span><span class='line'>  $IPTABLES -A FORWARD -i $i -o $INET -j ACCEPT
+</span><span class='line'>  $IPTABLES -A FORWARD -i $i -o $PROVIDER -j ACCEPT
+</span><span class='line'>  #forward each home eth to other home eth
+</span><span class='line'>  for j in $LNETS; do&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>if [ "$i" != "$j" ] ; then
+</span><span class='line'>  $IPTABLES -A FORWARD -i $i -o $j -j ACCEPT
+</span><span class='line'>  $IPTABLES -A FORWARD -i $j -o $i -j ACCEPT
+</span><span class='line'>fi
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  done
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>### LOCAL NAT&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $HOME_MASKS; do
+</span><span class='line'>  $IPTABLES -t nat -A POSTROUTING -s $i -d $PROVIDER_MASK -j SNAT &mdash;to-source $PROVIDER_IP
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>### INET NAT&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $HOME_MASKS; do
+</span><span class='line'>  $IPTABLES -t nat -A POSTROUTING -s $i -j SNAT &mdash;to-source $WHITE_IP
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;h6>#### FORWARD PORTS&lt;/h6>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $DESKTOP_OPEN_PORT; do
+</span><span class='line'>  $IPTABLES -t nat -A PREROUTING -p tcp &mdash;dport $i -j DNAT &mdash;to $DESKTOP:$i
+</span><span class='line'>  $IPTABLES -A FORWARD -p tcp -d $DESKTOP &mdash;dport $i -j ACCEPT
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>for i in $DESKTOP2_OPEN_PORT; do
+</span><span class='line'>  $IPTABLES -t nat -A PREROUTING -p tcp &mdash;dport $i -j DNAT &mdash;to $DESKTOP2:$i
+</span><span class='line'>  $IPTABLES -A FORWARD -p tcp -d $DESKTOP2 &mdash;dport $i -j ACCEPT
+</span><span class='line'>done&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>ssh for destop with defence&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -t nat -A PREROUTING -p tcp &mdash;dport 12345 -j DNAT &mdash;to $DESKTOP:22
+</span><span class='line'>$IPTABLES -A FORWARD -p tcp -m state -d $DESKTOP &mdash;state NEW &mdash;dport 12345 -m recent &mdash;update &mdash;seconds 20 -j DROP
+</span><span class='line'>$IPTABLES -A FORWARD -p tcp -m state -d $DESKTOP &mdash;state NEW &mdash;dport 12345 -m recent &mdash;set -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>ping&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -p ICMP &mdash;icmp-type 8 -j ACCEPT&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>deny other ICMP packets&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -p icmp -j DROP&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>other reject&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$IPTABLES -A INPUT -j DROP $IPTABLES -A FORWARD -j DROP&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Делаем скрипт исполняемым:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>chmod +x /etc/init.d/rc.firewall</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И прописываем в автозагрузку</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>update-rc.d rc.firewall defaults</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>По сути в нём всё лаконично закоментированно, но iptables – та ещё магия. В скрипте почти все настройки вынесены. Скрипт разрешает форвардинг между всеми интерфейсами, включает NAT, разрешает пинги до сервера. Всё что явно не разрешено, то запрещено. Бонусом есть защита ssh от брута, форвардинг ssh с порта 12345 на 22 порт домашнего компьютера, форвардинг портов на внутренние компьютеры (разделяются пробелом) Там найдёте магическую строку с моим негативом. Дебиан почему-то не может поставить MTU для ppp. Всё бы ничего, но некоторые сайты не открываются (nix.ru, mail.ru). Как говорят знакомые админы баг тянется ещё с etch. Отписал баг-репорт, ничего внятного так и не ответили. В Ubuntu 9.10, когда настраивал VPN скриптом, всё с mtu было нормально. Благодарю нашего админа за предоставление конфигов и помощи в настройках Теперь у всех домашних компьютеров есть интернет и настроен фаервол. Следующие статьи будут о полезных программах, настройке веб-сервера.</p>
+
+<p><a href="/debian-2-setting-network-dhcp-bind9-vpn">← Часть 2</a> | <a href="/debian-4-configure-web-server-nginx-apache-mysql-postgresql">Часть 4 →</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Зачем нужен firewall на веб-проектах]]></title>
+    <link href="http://stamm.github.io/why-you-need-the-firewall-on-the-web-projects/"/>
+    <updated>2010-07-28T00:32:00+04:00</updated>
+    <id>http://stamm.github.io/why-you-need-the-firewall-on-the-web-projects</id>
+    <content type="html"><![CDATA[<p>Не так давно написал <a href="http://habrahabr.ru/blogs/infosecurity/69436/">статейку на хабре</a>.</p>
+
+<p>Здравствуйте, обычно при создании проектов в интернете при вопросе безопасности большее внимание уделяют веб-приложению, а о защите самого сервера забывают, а именно о firewall’е. Я понимаю, что настройкой сервера, и в том числе firewall’а, должен заниматься специальный человек — сисадмин, но во многих ситуациях получается так, что программист сам себе админ. На настройку firewall’а даже у программиста уйдёт всего лишь около 1 дня — это избавит от потенциальных проблем. От каких? Сейчас расскажу небольшую историю «взлома». В моём городе у провайдера, который занимает лидирующее положение, есть локальный трекер, довольно таки большой (не будем про нелегальность, нас интересует только вопрос безопасности проекта). Т.к. я занимаюсь разработкой другого трекера меня интересуют различные новые возможности, и я периодически захожу на разные трекеры, в том числе и на него. Однажды я увидел ошибку 502 Bad Gateway от nginx, и решил позже зайти прямо на apache. Обычно apache перевешивают на порт 8080. Зашёл — значит firewall не настроен, посмотрел на заголовки ответа — стояла FreeBSD. Я думаю, что те, кто ставит фряху, должен быть довольно опытен в настройке и просто забыл закрыть порт, при установке nginx как фронтэнда, а apache’а как бэкенда. И я решил проверить Nmap проверил, что все порты, которые используют приложения открыты: 21, 22, 25, 80, 3306, 8080 и ещё несколько портов. Т.к. я тоже занимаюсь разработкой, я знал, что этот движок трекера (torrentpier) имеет возможность использования кэширования через memcached. Проверил стандартный порт memcached — порт был открыт. Написал простецкий скрипт соединения к memcached. Изучив исходники torrentpier, я узнал названия ключей, в которых происходит запись кэша. Из них интересными оказались 2 значения: массив настроек трекера и полный html-код главной страницы для незалогиненного пользователя. Из настроек трекера я узнал логин, пароль и адрес smtp сервера, т.е. потенциальный взломщик уже может рассылать спам (smtp же тоже не закрыт). Попробовал пароль от smtp в качестве пароля администратора трекера — получилось, я получил администраторский доступ к трекеру. Я понимаю, что это было «удачное» стечение обстоятельств, но просто закрытие портов уже бы помогло.</p>
+
+<h2>Заключение</h2>
+
+<p>Кроме безопасности самого веб-приложения (php, python, ruby, etc), но и о безопасности самого сервера (в частности firewall’а) и всех используемых параллельно инструментов. Так же нужно делать разные пароли для всего (почта, БД, ftp) даже на уровне 1 проекта.</p>
+
+<p>P.S.: Делал это я не для того, чтобы что-то сломать, а просто из «спортивного» интереса. Администратор трекера был почти сразу уведомлён о возможности «взлома», в том числе о каждом шаге. %Username%, а у тебя настроен firewall?</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: apt | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/apt/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Apt: управление приоритетами пакетов из stable, testing, unstable, experimental]]></title>
+    <link href="http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental/"/>
+    <updated>2010-08-20T01:22:00+04:00</updated>
+    <id>http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental</id>
+    <content type="html"><![CDATA[<p>Есть несколько &ldquo;виртуальных&rdquo; релизов у debian: stable &ndash; на текущий момент это 5 версия (lenny), testing &ndash; squeeze (когда он будет выпущен, то перейдёт в релиз stable). Unstable и experimental &ndash; экспериментальные релизы, не для продакшена!. Пакет проходит путь из experimental => unstable => testing => stable. Иногда бывают ситуации, когда нужно установить пакеты поновее. Можно, конечно, скачать отдельно deb-пакет и установить его, но в этом случае одни минусы: возможно требуются удовлетворения зависимостей и лишаемся обновлений. А можно рулить приоритетами пакетов в зависимости от релиза (stable, testing, unstable, experimental).</p>
+
+<p>Создаём файлы в /etc/apt/sources.list.d</p>
+
+<p>testing.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> testing main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> testing main non-free contrib
+</span><span class='line'>deb &lt;a href="http://security.debian.org/">http://security.debian.org/&lt;/a> testing/updates main contrib non-free
+</span><span class='line'>deb-src &lt;a href="http://security.debian.org/">http://security.debian.org/&lt;/a> testing/updates main contrib non-free</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>unstable.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> sid main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> sid main non-free contrib</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>experimental.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> experimental main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> experimental main non-free contrib</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь настраиваем приоритеты в файле /etc/apt/preferences:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Package: *
+</span><span class='line'>Pin: release a=stable
+</span><span class='line'>Pin-Priority: 200&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=testing
+</span><span class='line'>Pin-Priority: 201&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=unstable
+</span><span class='line'>Pin-Priority: 199&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=experimental
+</span><span class='line'>Pin-Priority: 198</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Этот конфиг означает, что пакеты будут искаться в такой последовательности: testing => stable => unstable => experimental. Вместо Package: * можно указать конкретные пакеты, но, к сожалению, нельзя указать маску пакетов.</p>
+
+<p>Установка пакета и попытка решить зависимости из unstable:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude -t unstable install &lt;package></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Установка пакета и попытка решить зависимости из релиза с наивысшим приоритетом:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install &lt;package>/unstable</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Ссылки по теме: <a href="http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.ru.html">http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.ru.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>

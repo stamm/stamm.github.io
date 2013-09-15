@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: phpstorm | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/phpstorm/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: рецепты №1]]></title>
+    <link href="http://stamm.github.io/yii-cookbook-1/"/>
+    <updated>2012-03-23T19:19:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cookbook-1</id>
+    <content type="html"><![CDATA[<h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
+
+<p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">clientScript</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">packages</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span>   <span class="s1">&#39;highcharts&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;baseUrl&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;/js/highcharts/&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;js&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">array</span><span class="p">(</span><span class="nx">YII_DEBUG</span> <span class="o">?</span> <span class="s1">&#39;highcharts.src.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;highcharts.js&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;css&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;highcharts.css&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;depends&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">),</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь вместо</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">clientScript</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerPackage</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">jquery</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;)</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerScriptFile</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">js</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">.</span><span class="nx">js</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;)</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerCssFile</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">js</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">.</span><span class="nx">css</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Пишем</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">clientScript</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerPackage</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">highcharts</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>YII_DEBUG</h3>
+
+<p>Эта константа позволяет включать режим дебага и она же доставляет немного неудобства. Локально нужно устанавливать констатну YII_DEBUG в true, но не комитить это изменение нельзя. Т.е. перед комитом нужно выставлять значение в false. Мы же программисты, народ ленивый, поэтому тем меньше пальцедвижений, тем лучше.</p>
+
+<ul>
+<li>Можно воспользовать <a href="/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
+<li>Можно не добавлять файл в коммит</li>
+</ul>
+
+
+<p>Но эти варианты не подходят, когда используется консоль, нельзя будет использовать команду <strong>git add .</strong></p>
+
+<p>Решение очевидное: использовать директивы <a href="http://www.php.net/manual/en/ini.core.php#ini.auto-prepend-file">auto_prepend_file</a> При запуске любого php-файла, будет предварительно выполнятся наш файлик с установленной константой.</p>
+
+<p>Теперь пишем в файл с настройками сайта php-fpm <strong>/etc/php5/fpm/pool.d/super-site-on-yii.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="p">[</span><span class="nx">php</span><span class="p">]</span>
+</span><span class='line'><span class="nx">php_admin_value</span><span class="p">[</span><span class="nx">auto_prepend_file</span><span class="p">]</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">yii_debug</span><span class="o">.</span><span class="nx">php</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файл /var/www/yii_debug.php</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">// Если включен профайлер xdebug</span>
+</span><span class='line'><span class="c1">//define(&amp;lsquo;YII_DEBUG&amp;rsquo;, empty($_GET[&amp;lsquo;XDEBUG_PROFILE&amp;rsquo;]));</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">YII_DEBUG</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="k">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Автодополнение в PhpStorm</h3>
+
+<p>При подключении стороннего компонента или расширении стандартного хотелось бы «научить» IDE подсказывать</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">components</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">user</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;WebUser&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">),</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">myext</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;MyExt&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файлик в любом месте, из которого он не сможет подключится автолоадерем. Например, в protected/autocomplete.php</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
+</span><span class='line'><span class="o">/&lt;</span><span class="nx">em</span><span class="o">&gt;*</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">@</span><span class="nx">property</span> <span class="nx">WebUser</span> <span class="nv">$user</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">@</span><span class="nx">property</span> <span class="nx">MyExt</span> <span class="nv">$myext</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CApplication</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь по вводу Yii::app()&ndash;>myext PhpStorm будет посказывать методы из класса MyExt.</p>
+
+<p>Ещё можно заставить PhpStorm подсказывать в файлах представления (views)</p>
+
+<p>Обычно хватает стандартного набора ($this и $form), но в каждой конкретной view может быть свой набор переменных</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">/&lt;</span><span class="nx">strong</span><span class="o">&gt;</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$this</span> <span class="nx">Controller</span> <span class="o">*/</span>
+</span><span class='line'><span class="o">/&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$form</span> <span class="nx">CActiveForm</span> <span class="o">&lt;</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="o">/**</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$model</span> <span class="nx">User</span> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Последний метод можно полу-автоматизировать через шаблоны gii. Это остаётся в качестве самостоятельной работы читателя.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Организация рабочего потока: Phpstorm, Redmine, Changelists]]></title>
+    <link href="http://stamm.github.io/phpstorm-redmine-changelist-workflow/"/>
+    <updated>2011-10-23T18:53:00+04:00</updated>
+    <id>http://stamm.github.io/phpstorm-redmine-changelist-workflow</id>
+    <content type="html"><![CDATA[<p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
+
+<ul>
+<li>Есть задача в redmine.</li>
+<li>Я начинаю её выполнять.</li>
+<li>Всё проверяю локально и коммичу в репозиторий.</li>
+<li>Выливаю изменения на тестовый сервер.</li>
+</ul>
+
+
+<p>Есть несколько ньюансов. Бывают задачи очень объёмные и/или не очень срочные, которые я делаю в перерывах между задачами с более высокими приоритетами. Или спокойно делаю задачу, но прибегает менеджер с огромными глазами и криками, что сайт выдаёт ошибку, и нужно сделать быстрый hotfix.</p>
+
+<p>В этом случае очень помогают changelist в PhpStorm.</p>
+
+<p>Смысл changelist'а заключается в логическом разделении группы файлов для коммита. Т.е. файлы &ldquo;прикрепляются&rdquo; к определённому changelist'у. И при коммите мы выбираем нужный changelist и коммитим только файлы из этого changelist'а. Changelist есть всегда, по-умолчанию название default.</p>
+
+<p>Настраиваем Redmine:</p>
+
+<p>Нужно включить в параметрах redmine пункт <strong>Enable REST web service</strong></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
+
+<p>Добавляем новый Task server в PhpStorm. Api token можно найти в личном разделе в redmine.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
+
+<p>И добавляем парсинг номера задачи из описания коммита для отображения её как ссылки на задачу в redmine.</p>
+
+<p>Project Settings → Version Control → Issue Navigation</p>
+
+<p>Вводим паттерн регулярного выражения <strong>#(\d+)</strong> и генерируемую ссылку: **<a href="http://redmine.company.com/issues/$1**">http://redmine.company.com/issues/$1**</a></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
+
+<p>Теперь открываем задачу Tools → Task → Open. Тут работает автодополнение для имени задачи.</p>
+
+<p>Если были открытые файлы, то они все скроются. Сейчас мы работаем в своём наборе открытых файлов. Если откроем changelist под названием default, то все открытые файлы вернуться в редактор. Нужно понимать, что изменения в скрытых файлах остаются (это вам не git stash), а просто скрываются из вида.</p>
+
+<p>Мы можем создать множество changelist'ов. Они не обязательно создаются из задачи, можно создать свой changelist. Я, например, создаю changelist NO для временных файлов, файлов своих настроек, декларативные скрипты для работы автодополнения, которые мне не нужно включать в коммит.</p>
+
+<p>Теперь при коммите будут выбраны только файлы, которые находяться в выбранном changelist'е.</p>
+
+<p>Откройте в разделе changes (alt+9 или ⌘+9) вкладку Local. Тут показаны изменённые файлы, сгруппированные по changelist'ам. Здесь файлы можно перемещать между changelist'ами.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
+
+<p>Кликнув правой кнопкой по changelist, вы можете изменить его комментарий. Этот комментарий потом автоматически вставиться в описание коммита.</p>
+
+<p>Для запуска сборки проекта в TeamCity из PhpStorm нужно поставить соответсвующий плагин.</p>
+
+<p>Получилась вот такая схема работы. Ребята из JetBrains очень крутые: развивают продукт очень стремительно, вводять очень удобные фишки. Кто ещё не пробывал PhpStorm &ndash; обязательно попробуйте. А на него перешёл с Netbeans и нисколько не жалею.</p>
+]]></content>
+  </entry>
+  
+</feed>

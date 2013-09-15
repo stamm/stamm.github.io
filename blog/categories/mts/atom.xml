@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mts | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/mts/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[3G интернет в Ubuntu]]></title>
+    <link href="http://stamm.github.io/3g-internet-in-ubuntu/"/>
+    <updated>2011-01-15T16:16:00+03:00</updated>
+    <id>http://stamm.github.io/3g-internet-in-ubuntu</id>
+    <content type="html"><![CDATA[<p>Хочу показать насколько просто настраивать 3G интернет в Ubuntu. Имеется huawei E1550 от МТС и Ubuntu 10.10. Хочу обратить внимание, что это всё работает &ldquo;из коробки&rdquo;.</p>
+
+<p><img src="/images/3g-internet-in-ubuntu/3g-1.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-2.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-3.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-4.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-5.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-6.png" alt="3g-internet-in-ubuntu" />
+<img src="/images/3g-internet-in-ubuntu/3g-7.png" alt="3g-internet-in-ubuntu" /></p>
+
+<p>Всё, интернет подключен ;)</p>
+]]></content>
+  </entry>
+  
+</feed>

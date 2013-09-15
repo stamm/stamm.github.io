@@ -1,0 +1,476 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Ограничение прав пользователей в git - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/remove-data-from-mongo-without-blocking">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Ограничение прав пользователей в Git</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-03T19:38:00+04:00" pubdate data-updated="true">2012-10-03</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
+
+<p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
+
+<p>Поэтому нужно ограничивать push в репозиторий на основе этих правил: тестерам дать право изменять файлы только в рамках одной директории. А программистам не давать возможность пушить в мастер, только какой-то группе доверенных программистов, а по сути тим-лиду.</p>
+
+<p>Мы используем gitolite и он позволяет это сделать на уровне конфигурации.</p>
+
+<p>Есть следующие группы пользователей</p>
+
+<ul>
+<li>мега-админы &ndash; они и только они могут менять историю в репе. Это чревато, но разрешено только одному человеку для непредвиденных ситуаций =)</li>
+<li>гит-мастера — это те, кто может пушить в мастер (по сути мёржить тоже), тэгировать, создавать и удалять ветки с версией релиза и хотфиксные ветки. Название веток начинается соответственно с v и hf. Т.е: v1.0.1 и hf.1.0.1</li>
+<li>разработчики — это пользователи, которые не могут пушить в мастер и создавать тэги. Также не могут удалить вертку с версией релиза и хотфиксную ветку. Могут создавать и удалять любые другие ветки.</li>
+<li>тестеры — ограниченные пользователи. Могут менять файлы в только пределах директории protected/test.</li>
+<li>только чтение — давать возможность только для чтения репы. Например, для технических писателей.</li>
+<li>группа аутсорсеров &ndash; у них свои порядки, но они не могут удалить ветки master, dev, hotfixes, release</li>
+</ul>
+
+
+<p>Есть 5 репозиториев: site, mobile, api, common-modules, outsource-site</p>
+
+<p>Только на site распространяются правила для тестировщиков.</p>
+
+<p>На site, mobile, api, common-modules — наши основные диктаторские правила</p>
+
+<p>На outsource-site — «мягкие» правила.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>repo    gitolite-admin
+</span><span class='line'>        RW+     =   id_rsa
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группировка веток или путей =============
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Не разрешать писать в master и создавать тэги
+</span><span class='line'>@not_write = master$ refs/tags
+</span><span class='line'># Не разрешать создавать ветки и удалять начинающиеся с v и hf.
+</span><span class='line'>@not_create = v hf.
+</span><span class='line'># Тестеры могут писать только сюда
+</span><span class='line'>@tester_write_only = NAME/protected/tests/
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Эти ветки не могут удалять обычные программеры
+</span><span class='line'>@old_branches = master$ dev$ hotfixes$ realease$
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группы пользователей ==========
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Админы имеют право писать всюду
+</span><span class='line'>@admins = id_rsa
+</span><span class='line'># Гит-админы могут писать в мастер и создавать ветки из @not_create
+</span><span class='line'>@git-admins = zagirov
+</span><span class='line'># Разработчики
+</span><span class='line'>@developers = @git-admins ivanov petrov sidorov
+</span><span class='line'># Тестеры имеют право на запись только в @tester_write_only
+</span><span class='line'>@testers = test-girl
+</span><span class='line'># Только на чтение
+</span><span class='line'>@developers-ro = tech-writer
+</span><span class='line'># Аутсорсеры со своими правилами
+</span><span class='line'>@outsource = five-hard-dev1 five-hard-dev2
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># =========== Правила ===================
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Правила применяются для всех
+</span><span class='line'>repo @all
+</span><span class='line'>  RW+CD                      = @admins
+</span><span class='line'>
+</span><span class='line'># Главный сайт с тестами
+</span><span class='line'>repo  site
+</span><span class='line'>  # Правило для тестировщиков
+</span><span class='line'>  # Если оно создаётся, ниже должно быть правило, RWCD NAME/ = @developers
+</span><span class='line'>  # Оно разрешает другим писать сюда
+</span><span class='line'>  RW                         = @testers
+</span><span class='line'>  RW   @tester_write_only    = @testers
+</span><span class='line'>  R                          = @testers
+</span><span class='line'>  -                          = @testers
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Группа, куда применяются общие правила работы с ветками @git-branch-rules
+</span><span class='line'>@git-branch-rules = site mobile api common-modules
+</span><span class='line'>
+</span><span class='line'>repo @git-branch-rules
+</span><span class='line'>  # Разрешаем писать в @not_write для @git-admins
+</span><span class='line'>  # У @developers на @not_write только чтение
+</span><span class='line'>  RWCD @not_write            = @git-admins
+</span><span class='line'>  -    @not_write            = @git-admins
+</span><span class='line'>  R    @not_write            = @developers
+</span><span class='line'>  -    @not_write            = @developers
+</span><span class='line'>
+</span><span class='line'>  # Разрешаем создавать и удалять ветки @not_create для @git-admins
+</span><span class='line'>  # @developers не могут создавать удалять @not_create
+</span><span class='line'>  RWCD @not_create           = @git-admins
+</span><span class='line'>  -    @not_create           = @git-admins
+</span><span class='line'>  RW   @not_create           = @developers
+</span><span class='line'>  -    @not_create           = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers могуть писать и создавать в @old_branches, но не удалять их
+</span><span class='line'>  RWC  @old_branches         = @developers
+</span><span class='line'>  -    @old_branches         = @developers
+</span><span class='line'>
+</span><span class='line'>  # Для всего остального разрешаем доступ для @developers
+</span><span class='line'>  RWCD                       = @developers
+</span><span class='line'>  # Это нужно, т.к раньше для @testers запретили запись для определённых файлов
+</span><span class='line'>  RWCD NAME/                 = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers-ro могут только читать
+</span><span class='line'>  R                          = @developers-ro
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Это обычный реп, без жёстких правил. Здесь просто запрещается удалять ветки master dev hotfixes realease
+</span><span class='line'>repo  outsource-site
+</span><span class='line'>  RWC  @old_branches         = @outsource
+</span><span class='line'>  -    @old_branches         = @outsource
+</span><span class='line'>  RWCD                       = @outsource</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если вы используете не gitolite, а другой продукт: gitosis или github, то скорее всего сделать это можно на хуках.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-03T19:38:00+04:00" pubdate data-updated="true">2012-10-03</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/dev/'>dev</a>, <a class='category' href='/blog/categories/git/'>git</a>, <a class='category' href='/blog/categories/gitolite/'>gitolite</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/remove-data-from-mongo-without-blocking/" data-via="" data-counturl="http://stamm.github.io/remove-data-from-mongo-without-blocking/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/remove-data-from-mongo-without-blocking/" title="Previous Post: Удаление данных из коллекции в Mongodb без блокировки">&laquo; Удаление данных из коллекции в Mongodb без блокировки</a>
+      
+      
+        <a class="basic-alignment right" href="/gnu-grep-faster-than-mac-os-x/" title="Next Post: Ускорение скорости работы grep в Mac OS X">Ускорение скорости работы grep в Mac OS X &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/remove-data-from-mongo-without-blocking/';
+        var disqus_url = 'http://stamm.github.io/remove-data-from-mongo-without-blocking/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

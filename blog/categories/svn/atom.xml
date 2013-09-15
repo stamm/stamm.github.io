@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: svn | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/svn/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Перенос svn-репозитария в git]]></title>
+    <link href="http://stamm.github.io/svn-to-git/"/>
+    <updated>2011-04-07T18:33:00+04:00</updated>
+    <id>http://stamm.github.io/svn-to-git</id>
+    <content type="html"><![CDATA[<p>Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)</p>
+
+<p>Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/usr/bin/env bash&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;authors<span class="o">=</span><span class="k">$(</span>svn log -q | grep -e &amp;lsquo;^r&amp;rsquo; | awk &amp;lsquo;BEGIN <span class="o">{</span> <span class="nv">FS</span> <span class="o">=</span> &amp;ldquo;|&amp;rdquo; <span class="o">}</span> ; <span class="o">{</span> print <span class="nv">$2</span> <span class="o">}</span>&amp;rsquo; | sort | uniq<span class="k">)</span>
+</span><span class='line'><span class="k">for </span>author in <span class="k">${</span><span class="nv">authors</span><span class="k">}</span>; <span class="k">do</span>
+</span><span class='line'><span class="k">  </span><span class="nb">echo</span> &amp;ldquo;<span class="k">${</span><span class="nv">author</span><span class="k">}</span> <span class="o">=</span> <span class="k">${</span><span class="nv">author</span><span class="k">}</span> &lt;email&gt;&amp;rdquo;;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Сохраняем вывод в какой-нибудь файл (/home/user/svn-authors.txt) и проставляем у всех авторов email. Иногда первый коммит совершается из консоли и он получается от неизвестного пользователя, поэтому стоит добавить строку об этом неизвестном пользователе, иначе экспорт в git не сработает.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(no author) = Name Surname &lt; email ></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И вот собственно скрипт. Он вытягивает репозиторий из svn (используя файл соотношения авторов с email), проставляет тэги и пушит изменения на удалённый git-репозитарий. В данном случае вытягивается исходники yii и пушаться на github.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/usr/bin/env bash&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;AUTHOR_FILE<span class="o">=</span>&amp;ldquo;/home/user/svn-authors.txt&amp;rdquo;
+</span><span class='line'><span class="nv">SVN_PATH</span><span class="o">=</span>&amp;ldquo;&lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://yii.googlecode.com/svn/&quot;</span>&gt;http://yii.googlecode.com/svn/&lt;/a&gt;&amp;rdquo;
+</span><span class='line'><span class="nb">cd</span> /path/to/git/repo&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;git svn clone -s &amp;mdash;authors-file<span class="o">=</span><span class="nv">$AUTHOR_FILE</span> <span class="nv">$SVN_PATH</span> .
+</span><span class='line'>git merge remotes/trunk &gt; /dev/null 2&gt;&amp;amp;1&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;git <span class="k">for</span>-each-ref refs/remotes/tags | cut -d / -f 4- |
+</span><span class='line'><span class="k">while </span><span class="nb">read </span>ref
+</span><span class='line'><span class="k">do</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt; git tag -a <span class="s2">&quot;$ref&quot;</span> <span class="s2">&quot;refs/remotes/tags/$ref&quot;</span> &amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;done
+</span><span class='line'>git push &amp;mdash;all &gt; /dev/null 2&gt;&amp;amp;1
+</span><span class='line'>git push &amp;mdash;tags &gt; /dev/null 2&gt;&amp;amp;1
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Этот скрипт можно поставить в крон. Скрипт не будет вытягивать весь svn-репозиторий заново (если уже был раз вытянут), а только изменения.</p>
+
+<p>Можно даже <a href="http://linsovet.com/git-svn-sync-changes">использовать git совместно с svn</a>.</p>
+
+<p>Используемые ссылки: <a href="http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git">http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git</a></p>
+]]></content>
+  </entry>
+  
+</feed>

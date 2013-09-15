@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: postgresql | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/postgresql/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
+    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <updated>2010-07-28T01:14:00+04:00</updated>
+    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
+
+<p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>zone &ldquo;zagirov.name&rdquo; {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>type master;
+</span><span class='line'>file "/etc/bind/db.zagirov.name";
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>};</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файл /etc/bind/db.zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$TTL    604800
+</span><span class='line'>@   IN  SOA zagirov.name. root.zagirov.name. (&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>              2     ; Serial
+</span><span class='line'>         604800     ; Refresh
+</span><span class='line'>          86400     ; Retry
+</span><span class='line'>        2419200     ; Expire
+</span><span class='line'>         604800 )   ; Negative Cache TTL
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>;
+</span><span class='line'>@   IN  NS  localhost.
+</span><span class='line'>@   IN  A   192.168.1.254
+</span><span class='line'>*   IN  A   192.168.1.254</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Я использую Debian testing (squeeze). Устанавливаем пакеты:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install apache2 nginx libapache2-mod-php5 php5-cli php5-mysql php5-pgsql php5-xmlrpc php5-gd php5-curl php5-xsl php-apc memcached php5-memcache mysql-server postgresql</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Структура папок сайта: logs – логи tmp – папка для временных файлов и файлов сессии www – содержимое сайта</p>
+
+<p>Создадим «эталонную» папку для сайта, которая будет структурой для будущих сайтов</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir &ndash; p /var/www/etalon/{logs,tmp,www}
+</span><span class='line'>chown www-data.www-data /var/www/etalon/{tmp,www}
+</span><span class='line'>chmod 0700 /var/www/etalon/{tmp,www}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем в mc папку /var/www/, выбираем папку etalon, нажимает shift+F5, вводим название сайта(zagirov.name). Появилась папка для будущего сайта: /var/www/zagirov.name/ Чтобы логи архивировались, создаём правило для logrotate в файле /etc/logrotate.d/sites:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/var/www/&lt;em>/logs/&lt;/em>.log {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>weekly
+</span><span class='line'>missingok
+</span><span class='line'>rotate 52
+</span><span class='line'>compress
+</span><span class='line'>delaycompress
+</span><span class='line'>notifempty
+</span><span class='line'>create 644 root root
+</span><span class='line'>sharedscripts
+</span><span class='line'>postrotate
+</span><span class='line'>    if [ -f "`. /etc/apache2/envvars ; echo ${APACHE_PID_FILE:-/var/run/apache2.pid}`" ]; then
+</span><span class='line'>        /etc/init.d/apache2 reload &gt; /dev/null
+</span><span class='line'>    fi
+</span><span class='line'>    [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+</span><span class='line'>endscript
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь настраиваем nginx. Удаляем все символические ссылки из папки /etc/nginx/sites-enabled Создаём конфигурацию для неописанных доменов: /etc/nginx/sites-available/default_http В случае, когда сайт не описан nginx просто разорвёт соединение, ничего не выдав.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen          80 default;
+</span><span class='line'>server_name     _;
+</span><span class='line'>access_log      off;
+</span><span class='line'>server_name_in_redirect  off;
+</span><span class='line'>return 444;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем mc. В левой панели /etc/nginx/sites-enabled, в правой – /etc/nginx/sites-available Выбираем файл default_http и нажимаем комбинацию Ctrl+X, а затем S – это создаст символическую ссылку выбранного файла в папке другой панели. Теперь создадим файл для сайта /etc/nginx/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen   80;
+</span><span class='line'>server_name zagirov.name www.zagirov.name rustam.zagirov.name;
+</span><span class='line'>
+</span><span class='line'>server_tokens off;
+</span><span class='line'>
+</span><span class='line'>access_log /var/www/zagirov.name/logs/nginx.access.log;
+</span><span class='line'>error_log /var/www/zagirov.name/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>charset utf-8;
+</span><span class='line'>client_max_body_size 1m;
+</span><span class='line'>
+</span><span class='line'>root /var/www/zagirov.name/www;
+</span><span class='line'>index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>location / {
+</span><span class='line'>    #Реврайт
+</span><span class='line'>    #try_files $uri $uri /index.php?q=$uri&amp;$args;
+</span><span class='line'>
+</span><span class='line'>    proxy_pass http://zagirov.name:81;
+</span><span class='line'>    include proxy.conf;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>#Тут перечисляем все пути и файлы статики (картинки, стили)
+</span><span class='line'>location ~ /(favicon.ico|wp-content/uploads/|wp-content/themes/openark-blog/(images/|style.css)) {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Опять включаем сайт созданием символической ссылки.</p>
+
+<p>Теперь настраиваем apache. Удаляем включённые по дефолту сайты из папки /etc/apache2/sites-enabled Меняем порт с 80 на 81 в файле /etc/apache2/ports.conf:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>NameVirtualHost *:81
+</span><span class='line'>Listen 81</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём конфигурацию для неописанных доменов: /etc/apache2/sites-available/default_http</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName default
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создадим настройки для сайта в файле /etc/apache2/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName zagirov.name
+</span><span class='line'>ServerAlias www.zagirov.name rustam.zagirov.name
+</span><span class='line'>DocumentRoot /var/www/zagirov.name/www
+</span><span class='line'>ErrorLog /var/www/zagirov.name/logs/apache2.error.log
+</span><span class='line'>CustomLog /var/www/zagirov.name/logs/apache2.access.log combined
+</span><span class='line'>AddDefaultCharset UTF8
+</span><span class='line'>php_flag magic_quotes_gpc off
+</span><span class='line'>php_admin_value open_basedir "/var/www/zagirov.name/www"
+</span><span class='line'>php_admin_value upload_tmp_dir "/var/www/zagirov.name/tmp"
+</span><span class='line'>php_value session.save_path "/var/www/zagirov.name/tmp"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Включаем сайт:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>a2ensite zagirov.name</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Перезапускаем apache и nginx.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>invoke-rc.d apache2 restart
+</span><span class='line'>invoke-rc.d nginx restart</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Установка рутового пароля для пользователя postgres для PostgreSQL:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su postgres
+</span><span class='line'>psql -d template1
+</span><span class='line'>ALTER USER postgres WITH PASSWORD &lsquo;Str0ng passw0rd&rsquo;;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><a href="/debian-3-setting-iptables-forward-nat-firewall">← Часть 3</a></p>
+]]></content>
+  </entry>
+  
+</feed>

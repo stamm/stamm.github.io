@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: jenkins | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/jenkins/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Непрерывная интеграция: jenkins + yii + git]]></title>
+    <link href="http://stamm.github.io/continuous-integration-jenkins-yii-git/"/>
+    <updated>2011-03-06T18:24:00+03:00</updated>
+    <id>http://stamm.github.io/continuous-integration-jenkins-yii-git</id>
+    <content type="html"><![CDATA[<p>Услышав шумиху про некую систему интеграционного тестирования hudson, который переименовали в jenkins, я захотел узнать что это и как это можно использовать. Для чего собственно он нужен? В кратце: он вытягивает последнюю версию из git/svn-репозитория и выполняет определённые действия (тестирует, выкладывает на другой сервер, делает отчёты). Всё это происходит автоматически: можно задать время, когда будет выполнятся задания. Можно почитать про <a href="http://habrahabr.ru/blogs/testing/108928/">пример использования jenkins</a>.</p>
+
+<p>Задача такая: Выполнение unit тестов для yii с отображением покрытия кода</p>
+
+<p>Все действия проводятся на сервере debian squeeze от root.</p>
+
+<h3>Установка jenkins</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo &ldquo;deb &lt;a href="http://pkg.jenkins-ci.org/debian">http://pkg.jenkins-ci.org/debian&lt;/a> binary/&rdquo; > /etc/apt/sources.list.d/jenkins.list
+</span><span class='line'>wget -q -O &ndash; &lt;a href="http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key">http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key&lt;/a> | sudo apt-key add &ndash;
+</span><span class='line'>aptitude update
+</span><span class='line'>aptitude install jenkins</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>По адресу <a href="http://serverName:8080/">http://serverName:8080/</a> должен открыться jenkins.</p>
+
+<h3>Установка плагинов</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /tmp
+</span><span class='line'>wget &lt;a href="http://localhost:8080/jnlpJars/jenkins-cli.jar">http://localhost:8080/jnlpJars/jenkins-cli.jar&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Если от jenkins нужно, чтобы выполнял unit-тесты и делал code coverage, то достаточно установить несколько плагинов, но на самом деле их очень много.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin xunit &amp;&amp; \
+</span><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin clover &amp;&amp; \
+</span><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin git</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Перезапускаем jenkins:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> safe-restart</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Настройка проекта</h3>
+
+<p>Создаём проект. Открываем Новая задача → Имя: Yii. Выбираем &ldquo;Создать задачу со свободной конфигурацией&rdquo; → Сохранить.</p>
+
+<p>Меняем файл <a href="https://github.com/stamm/jenkins-yii/raw/master/phpunit.xml">protected/tests/phpunit.xml</a>
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;phpunit bootstrap="bootstrap.php"
+</span><span class='line'>   colors="false"
+</span><span class='line'>   convertErrorsToExceptions="true"
+</span><span class='line'>   convertNoticesToExceptions="true"
+</span><span class='line'>   convertWarningsToExceptions="true"
+</span><span class='line'>   stopOnFailure="false">&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;selenium>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>&lt;browser name="Internet Explorer" browser="*iexplore" /&gt;
+</span><span class='line'>&lt;browser name="Firefox" browser="*firefox" /&gt;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;/selenium>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;logging>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>&lt;log type="coverage-html" target="../../build/coverage" title="prj"
+</span><span class='line'> charset="UTF-8" yui="true" highlight="true"
+</span><span class='line'> lowUpperBound="35" highLowerBound="70"/&gt;
+</span><span class='line'>&lt;log type="coverage-clover" target="../../build/logs/clover.xml"/&gt;
+</span><span class='line'>&lt;log type="junit" target="../../build/logs/junit.xml" logIncompleteSkipped="false"/&gt;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;/logging>
+</span><span class='line'>&lt;/phpunit></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>../../build &ndash; должен указывать на папку build в корневой папке репозитория, создавать её не нужно.</p>
+
+<p>Теперь создаём конфиги, скачивая из <a href="https://github.com/Stamm/jenkins-yii/:">https://github.com/Stamm/jenkins-yii/:</a></p>
+
+<ul>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/config.xml">config.xml</a></li>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/build.xml">build.xml</a></li>
+</ul>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rm /var/lib/jenkins/jobs/yii/config.xml
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/config.xml &mdash;no-check-certificate &lt;a href="https://github.com/Stamm/jenkins-yii/raw/master/config.xml">https://github.com/Stamm/jenkins-yii/raw/master/config.xml&lt;/a>
+</span><span class='line'>sudo -u jenkins mkdir /var/lib/jenkins/jobs/yii/workspace
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/workspace/build.xml &mdash;no-check-certificate &lt;a href="https://github.com/Stamm/jenkins-yii/raw/master/build.xml">https://github.com/Stamm/jenkins-yii/raw/master/build.xml&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Чтобы наши конфиги подхватились идём в настройки jenkins и кликаем по ссылке &ldquo;Пересчитать настройки из файла&rdquo;. В настройках проекта yii указываем git репозиторий до нашего проекта. Можно даже указать локальный путь, но должны быть права для пользователя jenkins. Добавляем <a href="https://github.com/stamm/jenkins-yii/raw/master/ExampleTest.xml">файл теста</a> в protected/unit/</p>
+
+<p>Теперь запускаем сборку. Вот как примерно это выглядит.</p>
+
+<p><img src="/images/continuous-integration-jenkins-yii-git/jenkins-board.png" alt="jenkis board" /></p>
+
+<h3>Уведомления по email</h3>
+
+<p>В конфиге jenkins указываем параметры для подключения к SMTP. Если настроен sendmail или exim, то нужно указать только от кого отсылать письмо. И теперь в настройках проекта yii указываем кому слать письмо об упавших тестах.</p>
+
+<h3>Авто-сборка</h3>
+
+<p>Можно настроить, чтобы сборки проводились автоматически. Для этого в настройках проекта yii ставим галку у Собирать периодически и в появившемся тестовом поле указываем время запуска в формате cron. Или сделать hook в git:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/sh&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>echo &ldquo;Running jenkins&rdquo;
+</span><span class='line'>wget &lt;a href="http://serverName:8080/job/yii/build">http://serverName:8080/job/yii/build&lt;/a> > /dev/null 2>&amp;1</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>P.S. Я показал только малую часть того, что может делать jenkins. Он может создавать документацию по коду, проверять на наличие дублирования в коде, проверять стиль кодирования и многое, многое другое. Примеры более сложных конфигов <a href="https://github.com/sebastianbergmann/php-jenkins-template/raw/master/config.xml">config.xml</a> и <a href="https://github.com/sebastianbergmann/php-object-freezer/raw/master/build.xml">build.xml</a></p>
+
+<p>Используемые ссылки:</p>
+
+<ul>
+<li><a href="http://www.rustyrobot.org/2011/02/continuous-integration.html">http://www.rustyrobot.org/2011/02/continuous-integration.html</a></li>
+<li><a href="http://jenkins-php.org/">http://jenkins-php.org/</a></li>
+<li><a href="http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/">http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/</a></li>
+<li><a href="http://habrahabr.ru/blogs/testing/108928/">http://habrahabr.ru/blogs/testing/108928/</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

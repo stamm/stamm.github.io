@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: js | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/js/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Парад ссылок №1]]></title>
+    <link href="http://stamm.github.io/links-parade-1/"/>
+    <updated>2013-02-11T19:43:00+04:00</updated>
+    <id>http://stamm.github.io/links-parade-1</id>
+    <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
+
+<p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<h2>Развёртывание и деплой</h2>
+
+<p>С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение <a href="http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/">caphub от компании railsware</a>, позволяющая структурировать задания для разных приложений.</p>
+
+<p>Отличный цикл статей о том, как <a href="http://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1/">начать работать с chef</a> от Алексея Васильего. Chef &ndash; это инструмент для автоматизации настроек парка серверов.</p>
+
+<h2>PHP</h2>
+
+<p><a href="https://segment.io/blog/how-to-make-async-requests-in-php/">Как сделать асинхронный запрос</a></p>
+
+<p><a href="http://nitschinger.at/Benchmarking-Cache-Transcoders-in-PHP">Сравнение упаковщиков для php</a></p>
+
+<p><a href="http://unassumingphp.com/managing-php-application-builds-with-phing/">Использование phing для собирания проекта</a>. Ребята, у кого есть возможность &ndash; используйте capistrano или rake.</p>
+
+<p><a href="https://wiki.php.net/rfc/optimizerplus">Новый опкэшер в PHP 5.5.0</a>. Обратите внимание на <a href="https://docs.google.com/spreadsheet/ccc?key=0Agw0hgqCxf0cdEZsdm1yNjd3amJReG05MzJYSF9USGc#gid=0">табличку сравнения</a>: неплохой прирост.</p>
+
+<p><a href="http://phpmaster.com/php-as-a-service-fortrabbit/">Php как сервис</a>.</p>
+
+<h2>Ruby, RoR</h2>
+
+<p>Начался новый <a href="http://www.rwpod.com/">подкаст rwpod от того же Алексея Васильего и ко</a>. Хороший подкаст, аккумулирующий новости не только из ruby-сообщества, но и веб-новостей. Пока нет харкорных тем, но я думаю, всё впереди.</p>
+
+<p><a href="http://habrahabr.ru/company/JetBrains/blog/168655/">Вышел RubyMine5</a>. Прошу обратить внимание на видео о его возможностей.</p>
+
+<p>У кого есть свои скрипты-помошники, предлагаю переехать на rake. Возникали проблемы с <a href="http://www.scottw.com/zsh-rake-parameters">zsh</a>, <a href="http://viget.com/extend/protip-passing-parameters-to-your-rake-tasks">передачи параметра в задачу</a>. Вцелом хороший инструмент не только для ruby разработчиков.</p>
+
+<p>Должна быть интересная <a href="http://securingrails.com/">книга по устранению уязвимостей в rails-приложении</a>. Обязательно посмотрите ролик.</p>
+
+<p>Узнайте, <a href="http://ablogaboutcode.com/2012/05/03/benchmark-your-bundle/">сколько же времени загружаются ваши гемы</a>.</p>
+
+<h2>Javascript</h2>
+
+<p><a href="http://www.jsdb.io/">JsDB &ndash; каталог js-библиотек</a></p>
+
+<p><a href="http://casperjs.org/">CasperJs &ndash; тестирование js и не только</a>. Использует PhantomJS.</p>
+
+<p><a href="https://github.com/unconed/MathBox.js">Рисуем сложные графики</a>. <a href="http://acko.net/blog/making-mathbox/">Демки</a>.</p>
+
+<h2>Разное</h2>
+
+<p><a href="http://kapeli.com/">Dash &ndash; Offline-документация для macos</a> по многочисленным языкам и фреймворкам: php, yii, ruby, gems, ror, javascript, backbone, mongodb, postgresql, mysql и это далеко не весь перечень. Однозначно в повседневное использование!</p>
+
+<p><a href="https://www.cheapssls.com/comodo-ssl-certificates/positivessl.html?years=5">Очень дешёвые SSL-сертификаты</a>. Например, на 5 лет за $25.</p>
+
+<p><a href="http://sphinxsearch.com/blog/2013/02/07/sphinx-2-1-json-attributes/">Поддержка JSON-атрибутов в sphinx 2.1</a>. Sphinx не отстаёт <a href="http://www.postgresql.org/docs/9.2/static/functions-json.html">от postgresql</a>.</p>
+
+<p><a href="http://zachholman.com/spark/">Spark &ndash; интересная визуализация небольших данных</a>. Скарливаем ему ряд значений: spark 0 30 55 80 33 150, и получаем ▁▂▃▅▂▇</p>
+
+<p><a href="http://www.codeschool.com/">Очень крутое обучение от codeschool</a>. Схема такая: вам показывают мини-лекцию, потом вы должны выполнить задание, т.е. писать код прямо в браузуере и он проходит проверку. Также у ребят есть скринкасты. Обучение не скучное и довольно эффективное.</p>
+
+<p>Нравиться ли вам такая рубрика? Продолжать?</p>
+]]></content>
+  </entry>
+  
+</feed>

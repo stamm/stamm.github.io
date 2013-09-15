@@ -1,1 +1,1425 @@
-My Octopress Page is coming soon &hellip;
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="На MacOS X в homebrew появился MySQL 5.6.10. Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек: 1
+Incorrect MySQL &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-04T19:02:00+04:00" pubdate data-updated="true">2013-03-04</time>
+        
+         | <a href="/macos-update-mysql2-mysql-5-dot-6/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
+
+<p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Incorrect MySQL client library version! This gem was compiled for 5.5.28 but the client library is 5.6.10.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если ставить так, как написано в readme:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 --with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure>
+
+
+<p>То возникает ошибка:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ERROR: While executing gem ... (OptionParser::InvalidOption) invalid option: --with-mysql-config</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Нужно добавить больше тирешек и кавычек</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 -- '--with-mysql-config=/usr/local/bin/mysql_config'</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>UPDATE:</h2>
+
+<p>Чтобы bundler всегда использовал данный параметр, выполните команду:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle config build.mysql2 --with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-24T18:56:00+04:00" pubdate data-updated="true">2013-02-24</time>
+        
+         | <a href="/how-to-install-ruby-2-dot-0-0-p0/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
+
+<p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Error running 'env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure --disable-install-doc --prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 --with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite --disable-shared', please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log 
+</span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Или ошибка при запуске bundle install:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/Users/stamm/.rvm/rubies/ruby-2.0.0-p0/lib/ruby/2.0.0/net/http.rb:917:in `connect': SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed (OpenSSL::SSL::SSLError)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Чтобы избавиться от этих ошибок, нужно поставить openssl и gcc:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm pkg install openssl
+</span><span class='line'>brew install gcc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>И переустановить с нужными флагами:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm reinstall ruby-2.0.0-p0 --with-gcc=gcc-4.7 --with-openssl-dir=$rvm_path/usr</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby 2.0.0 требуется bundler 1.3, который ещё не вышел. Его можно
+поставить:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install --pre bundler</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/links-parade-2/">Парад ссылок №2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-20T19:48:00+04:00" pubdate data-updated="true">2013-02-20</time>
+        
+         | <a href="/links-parade-2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>Yii</h2>
+
+<ul>
+<li><a href="http://yiiframework.ru/forum/viewtopic.php?f=17&amp;t=10795">Вышел плагин для phpstorm</a>, поддерживающий yii. Надеюсь автор не забросит его, и из этого получиться что-то более функциональное.</li>
+</ul>
+
+
+<h2>Тестирование</h2>
+
+<ul>
+<li><a href="https://saucelabs.com/home">Функиональное тестирования как сервис</a> &ndash; поддерживаются почти все популярные языки, все актуальные браузеры. Сам не пробовал, но судя по фичам у сервиса будут свои пользователи.</li>
+<li><a href="https://coveralls.io/">Процент покрытие тестами в ruby on rails</a>. Работает в связке с travis ci. Сейчас процедура такая: пушим на github, travis-ci выполняет тесты, coveralls показывает как изменилось покрытие кода и показывает красивые отчёты об изменениях. При этом не держа у себя сервер и не платя ни копейки.</li>
+<li>Крутое <a href="%D0%B2%D0%B8%D0%B4%D0%B5%D0%BE%20%D1%81%20%D0%B4%D0%B5%D0%BC%D0%BE%20%D0%BF%D0%BE%20cucumber">видео с демо по cucumber</a>. Можно довольно быстро понять как правильно писать свои тесты на cucumber&#8217;е (<a href="https://github.com/mattwynne/bdd-exchange-london-2011-code/tree/master/features/support">код на github</a>).</li>
+</ul>
+
+
+<h2>Нагрузочное тестирование</h2>
+
+<ul>
+<li><a href="%D0%A1%D0%BE%D0%B1%D0%B8%D1%80%D0%B0%D0%B5%D0%BC%20%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D1%83%20%D1%81%20%D0%BD%D0%B0%D0%B3%D1%80%D1%83%D0%B6%D0%B0%D0%B5%D0%BC%D0%BE%D0%B9%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%BE%D0%B9">Собираем статистику с нагружаемой машины</a> с помощью яндекс-танка.</li>
+</ul>
+
+
+<h2>Разное</h2>
+
+<ul>
+<li><a href="http://csolg.com/blogs/nastroika-rezervnogo-arhivirovaniya-backup-ruby-on-rails-32-proektov">Создание бэкапов с помощью ruby</a> &ndash; это вам не <a href="/bacula-backup">монструозные конфиги бакулы</a>, тут всё быстро и понятно.</li>
+<li>Прикольный <a href="http://shopify.github.com/dashing">интерфес для мониторинга показателей</a>, написанные на ruby. Есть несколько предопределённый виджетов для отображения kpi. Добавляется блок очень быстро и приятно. В крайнем случае можно написать свой: ruby + coffee + sass. Работает без ajax-запросов, на основе постоянного соединения.</li>
+<li><a href="http://runnable.com/">http://runnable.com/</a> &ndash; позволяет выполнить код на скриптовом языке прямо в браузере. Что-то типо сервиса <a href="http://jsfiddle.net/">jsfiddle</a>, только для серверных языков. Пока поддерживается nodejs, но обещают поддержку php, ruby.</li>
+<li><a href="http://www.clipmenu.com/">Бесплатный менеджер буфера обмена для MacOS</a>. Теперь работать без неё не могу.</li>
+<li>Очень интересная новость: <a href="http://support.google.com/webmasters/bin/answer.py?hl=ru&amp;answer=2692911">гугл запустил маркеры</a> &ndash; (<a href="http://www.youtube.com/watch?v=WrEJds3QeTw&amp;feature=youtu.be&amp;hd=1">видео</a>). В кратце позволяет мне, как администратору сайта кликая и выделяю мышью указывать структуру информации на сайте. Сейчас поддерживаются только мероприятия, но с развитием можно будет указать много другой мета-информации. Но я за то, чтобы использовать микро-форматы. По сути гугл хочет переложить работу с себя на хозяев сайта. Посмотрим что из этого получится.</li>
+<li>Крутое видео о том, <a href="http://www.youtube.com/watch?v=wdBNjHZPUsI&amp;feature=youtu.be">зачем нужен DevOps</a>. Вообще как-то начинает развиваться эта движуха, если кто не знает, советую почитать</li>
+<li>Cмешная картинка <a href="http://pic.twitter.com/wQMutooX">ковёр-самолёт</a>. Это к тому, что все понимают в свою меру понимания. Всегда помнить, когда пишите задачу или ТЗ ;)</li>
+<li>Забавные гифки, что называется, до слёз: <a href="http://devopsreactions.tumblr.com/">раз</a>, <a href="http://www.zombieit.net/posts/zhizn-razrabotchika-v-gif-animacijah">два</a>.</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/links-parade-1/">Парад ссылок №1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-11T19:43:00+04:00" pubdate data-updated="true">2013-02-11</time>
+        
+         | <a href="/links-parade-1/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
+
+<p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<h2>Развёртывание и деплой</h2>
+
+<p>С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение <a href="http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/">caphub от компании railsware</a>, позволяющая структурировать задания для разных приложений.</p>
+
+<p>Отличный цикл статей о том, как <a href="http://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1/">начать работать с chef</a> от Алексея Васильего. Chef &ndash; это инструмент для автоматизации настроек парка серверов.</p>
+
+<h2>PHP</h2>
+
+<p><a href="https://segment.io/blog/how-to-make-async-requests-in-php/">Как сделать асинхронный запрос</a></p>
+
+<p><a href="http://nitschinger.at/Benchmarking-Cache-Transcoders-in-PHP">Сравнение упаковщиков для php</a></p>
+
+<p><a href="http://unassumingphp.com/managing-php-application-builds-with-phing/">Использование phing для собирания проекта</a>. Ребята, у кого есть возможность &ndash; используйте capistrano или rake.</p>
+
+<p><a href="https://wiki.php.net/rfc/optimizerplus">Новый опкэшер в PHP 5.5.0</a>. Обратите внимание на <a href="https://docs.google.com/spreadsheet/ccc?key=0Agw0hgqCxf0cdEZsdm1yNjd3amJReG05MzJYSF9USGc#gid=0">табличку сравнения</a>: неплохой прирост.</p>
+
+<p><a href="http://phpmaster.com/php-as-a-service-fortrabbit/">Php как сервис</a>.</p>
+
+<h2>Ruby, RoR</h2>
+
+<p>Начался новый <a href="http://www.rwpod.com/">подкаст rwpod от того же Алексея Васильего и ко</a>. Хороший подкаст, аккумулирующий новости не только из ruby-сообщества, но и веб-новостей. Пока нет харкорных тем, но я думаю, всё впереди.</p>
+
+<p><a href="http://habrahabr.ru/company/JetBrains/blog/168655/">Вышел RubyMine5</a>. Прошу обратить внимание на видео о его возможностей.</p>
+
+<p>У кого есть свои скрипты-помошники, предлагаю переехать на rake. Возникали проблемы с <a href="http://www.scottw.com/zsh-rake-parameters">zsh</a>, <a href="http://viget.com/extend/protip-passing-parameters-to-your-rake-tasks">передачи параметра в задачу</a>. Вцелом хороший инструмент не только для ruby разработчиков.</p>
+
+<p>Должна быть интересная <a href="http://securingrails.com/">книга по устранению уязвимостей в rails-приложении</a>. Обязательно посмотрите ролик.</p>
+
+<p>Узнайте, <a href="http://ablogaboutcode.com/2012/05/03/benchmark-your-bundle/">сколько же времени загружаются ваши гемы</a>.</p>
+
+<h2>Javascript</h2>
+
+<p><a href="http://www.jsdb.io/">JsDB &ndash; каталог js-библиотек</a></p>
+
+<p><a href="http://casperjs.org/">CasperJs &ndash; тестирование js и не только</a>. Использует PhantomJS.</p>
+
+<p><a href="https://github.com/unconed/MathBox.js">Рисуем сложные графики</a>. <a href="http://acko.net/blog/making-mathbox/">Демки</a>.</p>
+
+<h2>Разное</h2>
+
+<p><a href="http://kapeli.com/">Dash &ndash; Offline-документация для macos</a> по многочисленным языкам и фреймворкам: php, yii, ruby, gems, ror, javascript, backbone, mongodb, postgresql, mysql и это далеко не весь перечень. Однозначно в повседневное использование!</p>
+
+<p><a href="https://www.cheapssls.com/comodo-ssl-certificates/positivessl.html?years=5">Очень дешёвые SSL-сертификаты</a>. Например, на 5 лет за $25.</p>
+
+<p><a href="http://sphinxsearch.com/blog/2013/02/07/sphinx-2-1-json-attributes/">Поддержка JSON-атрибутов в sphinx 2.1</a>. Sphinx не отстаёт <a href="http://www.postgresql.org/docs/9.2/static/functions-json.html">от postgresql</a>.</p>
+
+<p><a href="http://zachholman.com/spark/">Spark &ndash; интересная визуализация небольших данных</a>. Скарливаем ему ряд значений: spark 0 30 55 80 33 150, и получаем ▁▂▃▅▂▇</p>
+
+<p><a href="http://www.codeschool.com/">Очень крутое обучение от codeschool</a>. Схема такая: вам показывают мини-лекцию, потом вы должны выполнить задание, т.е. писать код прямо в браузуере и он проходит проверку. Также у ребят есть скринкасты. Обучение не скучное и довольно эффективное.</p>
+
+<p>Нравиться ли вам такая рубрика? Продолжать?</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-28T19:40:00+04:00" pubdate data-updated="true">2012-11-28</time>
+        
+         | <a href="/gnu-grep-faster-than-mac-os-x/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep&#8217;а в 10 раз</a></p>
+
+<p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install grep
+</span><span class='line'>$ time /usr/bin/grep "GET /out" nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>/usr/bin/grep "GET /out" nginx-access_log.2 26.49s user 0.28s system 97% cpu 27.443 total wc -l 0.03s user 0.02s system 0% cpu 27.443 total
+</span><span class='line'>
+</span><span class='line'>$ tmp time grep "GET /out" nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>grep "GET /out" nginx-access_log.2 0.58s user 0.15s system 98% cpu 0.748 total wc -l 0.03s user 0.01s system 6% cpu 0.747 total</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/remove-data-from-mongo-without-blocking/">Ограничение прав пользователей в Git</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-03T19:38:00+04:00" pubdate data-updated="true">2012-10-03</time>
+        
+         | <a href="/remove-data-from-mongo-without-blocking/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
+
+<p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
+
+<p>Поэтому нужно ограничивать push в репозиторий на основе этих правил: тестерам дать право изменять файлы только в рамках одной директории. А программистам не давать возможность пушить в мастер, только какой-то группе доверенных программистов, а по сути тим-лиду.</p>
+
+<p>Мы используем gitolite и он позволяет это сделать на уровне конфигурации.</p>
+
+<p>Есть следующие группы пользователей</p>
+
+<ul>
+<li>мега-админы &ndash; они и только они могут менять историю в репе. Это чревато, но разрешено только одному человеку для непредвиденных ситуаций =)</li>
+<li>гит-мастера — это те, кто может пушить в мастер (по сути мёржить тоже), тэгировать, создавать и удалять ветки с версией релиза и хотфиксные ветки. Название веток начинается соответственно с v и hf. Т.е: v1.0.1 и hf.1.0.1</li>
+<li>разработчики — это пользователи, которые не могут пушить в мастер и создавать тэги. Также не могут удалить вертку с версией релиза и хотфиксную ветку. Могут создавать и удалять любые другие ветки.</li>
+<li>тестеры — ограниченные пользователи. Могут менять файлы в только пределах директории protected/test.</li>
+<li>только чтение — давать возможность только для чтения репы. Например, для технических писателей.</li>
+<li>группа аутсорсеров &ndash; у них свои порядки, но они не могут удалить ветки master, dev, hotfixes, release</li>
+</ul>
+
+
+<p>Есть 5 репозиториев: site, mobile, api, common-modules, outsource-site</p>
+
+<p>Только на site распространяются правила для тестировщиков.</p>
+
+<p>На site, mobile, api, common-modules — наши основные диктаторские правила</p>
+
+<p>На outsource-site — «мягкие» правила.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>repo    gitolite-admin
+</span><span class='line'>        RW+     =   id_rsa
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группировка веток или путей =============
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Не разрешать писать в master и создавать тэги
+</span><span class='line'>@not_write = master$ refs/tags
+</span><span class='line'># Не разрешать создавать ветки и удалять начинающиеся с v и hf.
+</span><span class='line'>@not_create = v hf.
+</span><span class='line'># Тестеры могут писать только сюда
+</span><span class='line'>@tester_write_only = NAME/protected/tests/
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Эти ветки не могут удалять обычные программеры
+</span><span class='line'>@old_branches = master$ dev$ hotfixes$ realease$
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группы пользователей ==========
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Админы имеют право писать всюду
+</span><span class='line'>@admins = id_rsa
+</span><span class='line'># Гит-админы могут писать в мастер и создавать ветки из @not_create
+</span><span class='line'>@git-admins = zagirov
+</span><span class='line'># Разработчики
+</span><span class='line'>@developers = @git-admins ivanov petrov sidorov
+</span><span class='line'># Тестеры имеют право на запись только в @tester_write_only
+</span><span class='line'>@testers = test-girl
+</span><span class='line'># Только на чтение
+</span><span class='line'>@developers-ro = tech-writer
+</span><span class='line'># Аутсорсеры со своими правилами
+</span><span class='line'>@outsource = five-hard-dev1 five-hard-dev2
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># =========== Правила ===================
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Правила применяются для всех
+</span><span class='line'>repo @all
+</span><span class='line'>  RW+CD                      = @admins
+</span><span class='line'>
+</span><span class='line'># Главный сайт с тестами
+</span><span class='line'>repo  site
+</span><span class='line'>  # Правило для тестировщиков
+</span><span class='line'>  # Если оно создаётся, ниже должно быть правило, RWCD NAME/ = @developers
+</span><span class='line'>  # Оно разрешает другим писать сюда
+</span><span class='line'>  RW                         = @testers
+</span><span class='line'>  RW   @tester_write_only    = @testers
+</span><span class='line'>  R                          = @testers
+</span><span class='line'>  -                          = @testers
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Группа, куда применяются общие правила работы с ветками @git-branch-rules
+</span><span class='line'>@git-branch-rules = site mobile api common-modules
+</span><span class='line'>
+</span><span class='line'>repo @git-branch-rules
+</span><span class='line'>  # Разрешаем писать в @not_write для @git-admins
+</span><span class='line'>  # У @developers на @not_write только чтение
+</span><span class='line'>  RWCD @not_write            = @git-admins
+</span><span class='line'>  -    @not_write            = @git-admins
+</span><span class='line'>  R    @not_write            = @developers
+</span><span class='line'>  -    @not_write            = @developers
+</span><span class='line'>
+</span><span class='line'>  # Разрешаем создавать и удалять ветки @not_create для @git-admins
+</span><span class='line'>  # @developers не могут создавать удалять @not_create
+</span><span class='line'>  RWCD @not_create           = @git-admins
+</span><span class='line'>  -    @not_create           = @git-admins
+</span><span class='line'>  RW   @not_create           = @developers
+</span><span class='line'>  -    @not_create           = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers могуть писать и создавать в @old_branches, но не удалять их
+</span><span class='line'>  RWC  @old_branches         = @developers
+</span><span class='line'>  -    @old_branches         = @developers
+</span><span class='line'>
+</span><span class='line'>  # Для всего остального разрешаем доступ для @developers
+</span><span class='line'>  RWCD                       = @developers
+</span><span class='line'>  # Это нужно, т.к раньше для @testers запретили запись для определённых файлов
+</span><span class='line'>  RWCD NAME/                 = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers-ro могут только читать
+</span><span class='line'>  R                          = @developers-ro
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Это обычный реп, без жёстких правил. Здесь просто запрещается удалять ветки master dev hotfixes realease
+</span><span class='line'>repo  outsource-site
+</span><span class='line'>  RWC  @old_branches         = @outsource
+</span><span class='line'>  -    @old_branches         = @outsource
+</span><span class='line'>  RWCD                       = @outsource</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если вы используете не gitolite, а другой продукт: gitosis или github, то скорее всего сделать это можно на хуках.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/remove-data-from-mongo-without-blocking/">Удаление данных из коллекции в Mongodb без блокировки</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-09-07T19:35:00+04:00" pubdate data-updated="true">2012-09-07</time>
+        
+         | <a href="/remove-data-from-mongo-without-blocking/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Задача: удалять устаревшие данные из большой коллекции монги. Можно пойти в лоб и удалять так:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">remove</span><span class="p">({</span><span class="nx">updating_time</span><span class="o">:</span> <span class="p">{</span><span class="nx">$lte</span><span class="o">:</span> <span class="nx">time</span><span class="p">}})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>В этом случае возникнет блокировка, и запросы на чтение будут очень долго выполняется. А система устроена таким образом, что постоянно вставлять и обновлять данные из этой коллекции.</p>
+
+<p>Удаление с указанием лимита в монге не существует, поэтому приходиться писать свои велосипеды.</p>
+
+<p>Скрипт выбирает от 10к до 20к записей и удаляет их по _id (по 3к за раз). Если выборка + удаление длилось больше 10 секунд, то удаляется только 1000 записей. Это сделано на всякий случай, когда идёт активная нагрузка на коллекцию (в моём случае активная вставка по 10к элементов).</p>
+
+<p>Все приведённые значения подобраны импирическим путём под конкретную задачу.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">microtime</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Удаляет данные из монги частями</span>
+</span><span class='line'><span class="cm"> * @param last_time - время последнего запроса</span>
+</span><span class='line'><span class="cm"> * @param collection - имя коллекции</span>
+</span><span class='line'><span class="cm"> * @param criteria - критерия для удаления</span>
+</span><span class='line'><span class="cm"> * @return {Array}</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">delete_data</span><span class="p">(</span><span class="nx">last_time</span><span class="p">,</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">ids</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span class='line'>    <span class="nx">start_time</span> <span class="o">=</span> <span class="nx">microtime</span><span class="p">(),</span>
+</span><span class='line'>    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">last_time</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">count</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20000</span><span class="o">-</span><span class="mi">10000</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">count</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">find</span><span class="p">(</span><span class="nx">criteria</span><span class="p">,</span> <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="mi">1</span><span class="p">}).</span><span class="nx">limit</span><span class="p">(</span><span class="nx">count</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">u</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">ids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">_id</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">%</span> <span class="mi">3000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">remove</span><span class="p">({</span><span class="nx">_id</span><span class="o">:</span> <span class="p">{</span><span class="nx">$in</span><span class="o">:</span> <span class="nx">ids</span> <span class="p">}});</span>
+</span><span class='line'>      <span class="nx">ids</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">remove</span><span class="p">({</span><span class="nx">_id</span><span class="o">:</span> <span class="p">{</span><span class="nx">$in</span><span class="o">:</span> <span class="nx">ids</span> <span class="p">}});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">last_time</span> <span class="o">=</span> <span class="nx">microtime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start_time</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">[</span><span class="nx">i</span><span class="p">,</span> <span class="nx">last_time</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="k">delete</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">last_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">last_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="nx">last_count</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">result</span> <span class="o">=</span> <span class="nx">delete_data</span><span class="p">(</span><span class="nx">last_time</span><span class="p">,</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">last_count</span> <span class="o">=</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>    <span class="nx">last_time</span> <span class="o">=</span> <span class="nx">result</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="nx">last_count</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">last_time</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;count: &quot;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">count</span><span class="p">());</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span>
+</span><span class='line'><span class="k">delete</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">updating_time</span><span class="o">:</span> <span class="p">{</span><span class="nx">$lte</span><span class="o">:</span> <span class="nx">time</span><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Вызывать так:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">mongo</span> <span class="o">-</span><span class="nx">u</span> <span class="s2">&quot;user&quot;</span> <span class="o">-</span><span class="nx">p</span> <span class="o">&lt;</span> <span class="nx">mongo_remove</span><span class="p">.</span><span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yandex-tank-load-testing/">Яндекс.танк — инструмент нагрузочного тестирования</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-02T19:30:00+04:00" pubdate data-updated="true">2012-08-02</time>
+        
+         | <a href="/yandex-tank-load-testing/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
+
+<p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+<p>Вот сам интерфейс:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
+
+<p>Сам проект и документация находится на github&#8217;е: <a href="https://github.com/yandex-load/yandex-tank">https://github.com/yandex-load/yandex-tank</a></p>
+
+<p>В кратце обрисую возможности:</p>
+
+<p>Можно нагружать одну страницу или сразу список урлов (которые будут запрашиваться примерно в одинаковых соотношениях).</p>
+
+<p>А можно самому составить список запросов со своими заголовками. Например, можно реализовать нагрузку от запросов от анонимных пользователей и залогиненных. Через скрипт (php, python, bash, etc) залогиниться на сайте и получить нужные куки. Сгенерировать в нужном формате данные для танка и запустить тест.</p>
+
+<p>Танк позволяет создать <a href="https://github.com/yandex-load/yandex-tank#first-step">3 вида нагрузки</a>:</p>
+
+<ul>
+<li>Постоянная &ndash; указывается количество запросов и время</li>
+<li>Линейный рост &ndash; указывается начальное и конечное значение и время</li>
+<li>Рост шагами &ndash; указывается начальное и конечное значение, шаг увеличения нагрузки и время.</li>
+</ul>
+
+
+<p>Причём эти виды нагрузки можно комбинировать в одном тесте.</p>
+
+<p>Особенно хочеться отметить простоту и понятность синтаксиса.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#Подогреваем кэш
+</span><span class='line'>load = const(1, 10s)
+</span><span class='line'># Линейно увеличиваем нагрузку с одного запроса в секунду до 10 в течение 2 минут
+</span><span class='line'>load = line(1, 10, 2m)
+</span><span class='line'># Начинаем нагружать 10 запросами в секунду в течение 1 минуты, потом увеличиваем на 5 запросов и так до 40. Т.е. на каждый шаг будет затрачено по минут
+</span><span class='line'>load = line(10, 40, 5, 1m)
+</span><span class='line'># Указываем нагружаемых хост, только ip (!)
+</span><span class='line'>address = 192.168.100.254:80
+</span><span class='line'># Посылаемые заголовки
+</span><span class='line'>header = [Host: test.server]
+</span><span class='line'>header = [Connection: close]
+</span><span class='line'>header_http = 1.1
+</span><span class='line'># Нагружаемые страницы
+</span><span class='line'>uri = / uri = /another_page/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Вот что случается, когда сервер не справляется:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
+
+<p>Думаю, что проект со временем будет обрастаться графическими интерфейсами, разработанными самим яндексом или сообществом.</p>
+
+<p>Я даже уже придумал, что можно сделать. Получать статистику на нагружаемом сервере через vmstat и выводить красивые графики для быстрого нахождения наиболее узкого места: память, cpu, io.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yii-cookbook-2/">Yii: рецепты №2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-26T19:23:00+04:00" pubdate data-updated="true">2012-03-26</time>
+        
+         | <a href="/yii-cookbook-2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Продолжаю делится интересным о Yii</p>
+
+<h3>Шифрование данных</h3>
+
+<p>Иногда требуется зашировать данные с возможностью последующей обратной дешифровкой.</p>
+
+<p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
+
+<p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;components&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;securityManager&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;cryptAlgorithm&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;rijndael-256&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;ofb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span class='line'>    <span class="s1">&#39;encryptionKey&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;pnkRVLZC6Oj87H2G8qmsNN&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$encrypt</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">securityManager</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="p">(</span><span class="s1">&#39;очень важные данные&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">securityManager</span><span class="o">-&gt;</span><span class="na">decrypt</span><span class="p">(</span><span class="nv">$encrypt</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Примечания:</p>
+
+<ul>
+<li>Чтобы использовать шифрованные данные в виде параметров в get-запросе, нужно использовать функцию base64_encode() и base64_decode()</li>
+<li>Можно использовать разные ключи, передав второй параметр в функции CSecurityManager::encrypt() и CSecurityManager::decrypt()</li>
+</ul>
+
+
+<h3>Организация конфигураций</h3>
+
+<p>В Yii существует 3 уровня конфигураций: веб-приложение, консольное приложение, тесты. Требуется прописывать в этих 3 файлах часть одинаковых конфигураций: пути для импорта, конфигурация базы, правила роутов. Так же нужно убрать настройки из системы контроля версии файлы, которые могут быть разные на разных серверах или компьютерах разработчиков: подключение к базе, разных уровень логирования, кэширование. Нужно оставить только &ldquo;болванку&rdquo; конфигураций, которые корректируются в связи с необходимостью.</p>
+
+<p>Схемотично такую систему можно изобразить так:</p>
+
+<p><img src="/images/yii-cookbook-2/yii-config.png" alt="yii-config" /></p>
+
+<p>Все файлы, имеющие custom в имени, убираются из системы контроля версии (в моём случае добавляются в <a href="https://github.com/stamm/yii.blog/blob/master/.gitignore">.gitignore</a>). Вместо них создаются файлы-примеры для настройки: example.main.custom.php, example.console.custom.php, example.test.custom.php.</p>
+
+<p>Для веб-приложения используются 2 файла: main.php и main.custom.php.</p>
+
+<p>В main.custom.php пишутся индивидуальные настройки: подключение к mysql, сервер кэширования. У разработчика включаются gii, yii-debug-toolbar, добавляются вспомогательные режимы логирования, профилирования.</p>
+
+<p>В main.php пишутся все настройки, которые не будут менятся для конкретного сервера: пути импорта, правила роутинга и т.п. И эти настройки сливаются с настройками с main.custom.php через функцию CMap::mergeArray(). Приоритет имеют настройки из main.custom.php</p>
+
+<p>Примеры файлов <a href="https://github.com/stamm/yii.blog/blob/master/src/protected/config/main.php">main.php</a>, <a href="https://github.com/Stamm/yii.blog/blob/master/src/protected/config/example.main.custom.php">main.custom.php</a></p>
+
+<p>Конфигурация консольного приложения работает схоже: сначала сливаются изменения из main.php ( включая main.custom.php) c console.php, а затем накладываются из console.custom.php. Настройки тестов работают аналогично.</p>
+
+<p>Естественно, у этой схемы есть свои минусы:</p>
+
+<p>В консольном приложении не может быть некоторых параметров, а некоторые нужно удалить. Например, нужно удалить параметр defaultController:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nb">unset</span><span class="p">(</span><span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;defaultController&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Или отключить Yii debug toolbar:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">][</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;routes&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$k</span> <span class="o">=&gt;</span> <span class="nv">$v</span> <span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="nv">$v</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;XWebDebugRouter&#39;</span> <span class="p">){</span>
+</span><span class='line'>    <span class="nb">unset</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">][</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="nv">$k</span><span class="p">]</span> <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://github.com/Stamm/yii.blog/tree/master/src/protected/config">Пример такой конфигурации</a></p>
+
+<h3>SphinxSQL</h3>
+
+<p>Есть 2 способа работы со sphinx из php: через api (используя библиотеку) и воспользоваться SphinxQL: получение данных через протокол mysql и используя запросы, очень схожие с синтаксисом MySQL-запросов.</p>
+
+<p>Для меня более предпочтителен второй вариант, не нужно таскать с собой библиотеку и все новые фишки будут реализованы в первую очередь в SphinxQL.</p>
+
+<p>Включаем в параметрах sphinx прослушивание через протокол mysql</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>searchd {
+</span><span class='line'>listen = 127.0.0.1:9306:mysql41
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Включаем в настройках yii компонент sphinx</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">sphinx</span><span class="s1">&#39; =&gt; array(</span>
+</span><span class='line'><span class="s1">    &#39;</span><span class="nx">class</span><span class="s1">&#39; =&gt; &#39;</span><span class="nb">system</span><span class="o">.</span><span class="nx">db</span><span class="o">.</span><span class="nx">CDbConnection</span><span class="s1">&#39;,</span>
+</span><span class='line'><span class="s1">    &#39;</span><span class="nx">connectionString</span><span class="s1">&#39; =&gt; &#39;</span><span class="nx">mysql</span><span class="o">:</span><span class="nx">host</span><span class="o">=</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">;</span><span class="nx">port</span><span class="o">=</span><span class="mi">9306</span><span class="err">&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь мы можем делать запросы:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$sSql</span> <span class="o">=</span> <span class="s1">&#39;SELECT post_id</span>
+</span><span class='line'><span class="s1">    FROM main</span>
+</span><span class='line'><span class="s1">    WHERE</span>
+</span><span class='line'><span class="s1">        MATCH(&#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sphinx</span><span class="o">-&gt;</span><span class="na">quoteValue</span><span class="p">(</span><span class="s1">&#39;yii&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;)</span>
+</span><span class='line'><span class="s1">        AND iscomment = 0</span>
+</span><span class='line'><span class="s1">    ORDER BY @weight</span>
+</span><span class='line'><span class="s1">OPTION field_weights=(title=10,content=1)&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ids</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sphinx</span>
+</span><span class='line'>  <span class="o">-&gt;</span><span class="na">createCommand</span><span class="p">(</span><span class="nv">$sSql</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">-&gt;</span><span class="na">queryColumn</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yii-cookbook-1/">Yii: рецепты №1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-23T19:19:00+04:00" pubdate data-updated="true">2012-03-23</time>
+        
+         | <a href="/yii-cookbook-1/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
+
+<p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;clientScript&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;packages&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>       <span class="s1">&#39;highcharts&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>            <span class="s1">&#39;baseUrl&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/js/highcharts/&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;js&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="nx">YII_DEBUG</span> <span class="o">?</span> <span class="s1">&#39;highcharts.src.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;highcharts.js&#39;</span><span class="p">),</span>
+</span><span class='line'>            <span class="s1">&#39;css&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;highcharts.css&#39;</span><span class="p">),</span>
+</span><span class='line'>            <span class="s1">&#39;depends&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="p">),</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь вместо</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">clientScript</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerPackage</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerScriptFile</span><span class="p">(</span><span class="s1">&#39;/js/highcharts/highcharts.js&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerCssFile</span><span class="p">(</span><span class="s1">&#39;/js/highcharts/highcharts.css&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Пишем</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">clientScript</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerPackage</span><span class="p">(</span><span class="s1">&#39;highcharts&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>YII_DEBUG</h3>
+
+<p>Эта константа позволяет включать режим дебага и она же доставляет немного неудобства. Локально нужно устанавливать констатну YII_DEBUG в true, но не комитить это изменение нельзя. Т.е. перед комитом нужно выставлять значение в false. Мы же программисты, народ ленивый, поэтому тем меньше пальцедвижений, тем лучше.</p>
+
+<ul>
+<li>Можно воспользовать <a href="/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
+<li>Можно не добавлять файл в коммит</li>
+</ul>
+
+
+<p>Но эти варианты не подходят, когда используется консоль, нельзя будет использовать команду <strong>git add .</strong></p>
+
+<p>Решение очевидное: использовать директивы <a href="http://www.php.net/manual/en/ini.core.php#ini.auto-prepend-file">auto_prepend_file</a> При запуске любого php-файла, будет предварительно выполнятся наш файлик с установленной константой.</p>
+
+<p>Теперь пишем в файл с настройками сайта php-fpm <strong>/etc/php5/fpm/pool.d/super-site-on-yii.conf</strong></p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="p">[</span><span class="nx">php</span><span class="p">]</span>
+</span><span class='line'><span class="nx">php_admin_value</span><span class="p">[</span><span class="nx">auto_prepend_file</span><span class="p">]</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">yii_debug</span><span class="o">.</span><span class="nx">php</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файл /var/www/yii_debug.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">// Если включен профайлер xdebug</span>
+</span><span class='line'><span class="c1">//define(&#39;YII_DEBUG&#39;, empty($_GET[&#39;XDEBUG_PROFILE&#39;]));</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Автодополнение в PhpStorm</h3>
+
+<p>При подключении стороннего компонента или расширении стандартного хотелось бы «научить» IDE подсказывать</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;components&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;user&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;WebUser&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span><span class='line'>  <span class="s1">&#39;myext&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyExt&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файлик в любом месте, из которого он не сможет подключится автолоадерем. Например, в protected/autocomplete.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * @property WebUser $user</span>
+</span><span class='line'><span class="sd"> * @property MyExt $myext</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CApplication</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь по вводу Yii::app()&ndash;>myext PhpStorm будет посказывать методы из класса MyExt.</p>
+
+<p>Ещё можно заставить PhpStorm подсказывать в файлах представления (views)</p>
+
+<p>Обычно хватает стандартного набора ($this и $form), но в каждой конкретной view может быть свой набор переменных</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="sd">/** @var $this Controller */</span>
+</span><span class='line'><span class="sd">/** @var $form CActiveForm */</span>
+</span><span class='line'><span class="sd">/** @var $model User */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Последний метод можно полу-автоматизировать через шаблоны gii. Это остаётся в качестве самостоятельной работы читателя.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Старее</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

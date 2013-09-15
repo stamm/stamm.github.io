@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: asus | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/asus/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ubuntu 11.04 alpha 2. Asus EeePC 1000H. Не работает wifi RaLink 2790 (RT2860)]]></title>
+    <link href="http://stamm.github.io/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860/"/>
+    <updated>2011-02-26T16:26:00+03:00</updated>
+    <id>http://stamm.github.io/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860</id>
+    <content type="html"><![CDATA[<p>Нашёл как исправить баг с глючащим wifi в моём нетбуке Asus EeePC 1000H. Карточка RaLink 2790 (RT2860). Нетбук подключался к wifi, получал ip-адрес по DHCP, но ничего не работало. Потом разрывалось соединение и заново подключалось с тем же печальным эффектом. Решение подсмотрел тут. Комманда lspci -vv выдала</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>01:00.0 Network controller: RaLink RT2860
+</span><span class='line'>Subsystem: RaLink Device 2790
+</span><span class='line'>Control: I/O+ Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
+</span><span class='line'>Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast &gt;TAbort- &lt;TAbort- &lt;MAbort- &gt;SERR- &lt;PERR- INTx-
+</span><span class='line'>Latency: 0, Cache Line Size: 32 bytes
+</span><span class='line'>Interrupt: pin A routed to IRQ 19
+</span><span class='line'>Region 0: Memory at fbef0000 (32-bit, non-prefetchable) [size=64K]
+</span><span class='line'>Capabilities: &lt;access denied&gt;
+</span><span class='line'>Kernel driver in use: rt2800pci
+</span><span class='line'>Kernel modules: rt2860sta, rt2800pci</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Нужно отключить модуль rt2800pci и использовать модуль rt2860. Добавляем в конец файла /etc/modprobe.d/blacklist.conf:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>blacklist rt2800pci</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

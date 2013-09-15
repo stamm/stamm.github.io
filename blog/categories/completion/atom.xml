@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: completion | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/completion/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: автодополнение в консоли]]></title>
+    <link href="http://stamm.github.io/yii-console-completion/"/>
+    <updated>2011-10-23T18:57:00+04:00</updated>
+    <id>http://stamm.github.io/yii-console-completion</id>
+    <content type="html"><![CDATA[<p>Очень не хватало автодополнения комманд при вызове консольных комманд yii, чувствовал какую-то неполноценность yii в bash.</p>
+
+<p>На просторах интернета была найдена статья, позволяющая реализовать автодополнение с помощью родной unix-утилиты bash_completion.</p>
+
+<p>Если у вас проект находиться под управлением git, то просто добавляем сабмодуль:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git submodule add git://github.com/Stamm/yii-console-completion protected/extensions/complete/
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Или создайте файл LCompleteCommand.php в protected/extensions/complete/</p>
+
+<p>Теперь подключаем класс в конфигурационном файле для консольного приложения (обычно это console.php):</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">commandMap</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;complete&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;ext.complete.LCompleteCommand&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">//&#39;bashFile&#39; =&amp;gt; &#39;/etc/bash_completion.d/yii_applications&#39; //Defaults to &amp;lt;/etc/bash_completion.d/yii_applications&amp;gt;. May be changed if needed</span>
+</span><span class='line'><span class="p">),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Пути до директории bash-completion могут различаться в зависимости от системы. Для Debian и Ubuntu можно оставить стандартный путь. В Mac OS X bash-completion был установлен с помощью homebrew, так что путь нужно сменить на /usr/local/etc/bash_completion.d/yii_applications</p>
+
+<p>Теперь выполняем комманду для создания bash-completion файла от root:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./yiic <span class="nb">complete </span>install
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь при создании новой сессии в bash будет работать автодополнение для yiic:</p>
+
+<ol>
+<li>Для приложения — набор возможных команд</li>
+<li>Для команды — набор возможных действий (actions) и именованых параметров действия по умолчанию</li>
+<li>Для действия — подсказки по ее именованым параметрам</li>
+</ol>
+
+
+<p>Источник: <a href="http://habr-sandbox.livejournal.com/230319.html">http://habr-sandbox.livejournal.com/230319.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>

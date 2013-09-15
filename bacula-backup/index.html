@@ -1,0 +1,1345 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Bacula - резервное копирование: быстро, бесплатно, без смс - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/bacula-backup">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Bacula - резервное копирование: быстро, бесплатно, без смс</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-27T19:08:00+04:00" pubdate data-updated="true">2011-11-27</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу поделиться реально работающими конфигами. Теперь седина пропала и мои волосы вновь мягкие и шелковистые =)</p>
+
+<p>Использовать буду систему под названием <a href="http://www.bacula.org/">bacula</a>. Соответственно всё проверялось и работает под ОС GNU/Debian 6.</p>
+
+<p>В интернете <a href="http://habrahabr.ru/blogs/sysadm/86526/">видел</a> много <a href="http://www.ignix.ru/book/freebsd/daemon/bacula">довольно</a> <a href="http://bog.pp.ru/work/bacula.html">полных</a> мануалов, где описывается конфигурация. Я описывать почти ничего не буду, просто приведу рабочие конфиги и скажу что копировать, чтобы начать бэкапить с ещё одного сервера. Можно считать статью предназначенной для тех, кто не осилил man, ну или хочет съэкономить своё время и получить работающую систему резервирования &ldquo;побыстрее&rdquo;.</p>
+
+<p>Имеется 2 машины</p>
+
+<ul>
+<li>home.zagirov.name (1.1.1.1) &ndash; сам сервер bacula (bacula director и storage director), mysql + www</li>
+<li>www.zagirov.name (2.2.2.2) &ndash; mysql + www</li>
+</ul>
+
+
+<p>Для mysql будем использовать собственный скрипт, который запускает <a href="http://www.percona.com/software/percona-xtrabackup/">xtrabackup</a>.</p>
+
+<p>Устанавливаем на обоих серверах sudo (чтобы запускать бэкапилку базы от рута через sudo) и file director</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install sudo bacula-fd openssh-server</span></code></pre></td></tr></table></div></figure>
+
+
+<p>А на сервере, который будет хранить все бэкапы (home.zagirov.name &ndash; 1.1.1.1) установим ещё bacula director и storage director:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install bacula-director-mysql bacula-sd-mysql bacula-console</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Выполняем на обоих серверах:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>usermod -s /bin/bash bacula</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Выполняем на home.zagirov.name (1.1.1.1)</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su - bacula
+</span><span class='line'>mkdir -p ~/.ssh
+</span><span class='line'>chmod 700 ~/.ssh
+</span><span class='line'>cd ~/.ssh
+</span><span class='line'>ssh-keygen -b 4096 -t rsa -f bacula -N ""
+</span><span class='line'>chmod 400 ~/.ssh/*</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Добавляем правило для пользователя bacula запускать xtrabackup под sudo без запрашивания пароля.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo "bacula ALL=NOPASSWD: /usr/bin/xtrabackup" > /etc/sudoers.d/bacula</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файлы для создания бэкапов. Храниться они будут централизовано на сервере бэкапов, а запускаться на удалённых машинах будут через sudo bash -s</p>
+
+<p><strong>/etc/bacula/scripts/xtrabackup.sh</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/bin/sh
+</span><span class='line'>
+</span><span class='line'>DIR="/bacula/create/xtrabackup"
+</span><span class='line'>if [ -d "$DIR" ]; then
+</span><span class='line'>  rm -r $DIR
+</span><span class='line'>fi
+</span><span class='line'>mkdir -p $DIR
+</span><span class='line'>
+</span><span class='line'>sudo xtrabackup --defaults-file=/etc/mysql/my.cnf --datadir=/var/lib/mysql \
+</span><span class='line'> --target-dir=$DIR --backup</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>/etc/bacula/scripts/xtrabackup_rm.sh</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/bin/sh
+</span><span class='line'>
+</span><span class='line'>DIR="/bacula/create/xtrabackup"
+</span><span class='line'>rm -r $DIR</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-dir.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  QueryFile = "/etc/bacula/scripts/query.sql"
+</span><span class='line'>  WorkingDirectory = "/var/lib/bacula"
+</span><span class='line'>  PidDirectory = "/var/run/bacula"
+</span><span class='line'>  Maximum Concurrent Jobs = 1
+</span><span class='line'>  Password = "password-director"
+</span><span class='line'>  Messages = Daemon
+</span><span class='line'>  DirAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Catalog {
+</span><span class='line'>  Name = MyCatalog
+</span><span class='line'>  dbname = "bacula"; DB Address = ""; dbuser = "bacula"; dbpassword = "password_for_db"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Console {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-console"
+</span><span class='line'>  CommandACL = status, .status
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Daemon
+</span><span class='line'>  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula daemon message\" %r"
+</span><span class='line'>  mail = root@localhost = all, !skipped            
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = "/var/lib/bacula/log" = all, !skipped
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula: %t %e of %c %l\" %r"
+</span><span class='line'>  operatorcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula: Intervention needed for %j\" %r"
+</span><span class='line'>  mail = rustam@zagirov.name = all, !skipped            
+</span><span class='line'>  operator = rustam@zagirov.name = mount
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = "/var/lib/bacula/log" = all, !skipped
+</span><span class='line'>  catalog = all
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Storage {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  Password = "password-storage"
+</span><span class='line'>  Device = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>#Расписания
+</span><span class='line'>Schedule {
+</span><span class='line'>  Name = "WeeklyCycle"
+</span><span class='line'>  Run = Full 1st sun at 02:05
+</span><span class='line'>  Run = Differential 2nd-5th sun at 02:05
+</span><span class='line'>  Run = Incremental mon-sat at 02:05
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Schedule {
+</span><span class='line'>  Name = "WeeklyCycleAfterBackup"
+</span><span class='line'>  Run = Full sun-sat at 02:10
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = Default
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>  Maximum Volume Jobs = 1
+</span><span class='line'>  Maximum Volume Bytes = 10G          # Limit Volume size to something reasonable
+</span><span class='line'>  Maximum Volumes = 100               # Limit number of Volumes in Pool
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Scratch pool definition
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = Scratch
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>@/etc/bacula/client_home.zagirov.name.conf
+</span><span class='line'>@/etc/bacula/client_www.zagirov.name.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_home.zagirov.name.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>### backup for home.zagirov.name
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Client {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = "password-fd-home.zagirov.name"
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>JobDefs {
+</span><span class='line'>  Name = "DefaultJob"
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = home.zagirov.name-fd
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "RestoreFiles"
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=home.zagirov.name-fd
+</span><span class='line'>  FileSet="home.zagirov.name-www"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "BackupCatalog"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="Catalog"
+</span><span class='line'>  Schedule = "WeeklyCycleAfterBackup"
+</span><span class='line'>  RunBeforeJob = "/etc/bacula/scripts/make_catalog_backup.pl MyCatalog"
+</span><span class='line'>  RunAfterJob  = "/etc/bacula/scripts/delete_catalog_backup"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "Catalog"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = "/var/lib/bacula/bacula.sql"
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "home.zagirov.name-www"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  FileSet = "home.zagirov.name-www"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "home.zagirov.name-www"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = /var/www
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "home.zagirov.name-MySQL"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="home.zagirov.name-MySQL"
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  RunBeforeJob = "/etc/bacula/scripts/xtrabackup.sh"
+</span><span class='line'>  RunAfterJob  = "/etc/bacula/scripts/xtrabackup_rm.sh"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11                   # run after main backup
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "home.zagirov.name-MySQL"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = "/bacula/create/xtrabackup"
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_www.zagirov.name.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>### backup from www.zagirov.name
+</span><span class='line'>
+</span><span class='line'>Client {
+</span><span class='line'>  Name = www.zagirov.name-fd
+</span><span class='line'>  Address = 2.2.2.2
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = "password-fd-www.zagirov.name"
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>JobDefs {
+</span><span class='line'>  Name = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = www.zagirov.name-fd
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "Restore-www.zagirov.name"
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=www.zagirov.name-fd
+</span><span class='line'>  FileSet="www.zagirov.name"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "www.zagirov.name-www"
+</span><span class='line'>  JobDefs = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  FileSet = "www.zagirov.name-www"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "www.zagirov.name-www"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = /var/www/www.zagirov.name/www
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "www.zagirov.name-MySQL"
+</span><span class='line'>  JobDefs = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="www.zagirov.name-MySQL"
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  RunBeforeJob = "ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name 'sudo bash -s' &lt;/etc/bacula/scripts/xtrabackup.sh"
+</span><span class='line'>  RunAfterJob  = "ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name 'sudo bash -s' &lt; /etc/bacula/scripts/xtrabackup_rm.sh"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "www.zagirov.name-MySQL"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>      compression = GZIP
+</span><span class='line'>    }
+</span><span class='line'>    File = "/bacula/create/xtrabackup"
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>bacula-sd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Storage {
+</span><span class='line'>  Name = home.zagirov.name-sd
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  WorkingDirectory = "/var/lib/bacula"
+</span><span class='line'>  Pid Directory = "/var/run/bacula"
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  SDAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-storage"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-mon"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Device {
+</span><span class='line'>  Name = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>  Archive Device = /bacula/
+</span><span class='line'>  LabelMedia = yes;                   # lets Bacula label unlabeled media
+</span><span class='line'>  Random Access = Yes;
+</span><span class='line'>  AutomaticMount = yes;               # when device opened, read it
+</span><span class='line'>  RemovableMedia = no;
+</span><span class='line'>  AlwaysOpen = no;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-fd-home.zagirov.name"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-mon-fd-home.zagirov.name"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileDaemon {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bconsole.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = localhost-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  address = 1.1.1.1
+</span><span class='line'>  Password = "password-director"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>А на удалённом настраиваем только fd</p>
+
+<p>www.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-fd-www.zagirov.name"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = stamm-server-mon
+</span><span class='line'>  Password = "password-mon-fd-www.zagirov.name"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileDaemon {
+</span><span class='line'>  Name = www.zagirov-name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 109.234.152.187
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Внимание!</p>
+
+<p>Не забываем поменять пароли на свои!</p>
+
+<p>Запускаем в консоле bconsole</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*label
+</span><span class='line'>Automatically selected Storage: File
+</span><span class='line'>Enter new Volume name: backup
+</span><span class='line'>Defined Pools:
+</span><span class='line'>     1: Default
+</span><span class='line'>     2: File
+</span><span class='line'>     3: Scratch
+</span><span class='line'>Select the Pool (1-3): 2
+</span><span class='line'>Connecting to Storage daemon File at 95.31.29.182:9103 ...
+</span><span class='line'>Sending label command for Volume "backup" Slot 0 ...
+</span><span class='line'>3000 OK label. VolBytes=210 DVD=0 Volume="backup" Device="FileStorage" (/bacula/)
+</span><span class='line'>Catalog record for Volume "backup", Slot 0  successfully created.
+</span><span class='line'>Requesting to mount FileStorage ...
+</span><span class='line'>3906 File device "FileStorage" (/bacula/) is always mounted.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Восстановление происходит тоже через команду bconsole. Например, мы захотели восстановить файлы веб-сайта с www.zagirov.name на home.zagirov.name:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*restore
+</span><span class='line'>Automatically selected Catalog: MyCatalog
+</span><span class='line'>Using Catalog "MyCatalog"
+</span><span class='line'>
+</span><span class='line'>First you select one or more JobIds that contain files
+</span><span class='line'>to be restored. You will be presented several methods
+</span><span class='line'>of specifying the JobIds. Then you will be allowed to
+</span><span class='line'>select which files from those JobIds are to be restored.
+</span><span class='line'>
+</span><span class='line'>To select the JobIds, you have the following choices:
+</span><span class='line'>     1: List last 20 Jobs run
+</span><span class='line'>     2: List Jobs where a given File is saved
+</span><span class='line'>     3: Enter list of comma separated JobIds to select
+</span><span class='line'>     4: Enter SQL list command
+</span><span class='line'>     5: Select the most recent backup for a client
+</span><span class='line'>     6: Select backup for a client before a specified time
+</span><span class='line'>     7: Enter a list of files to restore
+</span><span class='line'>     8: Enter a list of files to restore before a specified time
+</span><span class='line'>     9: Find the JobIds of the most recent backup for a client
+</span><span class='line'>    10: Find the JobIds for a backup for a client before a specified time
+</span><span class='line'>    11: Enter a list of directories to restore for found JobIds
+</span><span class='line'>    12: Select full restore to a specified Job date
+</span><span class='line'>    13: Cancel
+</span><span class='line'>Select item:  (1-13): 5
+</span><span class='line'>Defined Clients:
+</span><span class='line'>     1: home.zagirov.name-fd
+</span><span class='line'>     2: www.zagirov.name-fd
+</span><span class='line'>Select the Client (1-2): 2
+</span><span class='line'>The defined FileSet resources are:
+</span><span class='line'>     1: www.zagirov.name
+</span><span class='line'>     2: www.zagirov.name-MySQL
+</span><span class='line'>Select FileSet resource (1-2): 1
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>| JobId | Level | JobFiles | JobBytes   | StartTime           | VolumeName |
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>|    66 | F     |    3,327 | 32,960,325 | 2011-11-19 03:47:28 | Backup     |
+</span><span class='line'>|   138 | D     |        7 |  5,973,688 | 2011-11-27 02:08:41 | Backup     |
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>You have selected the following JobIds: 66,138
+</span><span class='line'>
+</span><span class='line'>Building directory tree for JobId(s) 66,138 ...  ++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>2,959 files inserted into the tree.
+</span><span class='line'>
+</span><span class='line'>You are now entering file selection mode where you add (mark) and
+</span><span class='line'>remove (unmark) files to be restored. No files are initially added, unless
+</span><span class='line'>you used the "all" keyword on the command line.
+</span><span class='line'>Enter "done" to leave this mode.
+</span><span class='line'>
+</span><span class='line'>cwd is: /
+</span><span class='line'>$ add *
+</span><span class='line'>3,327 files marked.
+</span><span class='line'>$ done
+</span><span class='line'>Bootstrap records written to /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr
+</span><span class='line'>
+</span><span class='line'>The job will require the following
+</span><span class='line'>   Volume(s)                 Storage(s)                SD Device(s)
+</span><span class='line'>===========================================================================
+</span><span class='line'>   
+</span><span class='line'>    Backup                    File                      FileStorage              
+</span><span class='line'>
+</span><span class='line'>Volumes marked with "*" are online.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>3,327 files selected to be restored.
+</span><span class='line'>
+</span><span class='line'>The defined Restore Job resources are:
+</span><span class='line'>     1: home.zagirov.name-restore
+</span><span class='line'>     2: www.zagirov.name-restore
+</span><span class='line'>Select Restore Job (1-2): 1
+</span><span class='line'>Run Restore job
+</span><span class='line'>JobName:         home.zagirov.name-restore
+</span><span class='line'>Bootstrap:       /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr
+</span><span class='line'>Where:           /bacula/restore/
+</span><span class='line'>Replace:         always
+</span><span class='line'>FileSet:         home.zagirov.name-105
+</span><span class='line'>Backup Client:   www.zagirov.name-fd
+</span><span class='line'>Restore Client:  www.zagirov.name-fd
+</span><span class='line'>Storage:         File
+</span><span class='line'>When:            2011-11-27 02:56:27
+</span><span class='line'>Catalog:         MyCatalog
+</span><span class='line'>Priority:        10
+</span><span class='line'>Plugin Options:  *None*
+</span><span class='line'>OK to run? (yes/mod/no): y
+</span><span class='line'>Job queued. JobId=143
+</span><span class='line'>You have messages.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для добавления нового сервера необходимо добавить в конфиг bacula director инклуд нового файла, который будет содержать следующие директивы:</p>
+
+<ul>
+<li><strong>Client</strong>, в который прописываем имя, ip и пароль</li>
+<li><strong>JobDefs</strong> &ndash; исходный джоб, от которого все будут наследоваться</li>
+<li><strong>Job</strong> восстановления впринципе не обязательно прописывать, но это удобно, когда нужно восстанавливать прямо на нужный сервер</li>
+<li><strong>Job</strong> и <strong>FileSet</strong> &ndash; собственно сам джоб и список файлов для этого джоба
+Думаю, теперь bacula кажется не такой уж и страшной как в начале?</li>
+</ul>
+
+
+<p>Ссылки:</p>
+
+<ul>
+<li><a href="http://habrahabr.ru/blogs/sysadm/86526/">http://habrahabr.ru/blogs/sysadm/86526/</a></li>
+<li><a href="http://bog.pp.ru/work/bacula.html">http://bog.pp.ru/work/bacula.html</a></li>
+<li><a href="http://www.ignix.ru/book/freebsd/daemon/bacula">http://www.ignix.ru/book/freebsd/daemon/bacula</a></li>
+<li><a href="http://habrahabr.ru/blogs/sysadm/111555/">http://habrahabr.ru/blogs/sysadm/111555/</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-27T19:08:00+04:00" pubdate data-updated="true">2011-11-27</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/backup/'>backup</a>, <a class='category' href='/blog/categories/bacula/'>bacula</a>, <a class='category' href='/blog/categories/debian/'>debian</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/bacula-backup/" data-via="" data-counturl="http://stamm.github.io/bacula-backup/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/nginx-config/" title="Previous Post: Nginx: общие принципы конфигурации">&laquo; Nginx: общие принципы конфигурации</a>
+      
+      
+        <a class="basic-alignment right" href="/mc-alt-mac/" title="Next Post: Эмуляция хоткея с участием Alt в midnight commander">Эмуляция хоткея с участием Alt в midnight commander &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/bacula-backup/';
+        var disqus_url = 'http://stamm.github.io/bacula-backup/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

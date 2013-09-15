@@ -1,0 +1,1543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: debian | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/debian/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Bacula - резервное копирование: быстро, бесплатно, без смс]]></title>
+    <link href="http://stamm.github.io/bacula-backup/"/>
+    <updated>2011-11-27T19:08:00+04:00</updated>
+    <id>http://stamm.github.io/bacula-backup</id>
+    <content type="html"><![CDATA[<p>Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу поделиться реально работающими конфигами. Теперь седина пропала и мои волосы вновь мягкие и шелковистые =)</p>
+
+<p>Использовать буду систему под названием <a href="http://www.bacula.org/">bacula</a>. Соответственно всё проверялось и работает под ОС GNU/Debian 6.</p>
+
+<p>В интернете <a href="http://habrahabr.ru/blogs/sysadm/86526/">видел</a> много <a href="http://www.ignix.ru/book/freebsd/daemon/bacula">довольно</a> <a href="http://bog.pp.ru/work/bacula.html">полных</a> мануалов, где описывается конфигурация. Я описывать почти ничего не буду, просто приведу рабочие конфиги и скажу что копировать, чтобы начать бэкапить с ещё одного сервера. Можно считать статью предназначенной для тех, кто не осилил man, ну или хочет съэкономить своё время и получить работающую систему резервирования &ldquo;побыстрее&rdquo;.</p>
+
+<p>Имеется 2 машины</p>
+
+<ul>
+<li>home.zagirov.name (1.1.1.1) &ndash; сам сервер bacula (bacula director и storage director), mysql + www</li>
+<li>www.zagirov.name (2.2.2.2) &ndash; mysql + www</li>
+</ul>
+
+
+<p>Для mysql будем использовать собственный скрипт, который запускает <a href="http://www.percona.com/software/percona-xtrabackup/">xtrabackup</a>.</p>
+
+<p>Устанавливаем на обоих серверах sudo (чтобы запускать бэкапилку базы от рута через sudo) и file director</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install sudo bacula-fd openssh-server</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>А на сервере, который будет хранить все бэкапы (home.zagirov.name &ndash; 1.1.1.1) установим ещё bacula director и storage director:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install bacula-director-mysql bacula-sd-mysql bacula-console</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Выполняем на обоих серверах:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>usermod -s /bin/bash bacula</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Выполняем на home.zagirov.name (1.1.1.1)</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su &ndash; bacula
+</span><span class='line'>mkdir -p ~/.ssh
+</span><span class='line'>chmod 700 ~/.ssh
+</span><span class='line'>cd ~/.ssh
+</span><span class='line'>ssh-keygen -b 4096 -t rsa -f bacula -N &ldquo;&rdquo;
+</span><span class='line'>chmod 400 ~/.ssh/*</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Добавляем правило для пользователя bacula запускать xtrabackup под sudo без запрашивания пароля.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo &ldquo;bacula ALL=NOPASSWD: /usr/bin/xtrabackup&rdquo; > /etc/sudoers.d/bacula</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файлы для создания бэкапов. Храниться они будут централизовано на сервере бэкапов, а запускаться на удалённых машинах будут через sudo bash -s</p>
+
+<p><strong>/etc/bacula/scripts/xtrabackup.sh</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/sh&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>DIR=&ldquo;/bacula/create/xtrabackup&rdquo;
+</span><span class='line'>if [ -d &ldquo;$DIR&rdquo; ]; then
+</span><span class='line'>  rm -r $DIR
+</span><span class='line'>fi
+</span><span class='line'>mkdir -p $DIR&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>sudo xtrabackup &mdash;defaults-file=/etc/mysql/my.cnf &mdash;datadir=/var/lib/mysql \
+</span><span class='line'> &mdash;target-dir=$DIR &mdash;backup</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><strong>/etc/bacula/scripts/xtrabackup_rm.sh</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/sh&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>DIR=&ldquo;/bacula/create/xtrabackup&rdquo;
+</span><span class='line'>rm -r $DIR</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-dir.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  QueryFile = &ldquo;/etc/bacula/scripts/query.sql&rdquo;
+</span><span class='line'>  WorkingDirectory = &ldquo;/var/lib/bacula&rdquo;
+</span><span class='line'>  PidDirectory = &ldquo;/var/run/bacula&rdquo;
+</span><span class='line'>  Maximum Concurrent Jobs = 1
+</span><span class='line'>  Password = &ldquo;password-director&rdquo;
+</span><span class='line'>  Messages = Daemon
+</span><span class='line'>  DirAddress = 1.1.1.1
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Catalog {
+</span><span class='line'>  Name = MyCatalog
+</span><span class='line'>  dbname = &ldquo;bacula&rdquo;; DB Address = &ldquo;&rdquo;; dbuser = &ldquo;bacula&rdquo;; dbpassword = &ldquo;password_for_db&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Console {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = &ldquo;password-console&rdquo;
+</span><span class='line'>  CommandACL = status, .status
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Messages {
+</span><span class='line'>  Name = Daemon
+</span><span class='line'>  mailcommand = &ldquo;/usr/lib/bacula/bsmtp -h localhost -f \&rdquo;(Bacula) &lt;%r>\&ldquo; -s \"Bacula daemon message\&rdquo; %r"
+</span><span class='line'>  mail = root@localhost = all, !skipped          &lt;br/>
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = &ldquo;/var/lib/bacula/log&rdquo; = all, !skipped
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  mailcommand = &ldquo;/usr/lib/bacula/bsmtp -h localhost -f \&rdquo;(Bacula) &lt;%r>\&ldquo; -s \"Bacula: %t %e of %c %l\&rdquo; %r"
+</span><span class='line'>  operatorcommand = &ldquo;/usr/lib/bacula/bsmtp -h localhost -f \&rdquo;(Bacula) &lt;%r>\&ldquo; -s \"Bacula: Intervention needed for %j\&rdquo; %r"
+</span><span class='line'>  mail = &lt;a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#x3a;&#114;&#117;&#115;&#x74;&#x61;&#x6d;&#x40;&#x7a;&#97;&#x67;&#105;&#x72;&#x6f;&#x76;&#46;&#110;&#97;&#109;&#x65;">&#x72;&#x75;&#115;&#116;&#97;&#109;&#64;&#122;&#97;&#103;&#105;&#x72;&#111;&#x76;&#x2e;&#x6e;&#97;&#x6d;&#101;&lt;/a> = all, !skipped          &lt;br/>
+</span><span class='line'>  operator = &lt;a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#x6f;&#58;&#114;&#117;&#115;&#116;&#x61;&#109;&#x40;&#122;&#97;&#x67;&#105;&#x72;&#111;&#118;&#x2e;&#110;&#97;&#x6d;&#x65;">&#x72;&#117;&#115;&#116;&#x61;&#x6d;&#x40;&#x7a;&#x61;&#x67;&#105;&#x72;&#x6f;&#118;&#46;&#110;&#97;&#109;&#x65;&lt;/a> = mount
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = &ldquo;/var/lib/bacula/log&rdquo; = all, !skipped
+</span><span class='line'>  catalog = all
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Storage {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  Password = &ldquo;password-storage&rdquo;
+</span><span class='line'>  Device = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Расписания&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Schedule {
+</span><span class='line'>  Name = &ldquo;WeeklyCycle&rdquo;
+</span><span class='line'>  Run = Full 1st sun at 02:05
+</span><span class='line'>  Run = Differential 2nd-5th sun at 02:05
+</span><span class='line'>  Run = Incremental mon-sat at 02:05
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Schedule {
+</span><span class='line'>  Name = &ldquo;WeeklyCycleAfterBackup&rdquo;
+</span><span class='line'>  Run = Full sun-sat at 02:10
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Pool {
+</span><span class='line'>  Name = Default
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Pool {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>  Maximum Volume Jobs = 1
+</span><span class='line'>  Maximum Volume Bytes = 10G          # Limit Volume size to something reasonable
+</span><span class='line'>  Maximum Volumes = 100               # Limit number of Volumes in Pool
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Scratch pool definition&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Pool {
+</span><span class='line'>  Name = Scratch
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@/etc/bacula/client_home.zagirov.name.conf
+</span><span class='line'>@/etc/bacula/client_www.zagirov.name.conf</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_home.zagirov.name.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h3>backup for home.zagirov.name&lt;/h3>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Client {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = &ldquo;password-fd-home.zagirov.name&rdquo;
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>JobDefs {
+</span><span class='line'>  Name = &ldquo;DefaultJob&rdquo;
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = home.zagirov.name-fd
+</span><span class='line'>  Schedule = &ldquo;WeeklyCycle&rdquo;
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = &ldquo;/var/lib/bacula/%c.bsr&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;RestoreFiles&rdquo;
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=home.zagirov.name-fd
+</span><span class='line'>  FileSet=&ldquo;home.zagirov.name-www&rdquo;
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;BackupCatalog&rdquo;
+</span><span class='line'>  JobDefs = &ldquo;DefaultJob&rdquo;
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet=&ldquo;Catalog&rdquo;
+</span><span class='line'>  Schedule = &ldquo;WeeklyCycleAfterBackup&rdquo;
+</span><span class='line'>  RunBeforeJob = &ldquo;/etc/bacula/scripts/make_catalog_backup.pl MyCatalog&rdquo;
+</span><span class='line'>  RunAfterJob  = &ldquo;/etc/bacula/scripts/delete_catalog_backup&rdquo;
+</span><span class='line'>  Write Bootstrap = &ldquo;/var/lib/bacula/%n.bsr&rdquo;
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileSet {
+</span><span class='line'>  Name = &ldquo;Catalog&rdquo;
+</span><span class='line'>  Include {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Options {
+</span><span class='line'>  signature = MD5
+</span><span class='line'>}
+</span><span class='line'>File = "/var/lib/bacula/bacula.sql"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;home.zagirov.name-www&rdquo;
+</span><span class='line'>  JobDefs = &ldquo;DefaultJob&rdquo;
+</span><span class='line'>  FileSet = &ldquo;home.zagirov.name-www&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileSet {
+</span><span class='line'>  Name = &ldquo;home.zagirov.name-www&rdquo;
+</span><span class='line'>  Include {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Options {
+</span><span class='line'>  signature = MD5
+</span><span class='line'>}
+</span><span class='line'>File = /var/www
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;home.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  JobDefs = &ldquo;DefaultJob&rdquo;
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet=&ldquo;home.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  Schedule = &ldquo;WeeklyCycle&rdquo;
+</span><span class='line'>  RunBeforeJob = &ldquo;/etc/bacula/scripts/xtrabackup.sh&rdquo;
+</span><span class='line'>  RunAfterJob  = &ldquo;/etc/bacula/scripts/xtrabackup_rm.sh&rdquo;
+</span><span class='line'>  Write Bootstrap = &ldquo;/var/lib/bacula/%n.bsr&rdquo;
+</span><span class='line'>  Priority = 11                   # run after main backup
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileSet {
+</span><span class='line'>  Name = &ldquo;home.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  Include {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Options {
+</span><span class='line'>  signature = MD5
+</span><span class='line'>}
+</span><span class='line'>File = "/bacula/create/xtrabackup"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_www.zagirov.name.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h3>backup from www.zagirov.name&lt;/h3>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Client {
+</span><span class='line'>  Name = www.zagirov.name-fd
+</span><span class='line'>  Address = 2.2.2.2
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = &ldquo;password-fd-www.zagirov.name&rdquo;
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>JobDefs {
+</span><span class='line'>  Name = &ldquo;DefaultJob-www.zagirov.name&rdquo;
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = www.zagirov.name-fd
+</span><span class='line'>  Schedule = &ldquo;WeeklyCycle&rdquo;
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = &ldquo;/var/lib/bacula/%c.bsr&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;Restore-www.zagirov.name&rdquo;
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=www.zagirov.name-fd
+</span><span class='line'>  FileSet=&ldquo;www.zagirov.name&rdquo;
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;www.zagirov.name-www&rdquo;
+</span><span class='line'>  JobDefs = &ldquo;DefaultJob-www.zagirov.name&rdquo;
+</span><span class='line'>  FileSet = &ldquo;www.zagirov.name-www&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileSet {
+</span><span class='line'>  Name = &ldquo;www.zagirov.name-www&rdquo;
+</span><span class='line'>  Include {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Options {
+</span><span class='line'>  signature = MD5
+</span><span class='line'>}
+</span><span class='line'>File = /var/www/www.zagirov.name/www
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Job {
+</span><span class='line'>  Name = &ldquo;www.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  JobDefs = &ldquo;DefaultJob-www.zagirov.name&rdquo;
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet=&ldquo;www.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  Schedule = &ldquo;WeeklyCycle&rdquo;
+</span><span class='line'>  RunBeforeJob = &ldquo;ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name &lsquo;sudo bash -s&rsquo; &lt;/etc/bacula/scripts/xtrabackup.sh&rdquo;
+</span><span class='line'>  RunAfterJob  = &ldquo;ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name &lsquo;sudo bash -s&rsquo; &lt; /etc/bacula/scripts/xtrabackup_rm.sh&rdquo;
+</span><span class='line'>  Write Bootstrap = &ldquo;/var/lib/bacula/%n.bsr&rdquo;
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileSet {
+</span><span class='line'>  Name = &ldquo;www.zagirov.name-MySQL&rdquo;
+</span><span class='line'>  Include {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Options {
+</span><span class='line'>  signature = MD5
+</span><span class='line'>  compression = GZIP
+</span><span class='line'>}
+</span><span class='line'>File = "/bacula/create/xtrabackup"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>bacula-sd.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Storage {
+</span><span class='line'>  Name = home.zagirov.name-sd
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  WorkingDirectory = &ldquo;/var/lib/bacula&rdquo;
+</span><span class='line'>  Pid Directory = &ldquo;/var/run/bacula&rdquo;
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  SDAddress = 1.1.1.1
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = &ldquo;password-storage&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = &ldquo;password-mon&rdquo;
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Device {
+</span><span class='line'>  Name = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>  Archive Device = /bacula/
+</span><span class='line'>  LabelMedia = yes;                   # lets Bacula label unlabeled media
+</span><span class='line'>  Random Access = Yes;
+</span><span class='line'>  AutomaticMount = yes;               # when device opened, read it
+</span><span class='line'>  RemovableMedia = no;
+</span><span class='line'>  AlwaysOpen = no;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = &ldquo;password-fd-home.zagirov.name&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = &ldquo;password-mon-fd-home.zagirov.name&rdquo;
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileDaemon {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 1.1.1.1
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>home.zagirov.name: <strong>/etc/bacula/bconsole.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = localhost-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  address = 1.1.1.1
+</span><span class='line'>  Password = &ldquo;password-director&rdquo;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>А на удалённом настраиваем только fd</p>
+
+<p>www.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = &ldquo;password-fd-www.zagirov.name&rdquo;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Director {
+</span><span class='line'>  Name = stamm-server-mon
+</span><span class='line'>  Password = &ldquo;password-mon-fd-www.zagirov.name&rdquo;
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>FileDaemon {
+</span><span class='line'>  Name = www.zagirov-name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 109.234.152.187
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Внимание!</p>
+
+<p>Не забываем поменять пароли на свои!</p>
+
+<p>Запускаем в консоле bconsole</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*label
+</span><span class='line'>Automatically selected Storage: File
+</span><span class='line'>Enter new Volume name: backup
+</span><span class='line'>Defined Pools:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> 1: Default
+</span><span class='line'> 2: File
+</span><span class='line'> 3: Scratch
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Select the Pool (1-3): 2
+</span><span class='line'>Connecting to Storage daemon File at 95.31.29.182:9103 &hellip;
+</span><span class='line'>Sending label command for Volume &ldquo;backup&rdquo; Slot 0 &hellip;
+</span><span class='line'>3000 OK label. VolBytes=210 DVD=0 Volume=&ldquo;backup&rdquo; Device=&ldquo;FileStorage&rdquo; (/bacula/)
+</span><span class='line'>Catalog record for Volume &ldquo;backup&rdquo;, Slot 0  successfully created.
+</span><span class='line'>Requesting to mount FileStorage &hellip;
+</span><span class='line'>3906 File device &ldquo;FileStorage&rdquo; (/bacula/) is always mounted.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Восстановление происходит тоже через команду bconsole. Например, мы захотели восстановить файлы веб-сайта с www.zagirov.name на home.zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*restore
+</span><span class='line'>Automatically selected Catalog: MyCatalog
+</span><span class='line'>Using Catalog &ldquo;MyCatalog&rdquo;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>First you select one or more JobIds that contain files
+</span><span class='line'>to be restored. You will be presented several methods
+</span><span class='line'>of specifying the JobIds. Then you will be allowed to
+</span><span class='line'>select which files from those JobIds are to be restored.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>To select the JobIds, you have the following choices:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> 1: List last 20 Jobs run
+</span><span class='line'> 2: List Jobs where a given File is saved
+</span><span class='line'> 3: Enter list of comma separated JobIds to select
+</span><span class='line'> 4: Enter SQL list command
+</span><span class='line'> 5: Select the most recent backup for a client
+</span><span class='line'> 6: Select backup for a client before a specified time
+</span><span class='line'> 7: Enter a list of files to restore
+</span><span class='line'> 8: Enter a list of files to restore before a specified time
+</span><span class='line'> 9: Find the JobIds of the most recent backup for a client
+</span><span class='line'>10: Find the JobIds for a backup for a client before a specified time
+</span><span class='line'>11: Enter a list of directories to restore for found JobIds
+</span><span class='line'>12: Select full restore to a specified Job date
+</span><span class='line'>13: Cancel
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Select item:  (1-13): 5
+</span><span class='line'>Defined Clients:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> 1: home.zagirov.name-fd
+</span><span class='line'> 2: www.zagirov.name-fd
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Select the Client (1-2): 2
+</span><span class='line'>The defined FileSet resources are:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> 1: www.zagirov.name
+</span><span class='line'> 2: www.zagirov.name-MySQL
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Select FileSet resource (1-2): 1
+</span><span class='line'>+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+</span><span class='line'>| JobId | Level | JobFiles | JobBytes   | StartTime           | VolumeName |
+</span><span class='line'>+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+</span><span class='line'>|    66 | F     |    3,327 | 32,960,325 | 2011-11-19 03:47:28 | Backup     |
+</span><span class='line'>|   138 | D     |        7 |  5,973,688 | 2011-11-27 02:08:41 | Backup     |
+</span><span class='line'>+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+</span><span class='line'>You have selected the following JobIds: 66,138&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Building directory tree for JobId(s) 66,138 &hellip;  ++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>2,959 files inserted into the tree.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>You are now entering file selection mode where you add (mark) and
+</span><span class='line'>remove (unmark) files to be restored. No files are initially added, unless
+</span><span class='line'>you used the &ldquo;all&rdquo; keyword on the command line.
+</span><span class='line'>Enter &ldquo;done&rdquo; to leave this mode.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>cwd is: /
+</span><span class='line'>$ add *
+</span><span class='line'>3,327 files marked.
+</span><span class='line'>$ done
+</span><span class='line'>Bootstrap records written to /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>The job will require the following&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>   Volume(s)                 Storage(s)                SD Device(s)&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>Backup                    File                      FileStorage              
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Volumes marked with &ldquo;*&rdquo; are online.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>3,327 files selected to be restored.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>The defined Restore Job resources are:&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> 1: home.zagirov.name-restore
+</span><span class='line'> 2: www.zagirov.name-restore
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Select Restore Job (1-2): 1
+</span><span class='line'>Run Restore job
+</span><span class='line'>JobName:         home.zagirov.name-restore
+</span><span class='line'>Bootstrap:       /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr
+</span><span class='line'>Where:           /bacula/restore/
+</span><span class='line'>Replace:         always
+</span><span class='line'>FileSet:         home.zagirov.name-105
+</span><span class='line'>Backup Client:   www.zagirov.name-fd
+</span><span class='line'>Restore Client:  www.zagirov.name-fd
+</span><span class='line'>Storage:         File
+</span><span class='line'>When:            2011-11-27 02:56:27
+</span><span class='line'>Catalog:         MyCatalog
+</span><span class='line'>Priority:        10
+</span><span class='line'>Plugin Options:  &lt;em>None&lt;/em>
+</span><span class='line'>OK to run? (yes/mod/no): y
+</span><span class='line'>Job queued. JobId=143
+</span><span class='line'>You have messages.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Для добавления нового сервера необходимо добавить в конфиг bacula director инклуд нового файла, который будет содержать следующие директивы:</p>
+
+<ul>
+<li><strong>Client</strong>, в который прописываем имя, ip и пароль</li>
+<li><strong>JobDefs</strong> &ndash; исходный джоб, от которого все будут наследоваться</li>
+<li><strong>Job</strong> восстановления впринципе не обязательно прописывать, но это удобно, когда нужно восстанавливать прямо на нужный сервер</li>
+<li><strong>Job</strong> и <strong>FileSet</strong> &ndash; собственно сам джоб и список файлов для этого джоба
+Думаю, теперь bacula кажется не такой уж и страшной как в начале?</li>
+</ul>
+
+
+<p>Ссылки:</p>
+
+<ul>
+<li><a href="http://habrahabr.ru/blogs/sysadm/86526/">http://habrahabr.ru/blogs/sysadm/86526/</a></li>
+<li><a href="http://bog.pp.ru/work/bacula.html">http://bog.pp.ru/work/bacula.html</a></li>
+<li><a href="http://www.ignix.ru/book/freebsd/daemon/bacula">http://www.ignix.ru/book/freebsd/daemon/bacula</a></li>
+<li><a href="http://habrahabr.ru/blogs/sysadm/111555/">http://habrahabr.ru/blogs/sysadm/111555/</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Установить текстовый редактор по-умолчанию]]></title>
+    <link href="http://stamm.github.io/default-text-editor/"/>
+    <updated>2011-03-12T18:32:00+03:00</updated>
+    <id>http://stamm.github.io/default-text-editor</id>
+    <content type="html"><![CDATA[<p>Установить mcedit текстовым редактором по-умолчанию в системе:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo update-alternatives &mdash;set editor /usr/bin/mcedit</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Выбрать редактор из списка:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo update-alternatives &mdash;config editor</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[MySQL запросы через консоль]]></title>
+    <link href="http://stamm.github.io/mysql-query-console/"/>
+    <updated>2010-09-14T14:05:00+04:00</updated>
+    <id>http://stamm.github.io/mysql-query-console</id>
+    <content type="html"><![CDATA[<p>Обнаружил очень простой способ выполнения MySQL запросов в Debian. Причём без указания логина и пароля. В Debian'е создаётся системный пользователь debian-sys-maint, от которого и будут идти запросы. Например выборка:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo &ldquo;SELECT * FROM database.table WHERE id > 10&rdquo; | mysql &mdash;defaults-file=/etc/mysql/debian.cnf -Bs</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Можно мониторить нагрузку:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>watch &lsquo;echo &ldquo;show full processlist&rdquo; | mysql &mdash;defaults-file=/etc/mysql/debian.cnf -Bs&rsquo;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Apt: управление приоритетами пакетов из stable, testing, unstable, experimental]]></title>
+    <link href="http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental/"/>
+    <updated>2010-08-20T01:22:00+04:00</updated>
+    <id>http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental</id>
+    <content type="html"><![CDATA[<p>Есть несколько &ldquo;виртуальных&rdquo; релизов у debian: stable &ndash; на текущий момент это 5 версия (lenny), testing &ndash; squeeze (когда он будет выпущен, то перейдёт в релиз stable). Unstable и experimental &ndash; экспериментальные релизы, не для продакшена!. Пакет проходит путь из experimental => unstable => testing => stable. Иногда бывают ситуации, когда нужно установить пакеты поновее. Можно, конечно, скачать отдельно deb-пакет и установить его, но в этом случае одни минусы: возможно требуются удовлетворения зависимостей и лишаемся обновлений. А можно рулить приоритетами пакетов в зависимости от релиза (stable, testing, unstable, experimental).</p>
+
+<p>Создаём файлы в /etc/apt/sources.list.d</p>
+
+<p>testing.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> testing main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> testing main non-free contrib
+</span><span class='line'>deb &lt;a href="http://security.debian.org/">http://security.debian.org/&lt;/a> testing/updates main contrib non-free
+</span><span class='line'>deb-src &lt;a href="http://security.debian.org/">http://security.debian.org/&lt;/a> testing/updates main contrib non-free</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>unstable.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> sid main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> sid main non-free contrib</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>experimental.list</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>deb &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> experimental main non-free contrib
+</span><span class='line'>deb-src &lt;a href="http://ftp.debian.org/debian/">http://ftp.debian.org/debian/&lt;/a> experimental main non-free contrib</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь настраиваем приоритеты в файле /etc/apt/preferences:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Package: *
+</span><span class='line'>Pin: release a=stable
+</span><span class='line'>Pin-Priority: 200&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=testing
+</span><span class='line'>Pin-Priority: 201&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=unstable
+</span><span class='line'>Pin-Priority: 199&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>Package: *
+</span><span class='line'>Pin: release a=experimental
+</span><span class='line'>Pin-Priority: 198</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Этот конфиг означает, что пакеты будут искаться в такой последовательности: testing => stable => unstable => experimental. Вместо Package: * можно указать конкретные пакеты, но, к сожалению, нельзя указать маску пакетов.</p>
+
+<p>Установка пакета и попытка решить зависимости из unstable:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude -t unstable install &lt;package></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Установка пакета и попытка решить зависимости из релиза с наивысшим приоритетом:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install &lt;package>/unstable</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Ссылки по теме: <a href="http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.ru.html">http://www.debian.org/doc/manuals/apt-howto/ch-apt-get.ru.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
+    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <updated>2010-07-28T01:14:00+04:00</updated>
+    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
+
+<p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>zone &ldquo;zagirov.name&rdquo; {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>type master;
+</span><span class='line'>file "/etc/bind/db.zagirov.name";
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>};</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файл /etc/bind/db.zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$TTL    604800
+</span><span class='line'>@   IN  SOA zagirov.name. root.zagirov.name. (&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>              2     ; Serial
+</span><span class='line'>         604800     ; Refresh
+</span><span class='line'>          86400     ; Retry
+</span><span class='line'>        2419200     ; Expire
+</span><span class='line'>         604800 )   ; Negative Cache TTL
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>;
+</span><span class='line'>@   IN  NS  localhost.
+</span><span class='line'>@   IN  A   192.168.1.254
+</span><span class='line'>*   IN  A   192.168.1.254</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Я использую Debian testing (squeeze). Устанавливаем пакеты:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install apache2 nginx libapache2-mod-php5 php5-cli php5-mysql php5-pgsql php5-xmlrpc php5-gd php5-curl php5-xsl php-apc memcached php5-memcache mysql-server postgresql</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Структура папок сайта: logs – логи tmp – папка для временных файлов и файлов сессии www – содержимое сайта</p>
+
+<p>Создадим «эталонную» папку для сайта, которая будет структурой для будущих сайтов</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir &ndash; p /var/www/etalon/{logs,tmp,www}
+</span><span class='line'>chown www-data.www-data /var/www/etalon/{tmp,www}
+</span><span class='line'>chmod 0700 /var/www/etalon/{tmp,www}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем в mc папку /var/www/, выбираем папку etalon, нажимает shift+F5, вводим название сайта(zagirov.name). Появилась папка для будущего сайта: /var/www/zagirov.name/ Чтобы логи архивировались, создаём правило для logrotate в файле /etc/logrotate.d/sites:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/var/www/&lt;em>/logs/&lt;/em>.log {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>weekly
+</span><span class='line'>missingok
+</span><span class='line'>rotate 52
+</span><span class='line'>compress
+</span><span class='line'>delaycompress
+</span><span class='line'>notifempty
+</span><span class='line'>create 644 root root
+</span><span class='line'>sharedscripts
+</span><span class='line'>postrotate
+</span><span class='line'>    if [ -f "`. /etc/apache2/envvars ; echo ${APACHE_PID_FILE:-/var/run/apache2.pid}`" ]; then
+</span><span class='line'>        /etc/init.d/apache2 reload &gt; /dev/null
+</span><span class='line'>    fi
+</span><span class='line'>    [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+</span><span class='line'>endscript
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь настраиваем nginx. Удаляем все символические ссылки из папки /etc/nginx/sites-enabled Создаём конфигурацию для неописанных доменов: /etc/nginx/sites-available/default_http В случае, когда сайт не описан nginx просто разорвёт соединение, ничего не выдав.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen          80 default;
+</span><span class='line'>server_name     _;
+</span><span class='line'>access_log      off;
+</span><span class='line'>server_name_in_redirect  off;
+</span><span class='line'>return 444;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем mc. В левой панели /etc/nginx/sites-enabled, в правой – /etc/nginx/sites-available Выбираем файл default_http и нажимаем комбинацию Ctrl+X, а затем S – это создаст символическую ссылку выбранного файла в папке другой панели. Теперь создадим файл для сайта /etc/nginx/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen   80;
+</span><span class='line'>server_name zagirov.name www.zagirov.name rustam.zagirov.name;
+</span><span class='line'>
+</span><span class='line'>server_tokens off;
+</span><span class='line'>
+</span><span class='line'>access_log /var/www/zagirov.name/logs/nginx.access.log;
+</span><span class='line'>error_log /var/www/zagirov.name/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>charset utf-8;
+</span><span class='line'>client_max_body_size 1m;
+</span><span class='line'>
+</span><span class='line'>root /var/www/zagirov.name/www;
+</span><span class='line'>index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>location / {
+</span><span class='line'>    #Реврайт
+</span><span class='line'>    #try_files $uri $uri /index.php?q=$uri&amp;$args;
+</span><span class='line'>
+</span><span class='line'>    proxy_pass http://zagirov.name:81;
+</span><span class='line'>    include proxy.conf;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>#Тут перечисляем все пути и файлы статики (картинки, стили)
+</span><span class='line'>location ~ /(favicon.ico|wp-content/uploads/|wp-content/themes/openark-blog/(images/|style.css)) {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Опять включаем сайт созданием символической ссылки.</p>
+
+<p>Теперь настраиваем apache. Удаляем включённые по дефолту сайты из папки /etc/apache2/sites-enabled Меняем порт с 80 на 81 в файле /etc/apache2/ports.conf:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>NameVirtualHost *:81
+</span><span class='line'>Listen 81</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём конфигурацию для неописанных доменов: /etc/apache2/sites-available/default_http</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName default
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создадим настройки для сайта в файле /etc/apache2/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName zagirov.name
+</span><span class='line'>ServerAlias www.zagirov.name rustam.zagirov.name
+</span><span class='line'>DocumentRoot /var/www/zagirov.name/www
+</span><span class='line'>ErrorLog /var/www/zagirov.name/logs/apache2.error.log
+</span><span class='line'>CustomLog /var/www/zagirov.name/logs/apache2.access.log combined
+</span><span class='line'>AddDefaultCharset UTF8
+</span><span class='line'>php_flag magic_quotes_gpc off
+</span><span class='line'>php_admin_value open_basedir "/var/www/zagirov.name/www"
+</span><span class='line'>php_admin_value upload_tmp_dir "/var/www/zagirov.name/tmp"
+</span><span class='line'>php_value session.save_path "/var/www/zagirov.name/tmp"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Включаем сайт:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>a2ensite zagirov.name</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Перезапускаем apache и nginx.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>invoke-rc.d apache2 restart
+</span><span class='line'>invoke-rc.d nginx restart</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Установка рутового пароля для пользователя postgres для PostgreSQL:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su postgres
+</span><span class='line'>psql -d template1
+</span><span class='line'>ALTER USER postgres WITH PASSWORD &lsquo;Str0ng passw0rd&rsquo;;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><a href="/debian-3-setting-iptables-forward-nat-firewall">← Часть 3</a></p>
+]]></content>
+  </entry>
+  
+</feed>

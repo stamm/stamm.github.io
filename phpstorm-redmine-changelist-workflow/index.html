@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Организация рабочего потока: Phpstorm, Redmine, Changelists - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity. Есть задача в redmine.
+Я начинаю её &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/phpstorm-redmine-changelist-workflow">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Организация рабочего потока: Phpstorm, Redmine, Changelists</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-23T18:53:00+04:00" pubdate data-updated="true">2011-10-23</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
+
+<ul>
+<li>Есть задача в redmine.</li>
+<li>Я начинаю её выполнять.</li>
+<li>Всё проверяю локально и коммичу в репозиторий.</li>
+<li>Выливаю изменения на тестовый сервер.</li>
+</ul>
+
+
+<p>Есть несколько ньюансов. Бывают задачи очень объёмные и/или не очень срочные, которые я делаю в перерывах между задачами с более высокими приоритетами. Или спокойно делаю задачу, но прибегает менеджер с огромными глазами и криками, что сайт выдаёт ошибку, и нужно сделать быстрый hotfix.</p>
+
+<p>В этом случае очень помогают changelist в PhpStorm.</p>
+
+<p>Смысл changelist&#8217;а заключается в логическом разделении группы файлов для коммита. Т.е. файлы &ldquo;прикрепляются&rdquo; к определённому changelist&#8217;у. И при коммите мы выбираем нужный changelist и коммитим только файлы из этого changelist&#8217;а. Changelist есть всегда, по-умолчанию название default.</p>
+
+<p>Настраиваем Redmine:</p>
+
+<p>Нужно включить в параметрах redmine пункт <strong>Enable REST web service</strong></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
+
+<p>Добавляем новый Task server в PhpStorm. Api token можно найти в личном разделе в redmine.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
+
+<p>И добавляем парсинг номера задачи из описания коммита для отображения её как ссылки на задачу в redmine.</p>
+
+<p>Project Settings → Version Control → Issue Navigation</p>
+
+<p>Вводим паттерн регулярного выражения <strong>#(\d+)</strong> и генерируемую ссылку: **<a href="http://redmine.company.com/issues/$1**">http://redmine.company.com/issues/$1**</a></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
+
+<p>Теперь открываем задачу Tools → Task → Open. Тут работает автодополнение для имени задачи.</p>
+
+<p>Если были открытые файлы, то они все скроются. Сейчас мы работаем в своём наборе открытых файлов. Если откроем changelist под названием default, то все открытые файлы вернуться в редактор. Нужно понимать, что изменения в скрытых файлах остаются (это вам не git stash), а просто скрываются из вида.</p>
+
+<p>Мы можем создать множество changelist&#8217;ов. Они не обязательно создаются из задачи, можно создать свой changelist. Я, например, создаю changelist NO для временных файлов, файлов своих настроек, декларативные скрипты для работы автодополнения, которые мне не нужно включать в коммит.</p>
+
+<p>Теперь при коммите будут выбраны только файлы, которые находяться в выбранном changelist&#8217;е.</p>
+
+<p>Откройте в разделе changes (alt+9 или ⌘+9) вкладку Local. Тут показаны изменённые файлы, сгруппированные по changelist&#8217;ам. Здесь файлы можно перемещать между changelist&#8217;ами.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
+
+<p>Кликнув правой кнопкой по changelist, вы можете изменить его комментарий. Этот комментарий потом автоматически вставиться в описание коммита.</p>
+
+<p>Для запуска сборки проекта в TeamCity из PhpStorm нужно поставить соответсвующий плагин.</p>
+
+<p>Получилась вот такая схема работы. Ребята из JetBrains очень крутые: развивают продукт очень стремительно, вводять очень удобные фишки. Кто ещё не пробывал PhpStorm &ndash; обязательно попробуйте. А на него перешёл с Netbeans и нисколько не жалею.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-23T18:53:00+04:00" pubdate data-updated="true">2011-10-23</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/phpstorm/'>phpstorm</a>, <a class='category' href='/blog/categories/redmine/'>redmine</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/phpstorm-redmine-changelist-workflow/" data-via="" data-counturl="http://stamm.github.io/phpstorm-redmine-changelist-workflow/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/yii-cache-cactivedataprovider/" title="Previous Post: Yii: используем кэш в CActiveDataProvider">&laquo; Yii: используем кэш в CActiveDataProvider</a>
+      
+      
+        <a class="basic-alignment right" href="/yii-console-completion/" title="Next Post: Yii: автодополнение в консоли">Yii: автодополнение в консоли &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/phpstorm-redmine-changelist-workflow/';
+        var disqus_url = 'http://stamm.github.io/phpstorm-redmine-changelist-workflow/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

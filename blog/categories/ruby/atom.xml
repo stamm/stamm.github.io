@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ruby | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
+    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <updated>2013-03-04T19:02:00+04:00</updated>
+    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
+
+<p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Incorrect MySQL client library version! This gem was compiled for 5.5.28 but the client library is 5.6.10.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Если ставить так, как написано в readme:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 &mdash;with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>То возникает ошибка:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ERROR: While executing gem &hellip; (OptionParser::InvalidOption) invalid option: &mdash;with-mysql-config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Нужно добавить больше тирешек и кавычек</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 &mdash; &lsquo;&mdash;with-mysql-config=/usr/local/bin/mysql_config&rsquo;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>UPDATE:</h2>
+
+<p>Чтобы bundler всегда использовал данный параметр, выполните команду:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle config build.mysql2 &mdash;with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Как установить ruby 2.0.0-p0]]></title>
+    <link href="http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0/"/>
+    <updated>2013-02-24T18:56:00+04:00</updated>
+    <id>http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0</id>
+    <content type="html"><![CDATA[<p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
+
+<p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Error running &lsquo;env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure &mdash;disable-install-doc &mdash;prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 &mdash;with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite &mdash;disable-shared&rsquo;, please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log
+</span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Или ошибка при запуске bundle install:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/Users/stamm/.rvm/rubies/ruby-2.0.0-p0/lib/ruby/2.0.0/net/http.rb:917:in `connect': SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed (OpenSSL::SSL::SSLError)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Чтобы избавиться от этих ошибок, нужно поставить openssl и gcc:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm pkg install openssl
+</span><span class='line'>brew install gcc</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И переустановить с нужными флагами:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm reinstall ruby-2.0.0-p0 &mdash;with-gcc=gcc-4.7 &mdash;with-openssl-dir=$rvm_path/usr</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Ruby 2.0.0 требуется bundler 1.3, который ещё не вышел. Его можно
+поставить:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install &mdash;pre bundler</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Парад ссылок №2]]></title>
+    <link href="http://stamm.github.io/links-parade-2/"/>
+    <updated>2013-02-20T19:48:00+04:00</updated>
+    <id>http://stamm.github.io/links-parade-2</id>
+    <content type="html"><![CDATA[<h2>Yii</h2>
+
+<ul>
+<li><a href="http://yiiframework.ru/forum/viewtopic.php?f=17&amp;t=10795">Вышел плагин для phpstorm</a>, поддерживающий yii. Надеюсь автор не забросит его, и из этого получиться что-то более функциональное.</li>
+</ul>
+
+
+<h2>Тестирование</h2>
+
+<ul>
+<li><a href="https://saucelabs.com/home">Функиональное тестирования как сервис</a> &ndash; поддерживаются почти все популярные языки, все актуальные браузеры. Сам не пробовал, но судя по фичам у сервиса будут свои пользователи.</li>
+<li><a href="https://coveralls.io/">Процент покрытие тестами в ruby on rails</a>. Работает в связке с travis ci. Сейчас процедура такая: пушим на github, travis-ci выполняет тесты, coveralls показывает как изменилось покрытие кода и показывает красивые отчёты об изменениях. При этом не держа у себя сервер и не платя ни копейки.</li>
+<li>Крутое <a href="%D0%B2%D0%B8%D0%B4%D0%B5%D0%BE%20%D1%81%20%D0%B4%D0%B5%D0%BC%D0%BE%20%D0%BF%D0%BE%20cucumber">видео с демо по cucumber</a>. Можно довольно быстро понять как правильно писать свои тесты на cucumber'е (<a href="https://github.com/mattwynne/bdd-exchange-london-2011-code/tree/master/features/support">код на github</a>).</li>
+</ul>
+
+
+<h2>Нагрузочное тестирование</h2>
+
+<ul>
+<li><a href="%D0%A1%D0%BE%D0%B1%D0%B8%D1%80%D0%B0%D0%B5%D0%BC%20%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D1%83%20%D1%81%20%D0%BD%D0%B0%D0%B3%D1%80%D1%83%D0%B6%D0%B0%D0%B5%D0%BC%D0%BE%D0%B9%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%BE%D0%B9">Собираем статистику с нагружаемой машины</a> с помощью яндекс-танка.</li>
+</ul>
+
+
+<h2>Разное</h2>
+
+<ul>
+<li><a href="http://csolg.com/blogs/nastroika-rezervnogo-arhivirovaniya-backup-ruby-on-rails-32-proektov">Создание бэкапов с помощью ruby</a> &ndash; это вам не <a href="/bacula-backup">монструозные конфиги бакулы</a>, тут всё быстро и понятно.</li>
+<li>Прикольный <a href="http://shopify.github.com/dashing">интерфес для мониторинга показателей</a>, написанные на ruby. Есть несколько предопределённый виджетов для отображения kpi. Добавляется блок очень быстро и приятно. В крайнем случае можно написать свой: ruby + coffee + sass. Работает без ajax-запросов, на основе постоянного соединения.</li>
+<li><a href="http://runnable.com/">http://runnable.com/</a> &ndash; позволяет выполнить код на скриптовом языке прямо в браузере. Что-то типо сервиса <a href="http://jsfiddle.net/">jsfiddle</a>, только для серверных языков. Пока поддерживается nodejs, но обещают поддержку php, ruby.</li>
+<li><a href="http://www.clipmenu.com/">Бесплатный менеджер буфера обмена для MacOS</a>. Теперь работать без неё не могу.</li>
+<li>Очень интересная новость: <a href="http://support.google.com/webmasters/bin/answer.py?hl=ru&amp;answer=2692911">гугл запустил маркеры</a> &ndash; (<a href="http://www.youtube.com/watch?v=WrEJds3QeTw&amp;feature=youtu.be&amp;hd=1">видео</a>). В кратце позволяет мне, как администратору сайта кликая и выделяю мышью указывать структуру информации на сайте. Сейчас поддерживаются только мероприятия, но с развитием можно будет указать много другой мета-информации. Но я за то, чтобы использовать микро-форматы. По сути гугл хочет переложить работу с себя на хозяев сайта. Посмотрим что из этого получится.</li>
+<li>Крутое видео о том, <a href="http://www.youtube.com/watch?v=wdBNjHZPUsI&amp;feature=youtu.be">зачем нужен DevOps</a>. Вообще как-то начинает развиваться эта движуха, если кто не знает, советую почитать</li>
+<li>Cмешная картинка <a href="http://pic.twitter.com/wQMutooX">ковёр-самолёт</a>. Это к тому, что все понимают в свою меру понимания. Всегда помнить, когда пишите задачу или ТЗ ;)</li>
+<li>Забавные гифки, что называется, до слёз: <a href="http://devopsreactions.tumblr.com/">раз</a>, <a href="http://www.zombieit.net/posts/zhizn-razrabotchika-v-gif-animacijah">два</a>.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Парад ссылок №1]]></title>
+    <link href="http://stamm.github.io/links-parade-1/"/>
+    <updated>2013-02-11T19:43:00+04:00</updated>
+    <id>http://stamm.github.io/links-parade-1</id>
+    <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
+
+<p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<h2>Развёртывание и деплой</h2>
+
+<p>С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение <a href="http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/">caphub от компании railsware</a>, позволяющая структурировать задания для разных приложений.</p>
+
+<p>Отличный цикл статей о том, как <a href="http://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1/">начать работать с chef</a> от Алексея Васильего. Chef &ndash; это инструмент для автоматизации настроек парка серверов.</p>
+
+<h2>PHP</h2>
+
+<p><a href="https://segment.io/blog/how-to-make-async-requests-in-php/">Как сделать асинхронный запрос</a></p>
+
+<p><a href="http://nitschinger.at/Benchmarking-Cache-Transcoders-in-PHP">Сравнение упаковщиков для php</a></p>
+
+<p><a href="http://unassumingphp.com/managing-php-application-builds-with-phing/">Использование phing для собирания проекта</a>. Ребята, у кого есть возможность &ndash; используйте capistrano или rake.</p>
+
+<p><a href="https://wiki.php.net/rfc/optimizerplus">Новый опкэшер в PHP 5.5.0</a>. Обратите внимание на <a href="https://docs.google.com/spreadsheet/ccc?key=0Agw0hgqCxf0cdEZsdm1yNjd3amJReG05MzJYSF9USGc#gid=0">табличку сравнения</a>: неплохой прирост.</p>
+
+<p><a href="http://phpmaster.com/php-as-a-service-fortrabbit/">Php как сервис</a>.</p>
+
+<h2>Ruby, RoR</h2>
+
+<p>Начался новый <a href="http://www.rwpod.com/">подкаст rwpod от того же Алексея Васильего и ко</a>. Хороший подкаст, аккумулирующий новости не только из ruby-сообщества, но и веб-новостей. Пока нет харкорных тем, но я думаю, всё впереди.</p>
+
+<p><a href="http://habrahabr.ru/company/JetBrains/blog/168655/">Вышел RubyMine5</a>. Прошу обратить внимание на видео о его возможностей.</p>
+
+<p>У кого есть свои скрипты-помошники, предлагаю переехать на rake. Возникали проблемы с <a href="http://www.scottw.com/zsh-rake-parameters">zsh</a>, <a href="http://viget.com/extend/protip-passing-parameters-to-your-rake-tasks">передачи параметра в задачу</a>. Вцелом хороший инструмент не только для ruby разработчиков.</p>
+
+<p>Должна быть интересная <a href="http://securingrails.com/">книга по устранению уязвимостей в rails-приложении</a>. Обязательно посмотрите ролик.</p>
+
+<p>Узнайте, <a href="http://ablogaboutcode.com/2012/05/03/benchmark-your-bundle/">сколько же времени загружаются ваши гемы</a>.</p>
+
+<h2>Javascript</h2>
+
+<p><a href="http://www.jsdb.io/">JsDB &ndash; каталог js-библиотек</a></p>
+
+<p><a href="http://casperjs.org/">CasperJs &ndash; тестирование js и не только</a>. Использует PhantomJS.</p>
+
+<p><a href="https://github.com/unconed/MathBox.js">Рисуем сложные графики</a>. <a href="http://acko.net/blog/making-mathbox/">Демки</a>.</p>
+
+<h2>Разное</h2>
+
+<p><a href="http://kapeli.com/">Dash &ndash; Offline-документация для macos</a> по многочисленным языкам и фреймворкам: php, yii, ruby, gems, ror, javascript, backbone, mongodb, postgresql, mysql и это далеко не весь перечень. Однозначно в повседневное использование!</p>
+
+<p><a href="https://www.cheapssls.com/comodo-ssl-certificates/positivessl.html?years=5">Очень дешёвые SSL-сертификаты</a>. Например, на 5 лет за $25.</p>
+
+<p><a href="http://sphinxsearch.com/blog/2013/02/07/sphinx-2-1-json-attributes/">Поддержка JSON-атрибутов в sphinx 2.1</a>. Sphinx не отстаёт <a href="http://www.postgresql.org/docs/9.2/static/functions-json.html">от postgresql</a>.</p>
+
+<p><a href="http://zachholman.com/spark/">Spark &ndash; интересная визуализация небольших данных</a>. Скарливаем ему ряд значений: spark 0 30 55 80 33 150, и получаем ▁▂▃▅▂▇</p>
+
+<p><a href="http://www.codeschool.com/">Очень крутое обучение от codeschool</a>. Схема такая: вам показывают мини-лекцию, потом вы должны выполнить задание, т.е. писать код прямо в браузуере и он проходит проверку. Также у ребят есть скринкасты. Обучение не скучное и довольно эффективное.</p>
+
+<p>Нравиться ли вам такая рубрика? Продолжать?</p>
+]]></content>
+  </entry>
+  
+</feed>

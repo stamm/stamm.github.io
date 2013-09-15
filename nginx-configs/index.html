@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Nginx конфиги - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/nginx-configs">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Nginx конфиги</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-06T18:36:00+04:00" pubdate data-updated="true">2011-05-06</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, что достойно <a href="http://sysoev.ru/nginx/docs/faq.html">всяческого порицания</a> по словам автора nginx Игоря Сысоева. Выложу используемые мной конфиги для различных систем (redmine, chive)</p>
+
+<h2>Redmine:</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream thin {
+</span><span class='line'>  server unix:/tmp/redmine.0.sock;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  listen 80;
+</span><span class='line'>  server_name redmine.zagirov.name;
+</span><span class='line'>  root /usr/share/redmine/public/;
+</span><span class='line'>  access_log /var/log/nginx/redmine.access.log;
+</span><span class='line'>  error_log /var/log/nginx/redmine.error.log;
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>    proxy_set_header X-Real-IP $remote_addr;
+</span><span class='line'>    proxy_set_header Host $host;
+</span><span class='line'>    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+</span><span class='line'>    include proxy.conf;
+</span><span class='line'>    proxy_pass http://thin;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  error_page 500 502 503 504 /500.html;
+</span><span class='line'>  error_page 404 403 /404.html;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><a href="http://www.chive-project.com/">Chive</a> &ndash; отличный аналог phpmyadmin</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /chive/ {
+</span><span class='line'>  try_files $uri $uri/ /chive/index.php?$request_uri&$args;
+</span><span class='line'>  location ~ ^/chive/(protected|yii)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /chive/(assets|css|images|js|themes)/ {
+</span><span class='line'>    expires 1y;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location = /chive/index.php {
+</span><span class='line'>    fastcgi_pass admin_zagirov_backend;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>    fastcgi_param   QUERY_STRING        $query_string&__chive_rewrite_on=1;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Конфиг для мною обожаемого Yii:</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream yii-clean.zagirov.name {
+</span><span class='line'>  server unix:/var/run/php5-fpm/yii-clean.zagirov.name.sock;
+</span><span class='line'>}
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;
+</span><span class='line'>
+</span><span class='line'>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  fastcgi_read_timeout 6000;
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.ht|index-test.php){
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  location ~ /(assets|css|themes/new/css)/ {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>    location / {
+</span><span class='line'>    try_files $uri $uri/ /index.php?$request_uri&$args;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location /index.php {
+</span><span class='line'>    fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_index index.php;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name test.yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;
+</span><span class='line'>
+</span><span class='line'>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.test.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.test.error.log warn;
+</span><span class='line'>
+</span><span class='line'>  gzip off;
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index-test.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>  fastcgi_read_timeout 6000;
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.ht|index.php)
+</span><span class='line'>  {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {
+</span><span class='line'>    deny all;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  location ~ /(assets|css|themes/new/css)/ {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location / {
+</span><span class='line'>    try_files $uri $uri/ /index-test.php?$request_uri&$args;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  location /index-test.php {
+</span><span class='line'>    fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>    include fastcgi_params;
+</span><span class='line'>    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-06T18:36:00+04:00" pubdate data-updated="true">2011-05-06</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nginx/'>nginx</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/nginx-configs/" data-via="" data-counturl="http://stamm.github.io/nginx-configs/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/svn-to-git/" title="Previous Post: Перенос svn-репозитария в git">&laquo; Перенос svn-репозитария в git</a>
+      
+      
+        <a class="basic-alignment right" href="/php-sendmail-save-to-file/" title="Next Post: Сохраняем письма, отправленные из php, в файлы">Сохраняем письма, отправленные из php, в файлы &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/nginx-configs/';
+        var disqus_url = 'http://stamm.github.io/nginx-configs/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

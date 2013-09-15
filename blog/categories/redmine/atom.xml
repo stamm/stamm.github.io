@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: redmine | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/redmine/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Организация рабочего потока: Phpstorm, Redmine, Changelists]]></title>
+    <link href="http://stamm.github.io/phpstorm-redmine-changelist-workflow/"/>
+    <updated>2011-10-23T18:53:00+04:00</updated>
+    <id>http://stamm.github.io/phpstorm-redmine-changelist-workflow</id>
+    <content type="html"><![CDATA[<p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
+
+<ul>
+<li>Есть задача в redmine.</li>
+<li>Я начинаю её выполнять.</li>
+<li>Всё проверяю локально и коммичу в репозиторий.</li>
+<li>Выливаю изменения на тестовый сервер.</li>
+</ul>
+
+
+<p>Есть несколько ньюансов. Бывают задачи очень объёмные и/или не очень срочные, которые я делаю в перерывах между задачами с более высокими приоритетами. Или спокойно делаю задачу, но прибегает менеджер с огромными глазами и криками, что сайт выдаёт ошибку, и нужно сделать быстрый hotfix.</p>
+
+<p>В этом случае очень помогают changelist в PhpStorm.</p>
+
+<p>Смысл changelist'а заключается в логическом разделении группы файлов для коммита. Т.е. файлы &ldquo;прикрепляются&rdquo; к определённому changelist'у. И при коммите мы выбираем нужный changelist и коммитим только файлы из этого changelist'а. Changelist есть всегда, по-умолчанию название default.</p>
+
+<p>Настраиваем Redmine:</p>
+
+<p>Нужно включить в параметрах redmine пункт <strong>Enable REST web service</strong></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
+
+<p>Добавляем новый Task server в PhpStorm. Api token можно найти в личном разделе в redmine.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
+
+<p>И добавляем парсинг номера задачи из описания коммита для отображения её как ссылки на задачу в redmine.</p>
+
+<p>Project Settings → Version Control → Issue Navigation</p>
+
+<p>Вводим паттерн регулярного выражения <strong>#(\d+)</strong> и генерируемую ссылку: **<a href="http://redmine.company.com/issues/$1**">http://redmine.company.com/issues/$1**</a></p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
+
+<p>Теперь открываем задачу Tools → Task → Open. Тут работает автодополнение для имени задачи.</p>
+
+<p>Если были открытые файлы, то они все скроются. Сейчас мы работаем в своём наборе открытых файлов. Если откроем changelist под названием default, то все открытые файлы вернуться в редактор. Нужно понимать, что изменения в скрытых файлах остаются (это вам не git stash), а просто скрываются из вида.</p>
+
+<p>Мы можем создать множество changelist'ов. Они не обязательно создаются из задачи, можно создать свой changelist. Я, например, создаю changelist NO для временных файлов, файлов своих настроек, декларативные скрипты для работы автодополнения, которые мне не нужно включать в коммит.</p>
+
+<p>Теперь при коммите будут выбраны только файлы, которые находяться в выбранном changelist'е.</p>
+
+<p>Откройте в разделе changes (alt+9 или ⌘+9) вкладку Local. Тут показаны изменённые файлы, сгруппированные по changelist'ам. Здесь файлы можно перемещать между changelist'ами.</p>
+
+<p><img src="/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
+
+<p>Кликнув правой кнопкой по changelist, вы можете изменить его комментарий. Этот комментарий потом автоматически вставиться в описание коммита.</p>
+
+<p>Для запуска сборки проекта в TeamCity из PhpStorm нужно поставить соответсвующий плагин.</p>
+
+<p>Получилась вот такая схема работы. Ребята из JetBrains очень крутые: развивают продукт очень стремительно, вводять очень удобные фишки. Кто ещё не пробывал PhpStorm &ndash; обязательно попробуйте. А на него перешёл с Netbeans и нисколько не жалею.</p>
+]]></content>
+  </entry>
+  
+</feed>

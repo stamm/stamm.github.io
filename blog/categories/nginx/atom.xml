@@ -1,0 +1,1036 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: nginx | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx: общие принципы конфигурации]]></title>
+    <link href="http://stamm.github.io/nginx-config/"/>
+    <updated>2011-10-30T18:59:00+04:00</updated>
+    <id>http://stamm.github.io/nginx-config</id>
+    <content type="html"><![CDATA[<p>На днях посмотрел <a href="http://video.yandex.ru/users/ibondarets/view/1/">видео с участием Игоря Сысоева</a> &ndash; отца русского nginx =)</p>
+
+<p>В выступлении Игорь говорит не о мастабировании в привычном для всех понимании (высокая нагрузка), а в плане рекомендаций к написанию конфигурации для nginx, чтобы при росте конфигурации не было проблем с его редактированием.</p>
+
+<h2>Виды location:</h2>
+
+<ol>
+<li>Описанные простыми строками (статические)</li>
+</ol>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {} &ndash; обычный префиксный location
+</span><span class='line'>location = /dir/ {} &ndash; точное совпадение по запросу
+</span><span class='line'>location ^~ /dir/ {} &ndash; префиксный location, но после него не идёт проверка по location на регулярных выражениях</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<ol>
+<li>Описанные регулярными выражениями</li>
+</ol>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ /dir/ {} &ndash; с учётом регистра
+</span><span class='line'>location ~* /dir/ {} &ndash; без учёта регистра</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<ol>
+<li>Именнованные location</li>
+</ol>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location @php {}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Расположение статических location не играет роли.</p>
+
+<p>Location'ы, написанные с помощью регулярных выражений, выполянются в порядке написания.</p>
+
+<p>По возможности используйте статические location'ы. Например, вместо</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ .(css|js|jpe?g|png)$ {}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>выносить все статические файлы в определённый каталог</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /static/ {}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Заворачивание location на регулярном выражении в статический location</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* ^/i/(.)(.&ndash;.gif)(
+</span><span class='line'>  alias /images/$1$1$2
+</span><span class='line'>)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /i/ {
+</span><span class='line'>  location ~* ^/i/(.)(.&ndash;.gif)$ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>alias /images/$1$1$2
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>  return 404
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Понимание директив root и alias:</p>
+
+<p>В общем смысле, root &ndash; добавляем в запрос путь в качестве префикса, а alias &ndash; заменяет location на указанный в директиве alias</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>root /path/to/data;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>         /dir/a/image.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/path/to/data/dir/a/image.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> alias /path/to/data/;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>     /dir/a/image.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/path/to/data/a/image.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/ {
+</span><span class='line'>  root /path/to/$subdomain;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>         /dir/a/image.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/path/to/shop/dir/a/image.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/.+/(.)(.*)$ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>alias /path/to/data/$1/$1$2;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>     /dir/a/image.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>/path/to/data/i/image.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>alias /path/to/data/0.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/data/0.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Обратите внимание на конечных слэш в proxy_pass</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {
+</span><span class='line'>  proxy_pass &lt;a href="http://back">http://back&lt;/a>
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/dir/a/image.gif</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>proxy_pass http://back/
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>/a/image.gif
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Большинство директив носит декларативный характер, а это значит нет разницы, где их определять.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>location / {}
+</span><span class='line'>location /images/ {}
+</span><span class='line'>
+</span><span class='line'>root /path/;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Не рекомендуется использовать if. В примере сработает только последний if. Игорь рекомендует использовать if в связке с return.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  if (1) {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>gzip off;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  if (1) {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>keepalive off;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Распространённые ошибки:</h2>
+
+<p>В этом примере break вообще не нужен, а expires можно вынести в location</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* .(gif|jpe?g|png)$ {
+</span><span class='line'>  root /data;
+</span><span class='line'>  if (-e $request_filename) {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code> expires 1y;
+</span><span class='line'> break;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Break тут не нужен.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* .(gif|jpe?g|png)$ {
+</span><span class='line'>   root /data;
+</span><span class='line'>   break;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Такое возникает у переходящих с apache. Тут нужно заменить всё на статические location.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  if ($uri ~ ^/login.php$) { }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  if ($uri ~ ^/image.php$) { }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx конфиги]]></title>
+    <link href="http://stamm.github.io/nginx-configs/"/>
+    <updated>2011-05-06T18:36:00+04:00</updated>
+    <id>http://stamm.github.io/nginx-configs</id>
+    <content type="html"><![CDATA[<p>В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, что достойно <a href="http://sysoev.ru/nginx/docs/faq.html">всяческого порицания</a> по словам автора nginx Игоря Сысоева. Выложу используемые мной конфиги для различных систем (redmine, chive)</p>
+
+<h2>Redmine:</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream thin {
+</span><span class='line'>  server unix:/tmp/redmine.0.sock;
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>server {
+</span><span class='line'>  listen 80;
+</span><span class='line'>  server_name redmine.zagirov.name;
+</span><span class='line'>  root /usr/share/redmine/public/;
+</span><span class='line'>  access_log /var/log/nginx/redmine.access.log;
+</span><span class='line'>  error_log /var/log/nginx/redmine.error.log;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location / {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>proxy_set_header X-Real-IP $remote_addr;
+</span><span class='line'>proxy_set_header Host $host;
+</span><span class='line'>proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+</span><span class='line'>include proxy.conf;
+</span><span class='line'>proxy_pass http://thin;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  error_page 500 502 503 504 /500.html;
+</span><span class='line'>  error_page 404 403 /404.html;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2><a href="http://www.chive-project.com/">Chive</a> &ndash; отличный аналог phpmyadmin</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /chive/ {
+</span><span class='line'>  try_files $uri $uri/ /chive/index.php?$request_uri&amp;$args;
+</span><span class='line'>  location ~ ^/chive/(protected|yii)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>deny all;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /chive/(assets|css|images|js|themes)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>expires 1y;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location = /chive/index.php {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>fastcgi_pass admin_zagirov_backend;
+</span><span class='line'>include fastcgi_params;
+</span><span class='line'>fastcgi_index index.php;
+</span><span class='line'>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>fastcgi_param   QUERY_STRING        $query_string&amp;__chive_rewrite_on=1;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>Конфиг для мною обожаемого Yii:</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>upstream yii-clean.zagirov.name {
+</span><span class='line'>  server unix:/var/run/php5-fpm/yii-clean.zagirov.name.sock;
+</span><span class='line'>}
+</span><span class='line'>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.error.log warn;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index.php index.html index.htm;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  fastcgi_read_timeout 6000;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(.ht|index-test.php){&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>deny all;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>deny all;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(assets|css|themes/new/css)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>expires 7d;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>location / {
+</span><span class='line'>try_files $uri $uri/ /index.php?$request_uri&amp;$args;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location /index.php {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>include fastcgi_params;
+</span><span class='line'>fastcgi_index index.php;
+</span><span class='line'>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>server {
+</span><span class='line'>  listen   80;
+</span><span class='line'>  server_name test.yii-clean.zagirov.name;
+</span><span class='line'>  server_tokens off;
+</span><span class='line'>  server_name_in_redirect  off;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  access_log  /var/www/yii-clean.zagirov.name/logs/nginx.test.access.log;
+</span><span class='line'>  error_log /var/www/yii-clean.zagirov.name/logs/nginx.test.error.log warn;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  gzip off;
+</span><span class='line'>  charset utf-8;
+</span><span class='line'>  client_max_body_size 10m;
+</span><span class='line'>  fastcgi_intercept_errors on;
+</span><span class='line'>  root /var/www/yii-clean.zagirov.name/www;
+</span><span class='line'>  index index-test.php index.html index.htm;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  fastcgi_read_timeout 6000;&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(.ht|index.php)
+</span><span class='line'>  {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>deny all;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(.svn|.git|.svn|themes/[^/]+/views)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>deny all;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location ~ /(assets|css|themes/new/css)/ {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>expires 7d;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location / {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>try_files $uri $uri/ /index-test.php?$request_uri&amp;$args;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  location /index-test.php {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>fastcgi_pass yii-clean.zagirov.name;
+</span><span class='line'>include fastcgi_params;
+</span><span class='line'>fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Правильная отдача заголовков при технических работах на сайте]]></title>
+    <link href="http://stamm.github.io/correct-return-header-on-service/"/>
+    <updated>2011-03-01T01:35:00+03:00</updated>
+    <id>http://stamm.github.io/correct-return-header-on-service</id>
+    <content type="html"><![CDATA[<p>Есть ситуация: проводятся какие-то технические работы на сайте и нужно сайт правильно закрыть. Это нужно чтобы поисковики знали, что сайт не доступен, а не добавляли страницы в индекс или помечали страницы как удалённые.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen 80 default;
+</span><span class='line'>server_name _;
+</span><span class='line'>root /var/www/default/www;
+</span><span class='line'>charset utf-8;
+</span><span class='line'>error_page 404 403 =503 /503.html;
+</span><span class='line'>location = /503.html {
+</span><span class='line'>    add_header Retry-After "Sun, 27 Feb 2011 23:59:59";
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Строка error_page 404 403 =503 /503.html означает, что перенаправляем все запросы с ошибками 404 и 403 на файл 503.html, попутно меняя код ответа на 503. И при запросе файла 503.html отдаём заголовок Retry-After, чтобы поисковики знали, когда можно опять запросить страницу. Вместо даты можно указать количество секунд перед следующей попыткой. В файле 503.html можно написать что-нибудь осмысленное для пользователей и даже встроить флэш-игру, чтобы не было скучно.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
+    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <updated>2010-07-28T01:14:00+04:00</updated>
+    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
+
+<p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>zone &ldquo;zagirov.name&rdquo; {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>type master;
+</span><span class='line'>file "/etc/bind/db.zagirov.name";
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>};</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файл /etc/bind/db.zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$TTL    604800
+</span><span class='line'>@   IN  SOA zagirov.name. root.zagirov.name. (&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>              2     ; Serial
+</span><span class='line'>         604800     ; Refresh
+</span><span class='line'>          86400     ; Retry
+</span><span class='line'>        2419200     ; Expire
+</span><span class='line'>         604800 )   ; Negative Cache TTL
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>;
+</span><span class='line'>@   IN  NS  localhost.
+</span><span class='line'>@   IN  A   192.168.1.254
+</span><span class='line'>*   IN  A   192.168.1.254</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Я использую Debian testing (squeeze). Устанавливаем пакеты:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install apache2 nginx libapache2-mod-php5 php5-cli php5-mysql php5-pgsql php5-xmlrpc php5-gd php5-curl php5-xsl php-apc memcached php5-memcache mysql-server postgresql</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Структура папок сайта: logs – логи tmp – папка для временных файлов и файлов сессии www – содержимое сайта</p>
+
+<p>Создадим «эталонную» папку для сайта, которая будет структурой для будущих сайтов</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir &ndash; p /var/www/etalon/{logs,tmp,www}
+</span><span class='line'>chown www-data.www-data /var/www/etalon/{tmp,www}
+</span><span class='line'>chmod 0700 /var/www/etalon/{tmp,www}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем в mc папку /var/www/, выбираем папку etalon, нажимает shift+F5, вводим название сайта(zagirov.name). Появилась папка для будущего сайта: /var/www/zagirov.name/ Чтобы логи архивировались, создаём правило для logrotate в файле /etc/logrotate.d/sites:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/var/www/&lt;em>/logs/&lt;/em>.log {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>weekly
+</span><span class='line'>missingok
+</span><span class='line'>rotate 52
+</span><span class='line'>compress
+</span><span class='line'>delaycompress
+</span><span class='line'>notifempty
+</span><span class='line'>create 644 root root
+</span><span class='line'>sharedscripts
+</span><span class='line'>postrotate
+</span><span class='line'>    if [ -f "`. /etc/apache2/envvars ; echo ${APACHE_PID_FILE:-/var/run/apache2.pid}`" ]; then
+</span><span class='line'>        /etc/init.d/apache2 reload &gt; /dev/null
+</span><span class='line'>    fi
+</span><span class='line'>    [ ! -f /var/run/nginx.pid ] || kill -USR1 `cat /var/run/nginx.pid`
+</span><span class='line'>endscript
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь настраиваем nginx. Удаляем все символические ссылки из папки /etc/nginx/sites-enabled Создаём конфигурацию для неописанных доменов: /etc/nginx/sites-available/default_http В случае, когда сайт не описан nginx просто разорвёт соединение, ничего не выдав.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen          80 default;
+</span><span class='line'>server_name     _;
+</span><span class='line'>access_log      off;
+</span><span class='line'>server_name_in_redirect  off;
+</span><span class='line'>return 444;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Открываем mc. В левой панели /etc/nginx/sites-enabled, в правой – /etc/nginx/sites-available Выбираем файл default_http и нажимаем комбинацию Ctrl+X, а затем S – это создаст символическую ссылку выбранного файла в папке другой панели. Теперь создадим файл для сайта /etc/nginx/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>listen   80;
+</span><span class='line'>server_name zagirov.name www.zagirov.name rustam.zagirov.name;
+</span><span class='line'>
+</span><span class='line'>server_tokens off;
+</span><span class='line'>
+</span><span class='line'>access_log /var/www/zagirov.name/logs/nginx.access.log;
+</span><span class='line'>error_log /var/www/zagirov.name/logs/nginx.error.log warn;
+</span><span class='line'>
+</span><span class='line'>charset utf-8;
+</span><span class='line'>client_max_body_size 1m;
+</span><span class='line'>
+</span><span class='line'>root /var/www/zagirov.name/www;
+</span><span class='line'>index index.php index.html index.htm;
+</span><span class='line'>
+</span><span class='line'>location / {
+</span><span class='line'>    #Реврайт
+</span><span class='line'>    #try_files $uri $uri /index.php?q=$uri&amp;$args;
+</span><span class='line'>
+</span><span class='line'>    proxy_pass http://zagirov.name:81;
+</span><span class='line'>    include proxy.conf;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>#Тут перечисляем все пути и файлы статики (картинки, стили)
+</span><span class='line'>location ~ /(favicon.ico|wp-content/uploads/|wp-content/themes/openark-blog/(images/|style.css)) {
+</span><span class='line'>    expires 7d;
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Опять включаем сайт созданием символической ссылки.</p>
+
+<p>Теперь настраиваем apache. Удаляем включённые по дефолту сайты из папки /etc/apache2/sites-enabled Меняем порт с 80 на 81 в файле /etc/apache2/ports.conf:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>NameVirtualHost *:81
+</span><span class='line'>Listen 81</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём конфигурацию для неописанных доменов: /etc/apache2/sites-available/default_http</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName default
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создадим настройки для сайта в файле /etc/apache2/sites-available/zagirov.name:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;virtualhost *:81>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>ServerName zagirov.name
+</span><span class='line'>ServerAlias www.zagirov.name rustam.zagirov.name
+</span><span class='line'>DocumentRoot /var/www/zagirov.name/www
+</span><span class='line'>ErrorLog /var/www/zagirov.name/logs/apache2.error.log
+</span><span class='line'>CustomLog /var/www/zagirov.name/logs/apache2.access.log combined
+</span><span class='line'>AddDefaultCharset UTF8
+</span><span class='line'>php_flag magic_quotes_gpc off
+</span><span class='line'>php_admin_value open_basedir "/var/www/zagirov.name/www"
+</span><span class='line'>php_admin_value upload_tmp_dir "/var/www/zagirov.name/tmp"
+</span><span class='line'>php_value session.save_path "/var/www/zagirov.name/tmp"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/virtualhost></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Включаем сайт:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>a2ensite zagirov.name</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Перезапускаем apache и nginx.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>invoke-rc.d apache2 restart
+</span><span class='line'>invoke-rc.d nginx restart</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Установка рутового пароля для пользователя postgres для PostgreSQL:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su postgres
+</span><span class='line'>psql -d template1
+</span><span class='line'>ALTER USER postgres WITH PASSWORD &lsquo;Str0ng passw0rd&rsquo;;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><a href="/debian-3-setting-iptables-forward-nat-firewall">← Часть 3</a></p>
+]]></content>
+  </entry>
+  
+</feed>

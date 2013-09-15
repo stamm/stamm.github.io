@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: mac | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/mac/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
+    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <updated>2013-03-04T19:02:00+04:00</updated>
+    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
+
+<p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Incorrect MySQL client library version! This gem was compiled for 5.5.28 but the client library is 5.6.10.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Если ставить так, как написано в readme:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 &mdash;with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>То возникает ошибка:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ERROR: While executing gem &hellip; (OptionParser::InvalidOption) invalid option: &mdash;with-mysql-config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Нужно добавить больше тирешек и кавычек</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 &mdash; &lsquo;&mdash;with-mysql-config=/usr/local/bin/mysql_config&rsquo;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>UPDATE:</h2>
+
+<p>Чтобы bundler всегда использовал данный параметр, выполните команду:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle config build.mysql2 &mdash;with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
+    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <updated>2012-11-28T19:40:00+04:00</updated>
+    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep'а в 10 раз</a></p>
+
+<p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install grep
+</span><span class='line'>$ time /usr/bin/grep &ldquo;GET /out&rdquo; nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>/usr/bin/grep &ldquo;GET /out&rdquo; nginx-access_log.2 26.49s user 0.28s system 97% cpu 27.443 total wc -l 0.03s user 0.02s system 0% cpu 27.443 total&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>$ tmp time grep &ldquo;GET /out&rdquo; nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>grep &ldquo;GET /out&rdquo; nginx-access_log.2 0.58s user 0.15s system 98% cpu 0.748 total wc -l 0.03s user 0.01s system 6% cpu 0.747 total</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Эмуляция хоткея с участием Alt в midnight commander]]></title>
+    <link href="http://stamm.github.io/mc-alt-mac/"/>
+    <updated>2011-12-14T19:15:00+04:00</updated>
+    <id>http://stamm.github.io/mc-alt-mac</id>
+    <content type="html"><![CDATA[<p>После перехода на Mac OS X, не как не мог отвыкнуть от использования хоткеев с участием клавиши Alt.</p>
+
+<p>Нашёл наконец-то способ, как съэмулировать хоткеи в сочении с Alt. Например, чтобы сделать действие по <strong>Alt+c</strong> нужно последовательно нажать <strong>Esc</strong> и <strong>c</strong>. «А ларчик просто открывался» ©.</p>
+
+<p>Тех, кто не знаком с хоткеями в mc, предлагаю ознакомиться с <a href="https://www.midnight-commander.org/wiki/ru/doc/filePanels/hotkeys">листингом горячих сочетаний mc</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

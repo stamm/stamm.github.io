@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: yii | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/yii/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: рецепты №2]]></title>
+    <link href="http://stamm.github.io/yii-cookbook-2/"/>
+    <updated>2012-03-26T19:23:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cookbook-2</id>
+    <content type="html"><![CDATA[<p>Продолжаю делится интересным о Yii</p>
+
+<h3>Шифрование данных</h3>
+
+<p>Иногда требуется зашировать данные с возможностью последующей обратной дешифровкой.</p>
+
+<p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
+
+<p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">components</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">securityManager</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;cryptAlgorithm&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;rijndael-256&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;ofb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span class='line'><span class="s1">&#39;encryptionKey&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;pnkRVLZC6Oj87H2G8qmsNN&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$encrypt</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">securityManager</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="err">очень</span> <span class="err">важные</span> <span class="err">данные</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span><span class='line'><span class="k">echo</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">securityManager</span><span class="o">-&gt;</span><span class="na">decrypt</span><span class="p">(</span><span class="nv">$encrypt</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Примечания:</p>
+
+<ul>
+<li>Чтобы использовать шифрованные данные в виде параметров в get-запросе, нужно использовать функцию base64_encode() и base64_decode()</li>
+<li>Можно использовать разные ключи, передав второй параметр в функции CSecurityManager::encrypt() и CSecurityManager::decrypt()</li>
+</ul>
+
+
+<h3>Организация конфигураций</h3>
+
+<p>В Yii существует 3 уровня конфигураций: веб-приложение, консольное приложение, тесты. Требуется прописывать в этих 3 файлах часть одинаковых конфигураций: пути для импорта, конфигурация базы, правила роутов. Так же нужно убрать настройки из системы контроля версии файлы, которые могут быть разные на разных серверах или компьютерах разработчиков: подключение к базе, разных уровень логирования, кэширование. Нужно оставить только &ldquo;болванку&rdquo; конфигураций, которые корректируются в связи с необходимостью.</p>
+
+<p>Схемотично такую систему можно изобразить так:</p>
+
+<p><img src="/images/yii-cookbook-2/yii-config.png" alt="yii-config" /></p>
+
+<p>Все файлы, имеющие custom в имени, убираются из системы контроля версии (в моём случае добавляются в <a href="https://github.com/stamm/yii.blog/blob/master/.gitignore">.gitignore</a>). Вместо них создаются файлы-примеры для настройки: example.main.custom.php, example.console.custom.php, example.test.custom.php.</p>
+
+<p>Для веб-приложения используются 2 файла: main.php и main.custom.php.</p>
+
+<p>В main.custom.php пишутся индивидуальные настройки: подключение к mysql, сервер кэширования. У разработчика включаются gii, yii-debug-toolbar, добавляются вспомогательные режимы логирования, профилирования.</p>
+
+<p>В main.php пишутся все настройки, которые не будут менятся для конкретного сервера: пути импорта, правила роутинга и т.п. И эти настройки сливаются с настройками с main.custom.php через функцию CMap::mergeArray(). Приоритет имеют настройки из main.custom.php</p>
+
+<p>Примеры файлов <a href="https://github.com/stamm/yii.blog/blob/master/src/protected/config/main.php">main.php</a>, <a href="https://github.com/Stamm/yii.blog/blob/master/src/protected/config/example.main.custom.php">main.custom.php</a></p>
+
+<p>Конфигурация консольного приложения работает схоже: сначала сливаются изменения из main.php ( включая main.custom.php) c console.php, а затем накладываются из console.custom.php. Настройки тестов работают аналогично.</p>
+
+<p>Естественно, у этой схемы есть свои минусы:</p>
+
+<p>В консольном приложении не может быть некоторых параметров, а некоторые нужно удалить. Например, нужно удалить параметр defaultController:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nb">unset</span><span class="p">(</span><span class="nv">$aConfig</span><span class="p">[</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">defaultController</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;]);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Или отключить Yii debug toolbar:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">components</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;][</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">log</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;][</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">routes</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;]</span> <span class="k">as</span> <span class="nv">$k</span> <span class="o">=&gt;</span> <span class="nv">$v</span> <span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="nv">$v</span><span class="p">[</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">class</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;]</span> <span class="o">==</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">XWebDebugRouter</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="p">){</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nb">unset</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">][</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="nv">$k</span><span class="p">]</span> <span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><a href="https://github.com/Stamm/yii.blog/tree/master/src/protected/config">Пример такой конфигурации</a></p>
+
+<h3>SphinxSQL</h3>
+
+<p>Есть 2 способа работы со sphinx из php: через api (используя библиотеку) и воспользоваться SphinxQL: получение данных через протокол mysql и используя запросы, очень схожие с синтаксисом MySQL-запросов.</p>
+
+<p>Для меня более предпочтителен второй вариант, не нужно таскать с собой библиотеку и все новые фишки будут реализованы в первую очередь в SphinxQL.</p>
+
+<p>Включаем в параметрах sphinx прослушивание через протокол mysql</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>searchd {
+</span><span class='line'>listen = 127.0.0.1:9306:mysql41
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Включаем в настройках yii компонент sphinx</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">sphinx</span><span class="s1">&#39; =&gt; array(&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s1">&lt;pre&gt;&lt;code&gt;&#39;</span><span class="nx">class</span><span class="s1">&#39; =&amp;gt; &#39;</span><span class="nb">system</span><span class="o">.</span><span class="nx">db</span><span class="o">.</span><span class="nx">CDbConnection</span><span class="s1">&#39;,</span>
+</span><span class='line'><span class="s1">&#39;</span><span class="nx">connectionString</span><span class="s1">&#39; =&amp;gt; &#39;</span><span class="nx">mysql</span><span class="o">:</span><span class="nx">host</span><span class="o">=</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">;</span><span class="nx">port</span><span class="o">=</span><span class="mi">9306</span><span class="err">&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь мы можем делать запросы:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$sSql</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">SELECT</span> <span class="nx">post_id</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="nx">FROM</span> <span class="nx">main</span>
+</span><span class='line'><span class="nx">WHERE</span>
+</span><span class='line'>    <span class="nx">MATCH</span><span class="p">(</span><span class="s1">&#39; . Yii::app()-&amp;gt;sphinx-&amp;gt;quoteValue(&#39;</span><span class="nx">yii</span><span class="s1">&#39;) . &#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">AND</span> <span class="nx">iscomment</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="nx">ORDER</span> <span class="nx">BY</span> <span class="o">@</span><span class="nx">weight</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">OPTION</span> <span class="nx">field_weights</span><span class="o">=</span><span class="p">(</span><span class="nx">title</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="nx">content</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nv">$ids</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">sphinx</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">createCommand</span><span class="p">(</span><span class="nv">$sSql</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">queryColumn</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: рецепты №1]]></title>
+    <link href="http://stamm.github.io/yii-cookbook-1/"/>
+    <updated>2012-03-23T19:19:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cookbook-1</id>
+    <content type="html"><![CDATA[<h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
+
+<p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">clientScript</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">packages</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span>   <span class="s1">&#39;highcharts&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;baseUrl&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;/js/highcharts/&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;js&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">array</span><span class="p">(</span><span class="nx">YII_DEBUG</span> <span class="o">?</span> <span class="s1">&#39;highcharts.src.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;highcharts.js&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;css&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;highcharts.css&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="s1">&#39;depends&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">),</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь вместо</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">clientScript</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerPackage</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">jquery</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;)</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerScriptFile</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">js</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">.</span><span class="nx">js</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;)</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerCssFile</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="o">/</span><span class="nx">js</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">/</span><span class="nx">highcharts</span><span class="o">.</span><span class="nx">css</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Пишем</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">clientScript</span>
+</span><span class='line'><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">registerPackage</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">highcharts</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>YII_DEBUG</h3>
+
+<p>Эта константа позволяет включать режим дебага и она же доставляет немного неудобства. Локально нужно устанавливать констатну YII_DEBUG в true, но не комитить это изменение нельзя. Т.е. перед комитом нужно выставлять значение в false. Мы же программисты, народ ленивый, поэтому тем меньше пальцедвижений, тем лучше.</p>
+
+<ul>
+<li>Можно воспользовать <a href="/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
+<li>Можно не добавлять файл в коммит</li>
+</ul>
+
+
+<p>Но эти варианты не подходят, когда используется консоль, нельзя будет использовать команду <strong>git add .</strong></p>
+
+<p>Решение очевидное: использовать директивы <a href="http://www.php.net/manual/en/ini.core.php#ini.auto-prepend-file">auto_prepend_file</a> При запуске любого php-файла, будет предварительно выполнятся наш файлик с установленной константой.</p>
+
+<p>Теперь пишем в файл с настройками сайта php-fpm <strong>/etc/php5/fpm/pool.d/super-site-on-yii.conf</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="p">[</span><span class="nx">php</span><span class="p">]</span>
+</span><span class='line'><span class="nx">php_admin_value</span><span class="p">[</span><span class="nx">auto_prepend_file</span><span class="p">]</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">yii_debug</span><span class="o">.</span><span class="nx">php</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файл /var/www/yii_debug.php</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">// Если включен профайлер xdebug</span>
+</span><span class='line'><span class="c1">//define(&amp;lsquo;YII_DEBUG&amp;rsquo;, empty($_GET[&amp;lsquo;XDEBUG_PROFILE&amp;rsquo;]));</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">YII_DEBUG</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span> <span class="k">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Автодополнение в PhpStorm</h3>
+
+<p>При подключении стороннего компонента или расширении стандартного хотелось бы «научить» IDE подсказывать</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">components</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">user</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;WebUser&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">),</span>
+</span><span class='line'>  <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">myext</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;MyExt&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Создаём файлик в любом месте, из которого он не сможет подключится автолоадерем. Например, в protected/autocomplete.php</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="o">?</span><span class="nx">php</span>
+</span><span class='line'><span class="o">/&lt;</span><span class="nx">em</span><span class="o">&gt;*</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">@</span><span class="nx">property</span> <span class="nx">WebUser</span> <span class="nv">$user</span>
+</span><span class='line'> <span class="o">*</span> <span class="o">@</span><span class="nx">property</span> <span class="nx">MyExt</span> <span class="nv">$myext</span>
+</span><span class='line'> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CApplication</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь по вводу Yii::app()&ndash;>myext PhpStorm будет посказывать методы из класса MyExt.</p>
+
+<p>Ещё можно заставить PhpStorm подсказывать в файлах представления (views)</p>
+
+<p>Обычно хватает стандартного набора ($this и $form), но в каждой конкретной view может быть свой набор переменных</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">/&lt;</span><span class="nx">strong</span><span class="o">&gt;</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$this</span> <span class="nx">Controller</span> <span class="o">*/</span>
+</span><span class='line'><span class="o">/&lt;/</span><span class="nx">strong</span><span class="o">&gt;</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$form</span> <span class="nx">CActiveForm</span> <span class="o">&lt;</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span><span class='line'><span class="o">/**</span> <span class="o">@</span><span class="k">var</span> <span class="nv">$model</span> <span class="nx">User</span> <span class="o">&lt;/</span><span class="nx">em</span><span class="o">&gt;/</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Последний метод можно полу-автоматизировать через шаблоны gii. Это остаётся в качестве самостоятельной работы читателя.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: автодополнение в консоли]]></title>
+    <link href="http://stamm.github.io/yii-console-completion/"/>
+    <updated>2011-10-23T18:57:00+04:00</updated>
+    <id>http://stamm.github.io/yii-console-completion</id>
+    <content type="html"><![CDATA[<p>Очень не хватало автодополнения комманд при вызове консольных комманд yii, чувствовал какую-то неполноценность yii в bash.</p>
+
+<p>На просторах интернета была найдена статья, позволяющая реализовать автодополнение с помощью родной unix-утилиты bash_completion.</p>
+
+<p>Если у вас проект находиться под управлением git, то просто добавляем сабмодуль:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git submodule add git://github.com/Stamm/yii-console-completion protected/extensions/complete/
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Или создайте файл LCompleteCommand.php в protected/extensions/complete/</p>
+
+<p>Теперь подключаем класс в конфигурационном файле для консольного приложения (обычно это console.php):</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">commandMap</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;complete&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;ext.complete.LCompleteCommand&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="c1">//&#39;bashFile&#39; =&amp;gt; &#39;/etc/bash_completion.d/yii_applications&#39; //Defaults to &amp;lt;/etc/bash_completion.d/yii_applications&amp;gt;. May be changed if needed</span>
+</span><span class='line'><span class="p">),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Пути до директории bash-completion могут различаться в зависимости от системы. Для Debian и Ubuntu можно оставить стандартный путь. В Mac OS X bash-completion был установлен с помощью homebrew, так что путь нужно сменить на /usr/local/etc/bash_completion.d/yii_applications</p>
+
+<p>Теперь выполняем комманду для создания bash-completion файла от root:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./yiic <span class="nb">complete </span>install
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь при создании новой сессии в bash будет работать автодополнение для yiic:</p>
+
+<ol>
+<li>Для приложения — набор возможных команд</li>
+<li>Для команды — набор возможных действий (actions) и именованых параметров действия по умолчанию</li>
+<li>Для действия — подсказки по ее именованым параметрам</li>
+</ol>
+
+
+<p>Источник: <a href="http://habr-sandbox.livejournal.com/230319.html">http://habr-sandbox.livejournal.com/230319.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: используем кэш в CActiveDataProvider]]></title>
+    <link href="http://stamm.github.io/yii-cache-cactivedataprovider/"/>
+    <updated>2011-10-17T18:48:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cache-cactivedataprovider</id>
+    <content type="html"><![CDATA[<p>Репост моей заметки из wiki: <a href="http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.">http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.</a></p>
+
+<p>Первый параметр в конструкторе <a href="http://www.yiiframework.com/doc/api/1.1/CActiveDataProvider/">CActiveDataProvider</a> может быть строковым значением с названием модели или экземпляр класса модели.</p>
+
+<p>Поэтому можно использовать <a href="http://www.yiiframework.com/doc/api/1.1/CActiveRecord#cache-detail">CActiveRecord::cache()</a> для кэширования, но нужно установить значение 3 у третьего параметра, потому что мы должны закэшировать 2 запроса: получение количества записей и само получение записей.</p>
+
+<p>Не забудьте использовать зависимости для принудительного протухания кэша.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$dependecy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CDbCacheDependency</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">SELECT</span> <span class="nx">MAX</span><span class="p">(</span><span class="nx">update_time</span><span class="p">)</span> <span class="nx">FROM</span> <span class="p">{{</span><span class="nx">post</span><span class="p">}}</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;)</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">cache</span><span class="p">(</span><span class="nv">$duration</span><span class="p">,</span> <span class="nv">$dependecy</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="k">array</span> <span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;criteria&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span> <span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;condition&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;status = 1&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;order&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;DESC create_time&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="s1">&#39;pagination&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span> <span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;pageSize&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="mi">20</span><span class="p">,</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: CGridView и запрос с group by и having by]]></title>
+    <link href="http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by/"/>
+    <updated>2011-10-15T18:46:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by</id>
+    <content type="html"><![CDATA[<p>Задача такая: вывести данные через компонент CGridView в YII, сгруппированные по определённому полю, а также применение условий по агрегированным данным.</p>
+
+<p>Возьмём простую таблицу:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>date | clicks</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Нам нужно получить сгруппированные данные по каждому часу.</p>
+
+<p>По сути нужно применить следующий запрос</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span>
+</span><span class='line'><span class="k">FROM</span> <span class="k">table</span>
+</span><span class='line'><span class="k">GROUP</span> <span class="k">BY</span> <span class="k">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Возникают следующие трудности в реализации через Yii:</p>
+
+<ul>
+<li>Yii не может посчитать общее количество, а соответственно будет неправильно создавать пагинатор. Yii просто обнуляет поля group by и having при подсчёте общего количества. Да ещё count(*) тут не сработает, нужно просто. посчитать количество строк, которое вернул запрос с группировкой</li>
+<li>Также нам не подходит использование where, чтобы искать по группированным данным. Тут нужно использовать having by.</li>
+<li>Сортировка. Yii автоматически подставляет поле без агрегирующей функции. А если использовать отношения, то ещё и подставит алиас главной таблицы (t.clicks).</li>
+</ul>
+
+
+<p>Соответственно, мы руками высчитываем общее количество и устанавливаем найденное значение в атрибут totalItemCount компонента CActiveDataProvider</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">search</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">=</span><span class="k">new</span> <span class="nx">CDbCriteria</span><span class="p">;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">compare</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nb">date</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span><span class="k">true</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;//</span> <span class="err">Скопипастил</span> <span class="err">из</span> <span class="err">исходников</span> <span class="nx">yii</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^(?:\s*(&amp;lt;&amp;gt;|&amp;lt;=|&amp;gt;=|&amp;lt;|&amp;gt;|=))(.*)$/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">clicks</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$clicks</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'>  <span class="nv">$op</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$clicks</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">clicks</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$op</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="c1">// Проставляем having by</span>
+</span><span class='line'><span class="nv">$criteria</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">having</span> <span class="o">=</span> <span class="s1">&#39;SUM(clicks) &#39;</span> <span class="o">.</span> <span class="nv">$op</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">db</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">quoteValue</span><span class="p">(</span><span class="nv">$clicks</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">}</span>
+</span><span class='line'>  <span class="c1">// Выбираем дату без минут и секунд И сумму кликов за определённый час</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span> <span class="k">AS</span> <span class="nb">date</span><span class="p">,</span> <span class="nx">SUM</span><span class="p">(</span><span class="nx">clicks</span><span class="p">)</span> <span class="k">AS</span> <span class="nx">clicks</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
+</span><span class='line'>  <span class="c1">// Применяем группировку по часам</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">group</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="nx">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="c1">// Клонируем объект критерии, чтобы посчитать общее количество записей</span>
+</span><span class='line'>  <span class="nv">$countCriteria</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$criteria</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$countCriteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="o">&amp;</span><span class="nx">lsquo</span><span class="p">;</span><span class="mi">1</span><span class="o">&amp;</span><span class="nx">rsquo</span><span class="p">;;</span>
+</span><span class='line'>  <span class="nv">$sum</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">&amp;</span><span class="nx">ndash</span><span class="p">;</span><span class="o">&gt;</span><span class="nx">findAll</span><span class="p">(</span><span class="nv">$countCriteria</span><span class="p">));</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="nv">$pages</span><span class="o">=</span><span class="k">new</span> <span class="nx">CPagination</span><span class="p">(</span><span class="nv">$sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">pageSize</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">applyLimit</span><span class="p">(</span><span class="nv">$criteria</span><span class="p">);</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="k">return</span> <span class="k">new</span> <span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nb">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span><span class="o">&lt;/</span><span class="nx">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="s1">&#39;totalItemCount&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="nv">$sum</span><span class="p">,</span>
+</span><span class='line'><span class="s1">&#39;criteria&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nv">$criteria</span><span class="p">,</span>
+</span><span class='line'><span class="s1">&#39;pagination&#39;</span><span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nv">$pages</span><span class="p">,</span>
+</span><span class='line'><span class="s1">&#39;sort&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;attributes&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="c1">// Тут устанавливаем свою сортировку по нужному полю</span>
+</span><span class='line'>    <span class="s1">&#39;clicks&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>      <span class="s1">&#39;asc&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;SUM(clicks) ASC&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s1">&#39;desc&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;SUM(clicks) DESC&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>  <span class="p">),</span>
+</span><span class='line'>  <span class="s1">&#39;defaultOrder&#39;</span> <span class="o">=&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="s1">&#39;date DESC&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">),</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="nx">code</span><span class="o">&gt;&lt;/</span><span class="nx">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>   <span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+]]></content>
+  </entry>
+  
+</feed>

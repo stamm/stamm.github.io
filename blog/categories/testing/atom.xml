@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: testing | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/testing/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Яндекс.танк — инструмент нагрузочного тестирования]]></title>
+    <link href="http://stamm.github.io/yandex-tank-load-testing/"/>
+    <updated>2012-08-02T19:30:00+04:00</updated>
+    <id>http://stamm.github.io/yandex-tank-load-testing</id>
+    <content type="html"><![CDATA[<p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
+
+<p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+<p>Вот сам интерфейс:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
+
+<p>Сам проект и документация находится на github'е: <a href="https://github.com/yandex-load/yandex-tank">https://github.com/yandex-load/yandex-tank</a></p>
+
+<p>В кратце обрисую возможности:</p>
+
+<p>Можно нагружать одну страницу или сразу список урлов (которые будут запрашиваться примерно в одинаковых соотношениях).</p>
+
+<p>А можно самому составить список запросов со своими заголовками. Например, можно реализовать нагрузку от запросов от анонимных пользователей и залогиненных. Через скрипт (php, python, bash, etc) залогиниться на сайте и получить нужные куки. Сгенерировать в нужном формате данные для танка и запустить тест.</p>
+
+<p>Танк позволяет создать <a href="https://github.com/yandex-load/yandex-tank#first-step">3 вида нагрузки</a>:</p>
+
+<ul>
+<li>Постоянная &ndash; указывается количество запросов и время</li>
+<li>Линейный рост &ndash; указывается начальное и конечное значение и время</li>
+<li>Рост шагами &ndash; указывается начальное и конечное значение, шаг увеличения нагрузки и время.</li>
+</ul>
+
+
+<p>Причём эти виды нагрузки можно комбинировать в одном тесте.</p>
+
+<p>Особенно хочеться отметить простоту и понятность синтаксиса.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Подогреваем кэш&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>load = const(1, 10s)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Линейно увеличиваем нагрузку с одного запроса в секунду до 10 в течение 2 минут&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>load = line(1, 10, 2m)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Начинаем нагружать 10 запросами в секунду в течение 1 минуты, потом увеличиваем на 5 запросов и так до 40. Т.е. на каждый шаг будет затрачено по минут&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>load = line(10, 40, 5, 1m)&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Указываем нагружаемых хост, только ip (!)&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>address = 192.168.100.254:80&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Посылаемые заголовки&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>header = [Host: test.server]
+</span><span class='line'>header = [Connection: close]
+</span><span class='line'>header_http = 1.1&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Нагружаемые страницы&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>uri = / uri = /another_page/</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Вот что случается, когда сервер не справляется:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
+
+<p>Думаю, что проект со временем будет обрастаться графическими интерфейсами, разработанными самим яндексом или сообществом.</p>
+
+<p>Я даже уже придумал, что можно сделать. Получать статистику на нагружаемом сервере через vmstat и выводить красивые графики для быстрого нахождения наиболее узкого места: память, cpu, io.</p>
+]]></content>
+  </entry>
+  
+</feed>

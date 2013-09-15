@@ -1,0 +1,2859 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
+    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <updated>2013-03-04T19:02:00+04:00</updated>
+    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
+
+<p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Incorrect MySQL client library version! This gem was compiled for 5.5.28 but the client library is 5.6.10.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если ставить так, как написано в readme:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 --with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure>
+
+
+<p>То возникает ошибка:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ERROR: While executing gem ... (OptionParser::InvalidOption) invalid option: --with-mysql-config</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Нужно добавить больше тирешек и кавычек</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install mysql2 -- '--with-mysql-config=/usr/local/bin/mysql_config'</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>UPDATE:</h2>
+
+<p>Чтобы bundler всегда использовал данный параметр, выполните команду:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>bundle config build.mysql2 --with-mysql-config=/usr/local/bin/mysql_config</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Как установить ruby 2.0.0-p0]]></title>
+    <link href="http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0/"/>
+    <updated>2013-02-24T18:56:00+04:00</updated>
+    <id>http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0</id>
+    <content type="html"><![CDATA[<p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
+
+<p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Error running 'env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure --disable-install-doc --prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 --with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite --disable-shared', please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log 
+</span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Или ошибка при запуске bundle install:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/Users/stamm/.rvm/rubies/ruby-2.0.0-p0/lib/ruby/2.0.0/net/http.rb:917:in `connect': SSL_connect returned=1 errno=0 state=SSLv3 read server certificate B: certificate verify failed (OpenSSL::SSL::SSLError)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Чтобы избавиться от этих ошибок, нужно поставить openssl и gcc:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm pkg install openssl
+</span><span class='line'>brew install gcc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>И переустановить с нужными флагами:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rvm reinstall ruby-2.0.0-p0 --with-gcc=gcc-4.7 --with-openssl-dir=$rvm_path/usr</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ruby 2.0.0 требуется bundler 1.3, который ещё не вышел. Его можно
+поставить:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install --pre bundler</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Парад ссылок №2]]></title>
+    <link href="http://stamm.github.io/links-parade-2/"/>
+    <updated>2013-02-20T19:48:00+04:00</updated>
+    <id>http://stamm.github.io/links-parade-2</id>
+    <content type="html"><![CDATA[<h2>Yii</h2>
+
+<ul>
+<li><a href="http://yiiframework.ru/forum/viewtopic.php?f=17&amp;t=10795">Вышел плагин для phpstorm</a>, поддерживающий yii. Надеюсь автор не забросит его, и из этого получиться что-то более функциональное.</li>
+</ul>
+
+
+<h2>Тестирование</h2>
+
+<ul>
+<li><a href="https://saucelabs.com/home">Функиональное тестирования как сервис</a> &ndash; поддерживаются почти все популярные языки, все актуальные браузеры. Сам не пробовал, но судя по фичам у сервиса будут свои пользователи.</li>
+<li><a href="https://coveralls.io/">Процент покрытие тестами в ruby on rails</a>. Работает в связке с travis ci. Сейчас процедура такая: пушим на github, travis-ci выполняет тесты, coveralls показывает как изменилось покрытие кода и показывает красивые отчёты об изменениях. При этом не держа у себя сервер и не платя ни копейки.</li>
+<li>Крутое <a href="%D0%B2%D0%B8%D0%B4%D0%B5%D0%BE%20%D1%81%20%D0%B4%D0%B5%D0%BC%D0%BE%20%D0%BF%D0%BE%20cucumber">видео с демо по cucumber</a>. Можно довольно быстро понять как правильно писать свои тесты на cucumber&#8217;е (<a href="https://github.com/mattwynne/bdd-exchange-london-2011-code/tree/master/features/support">код на github</a>).</li>
+</ul>
+
+
+<h2>Нагрузочное тестирование</h2>
+
+<ul>
+<li><a href="%D0%A1%D0%BE%D0%B1%D0%B8%D1%80%D0%B0%D0%B5%D0%BC%20%D1%81%D1%82%D0%B0%D1%82%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D1%83%20%D1%81%20%D0%BD%D0%B0%D0%B3%D1%80%D1%83%D0%B6%D0%B0%D0%B5%D0%BC%D0%BE%D0%B9%20%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D0%BE%D0%B9">Собираем статистику с нагружаемой машины</a> с помощью яндекс-танка.</li>
+</ul>
+
+
+<h2>Разное</h2>
+
+<ul>
+<li><a href="http://csolg.com/blogs/nastroika-rezervnogo-arhivirovaniya-backup-ruby-on-rails-32-proektov">Создание бэкапов с помощью ruby</a> &ndash; это вам не <a href="http://stamm.github.io/bacula-backup">монструозные конфиги бакулы</a>, тут всё быстро и понятно.</li>
+<li>Прикольный <a href="http://shopify.github.com/dashing">интерфес для мониторинга показателей</a>, написанные на ruby. Есть несколько предопределённый виджетов для отображения kpi. Добавляется блок очень быстро и приятно. В крайнем случае можно написать свой: ruby + coffee + sass. Работает без ajax-запросов, на основе постоянного соединения.</li>
+<li><a href="http://runnable.com/">http://runnable.com/</a> &ndash; позволяет выполнить код на скриптовом языке прямо в браузере. Что-то типо сервиса <a href="http://jsfiddle.net/">jsfiddle</a>, только для серверных языков. Пока поддерживается nodejs, но обещают поддержку php, ruby.</li>
+<li><a href="http://www.clipmenu.com/">Бесплатный менеджер буфера обмена для MacOS</a>. Теперь работать без неё не могу.</li>
+<li>Очень интересная новость: <a href="http://support.google.com/webmasters/bin/answer.py?hl=ru&amp;answer=2692911">гугл запустил маркеры</a> &ndash; (<a href="http://www.youtube.com/watch?v=WrEJds3QeTw&amp;feature=youtu.be&amp;hd=1">видео</a>). В кратце позволяет мне, как администратору сайта кликая и выделяю мышью указывать структуру информации на сайте. Сейчас поддерживаются только мероприятия, но с развитием можно будет указать много другой мета-информации. Но я за то, чтобы использовать микро-форматы. По сути гугл хочет переложить работу с себя на хозяев сайта. Посмотрим что из этого получится.</li>
+<li>Крутое видео о том, <a href="http://www.youtube.com/watch?v=wdBNjHZPUsI&amp;feature=youtu.be">зачем нужен DevOps</a>. Вообще как-то начинает развиваться эта движуха, если кто не знает, советую почитать</li>
+<li>Cмешная картинка <a href="http://pic.twitter.com/wQMutooX">ковёр-самолёт</a>. Это к тому, что все понимают в свою меру понимания. Всегда помнить, когда пишите задачу или ТЗ ;)</li>
+<li>Забавные гифки, что называется, до слёз: <a href="http://devopsreactions.tumblr.com/">раз</a>, <a href="http://www.zombieit.net/posts/zhizn-razrabotchika-v-gif-animacijah">два</a>.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Парад ссылок №1]]></title>
+    <link href="http://stamm.github.io/links-parade-1/"/>
+    <updated>2013-02-11T19:43:00+04:00</updated>
+    <id>http://stamm.github.io/links-parade-1</id>
+    <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
+
+<p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<h2>Развёртывание и деплой</h2>
+
+<p>С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение <a href="http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/">caphub от компании railsware</a>, позволяющая структурировать задания для разных приложений.</p>
+
+<p>Отличный цикл статей о том, как <a href="http://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1/">начать работать с chef</a> от Алексея Васильего. Chef &ndash; это инструмент для автоматизации настроек парка серверов.</p>
+
+<h2>PHP</h2>
+
+<p><a href="https://segment.io/blog/how-to-make-async-requests-in-php/">Как сделать асинхронный запрос</a></p>
+
+<p><a href="http://nitschinger.at/Benchmarking-Cache-Transcoders-in-PHP">Сравнение упаковщиков для php</a></p>
+
+<p><a href="http://unassumingphp.com/managing-php-application-builds-with-phing/">Использование phing для собирания проекта</a>. Ребята, у кого есть возможность &ndash; используйте capistrano или rake.</p>
+
+<p><a href="https://wiki.php.net/rfc/optimizerplus">Новый опкэшер в PHP 5.5.0</a>. Обратите внимание на <a href="https://docs.google.com/spreadsheet/ccc?key=0Agw0hgqCxf0cdEZsdm1yNjd3amJReG05MzJYSF9USGc#gid=0">табличку сравнения</a>: неплохой прирост.</p>
+
+<p><a href="http://phpmaster.com/php-as-a-service-fortrabbit/">Php как сервис</a>.</p>
+
+<h2>Ruby, RoR</h2>
+
+<p>Начался новый <a href="http://www.rwpod.com/">подкаст rwpod от того же Алексея Васильего и ко</a>. Хороший подкаст, аккумулирующий новости не только из ruby-сообщества, но и веб-новостей. Пока нет харкорных тем, но я думаю, всё впереди.</p>
+
+<p><a href="http://habrahabr.ru/company/JetBrains/blog/168655/">Вышел RubyMine5</a>. Прошу обратить внимание на видео о его возможностей.</p>
+
+<p>У кого есть свои скрипты-помошники, предлагаю переехать на rake. Возникали проблемы с <a href="http://www.scottw.com/zsh-rake-parameters">zsh</a>, <a href="http://viget.com/extend/protip-passing-parameters-to-your-rake-tasks">передачи параметра в задачу</a>. Вцелом хороший инструмент не только для ruby разработчиков.</p>
+
+<p>Должна быть интересная <a href="http://securingrails.com/">книга по устранению уязвимостей в rails-приложении</a>. Обязательно посмотрите ролик.</p>
+
+<p>Узнайте, <a href="http://ablogaboutcode.com/2012/05/03/benchmark-your-bundle/">сколько же времени загружаются ваши гемы</a>.</p>
+
+<h2>Javascript</h2>
+
+<p><a href="http://www.jsdb.io/">JsDB &ndash; каталог js-библиотек</a></p>
+
+<p><a href="http://casperjs.org/">CasperJs &ndash; тестирование js и не только</a>. Использует PhantomJS.</p>
+
+<p><a href="https://github.com/unconed/MathBox.js">Рисуем сложные графики</a>. <a href="http://acko.net/blog/making-mathbox/">Демки</a>.</p>
+
+<h2>Разное</h2>
+
+<p><a href="http://kapeli.com/">Dash &ndash; Offline-документация для macos</a> по многочисленным языкам и фреймворкам: php, yii, ruby, gems, ror, javascript, backbone, mongodb, postgresql, mysql и это далеко не весь перечень. Однозначно в повседневное использование!</p>
+
+<p><a href="https://www.cheapssls.com/comodo-ssl-certificates/positivessl.html?years=5">Очень дешёвые SSL-сертификаты</a>. Например, на 5 лет за $25.</p>
+
+<p><a href="http://sphinxsearch.com/blog/2013/02/07/sphinx-2-1-json-attributes/">Поддержка JSON-атрибутов в sphinx 2.1</a>. Sphinx не отстаёт <a href="http://www.postgresql.org/docs/9.2/static/functions-json.html">от postgresql</a>.</p>
+
+<p><a href="http://zachholman.com/spark/">Spark &ndash; интересная визуализация небольших данных</a>. Скарливаем ему ряд значений: spark 0 30 55 80 33 150, и получаем ▁▂▃▅▂▇</p>
+
+<p><a href="http://www.codeschool.com/">Очень крутое обучение от codeschool</a>. Схема такая: вам показывают мини-лекцию, потом вы должны выполнить задание, т.е. писать код прямо в браузуере и он проходит проверку. Также у ребят есть скринкасты. Обучение не скучное и довольно эффективное.</p>
+
+<p>Нравиться ли вам такая рубрика? Продолжать?</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
+    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <updated>2012-11-28T19:40:00+04:00</updated>
+    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep&#8217;а в 10 раз</a></p>
+
+<p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ brew install grep
+</span><span class='line'>$ time /usr/bin/grep "GET /out" nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>/usr/bin/grep "GET /out" nginx-access_log.2 26.49s user 0.28s system 97% cpu 27.443 total wc -l 0.03s user 0.02s system 0% cpu 27.443 total
+</span><span class='line'>
+</span><span class='line'>$ tmp time grep "GET /out" nginx-access_log.2 | wc -l
+</span><span class='line'>140858
+</span><span class='line'>grep "GET /out" nginx-access_log.2 0.58s user 0.15s system 98% cpu 0.748 total wc -l 0.03s user 0.01s system 6% cpu 0.747 total</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ограничение прав пользователей в git]]></title>
+    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <updated>2012-10-03T19:38:00+04:00</updated>
+    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <content type="html"><![CDATA[<p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
+
+<p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
+
+<p>Поэтому нужно ограничивать push в репозиторий на основе этих правил: тестерам дать право изменять файлы только в рамках одной директории. А программистам не давать возможность пушить в мастер, только какой-то группе доверенных программистов, а по сути тим-лиду.</p>
+
+<p>Мы используем gitolite и он позволяет это сделать на уровне конфигурации.</p>
+
+<p>Есть следующие группы пользователей</p>
+
+<ul>
+<li>мега-админы &ndash; они и только они могут менять историю в репе. Это чревато, но разрешено только одному человеку для непредвиденных ситуаций =)</li>
+<li>гит-мастера — это те, кто может пушить в мастер (по сути мёржить тоже), тэгировать, создавать и удалять ветки с версией релиза и хотфиксные ветки. Название веток начинается соответственно с v и hf. Т.е: v1.0.1 и hf.1.0.1</li>
+<li>разработчики — это пользователи, которые не могут пушить в мастер и создавать тэги. Также не могут удалить вертку с версией релиза и хотфиксную ветку. Могут создавать и удалять любые другие ветки.</li>
+<li>тестеры — ограниченные пользователи. Могут менять файлы в только пределах директории protected/test.</li>
+<li>только чтение — давать возможность только для чтения репы. Например, для технических писателей.</li>
+<li>группа аутсорсеров &ndash; у них свои порядки, но они не могут удалить ветки master, dev, hotfixes, release</li>
+</ul>
+
+
+<p>Есть 5 репозиториев: site, mobile, api, common-modules, outsource-site</p>
+
+<p>Только на site распространяются правила для тестировщиков.</p>
+
+<p>На site, mobile, api, common-modules — наши основные диктаторские правила</p>
+
+<p>На outsource-site — «мягкие» правила.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>repo    gitolite-admin
+</span><span class='line'>        RW+     =   id_rsa
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группировка веток или путей =============
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Не разрешать писать в master и создавать тэги
+</span><span class='line'>@not_write = master$ refs/tags
+</span><span class='line'># Не разрешать создавать ветки и удалять начинающиеся с v и hf.
+</span><span class='line'>@not_create = v hf.
+</span><span class='line'># Тестеры могут писать только сюда
+</span><span class='line'>@tester_write_only = NAME/protected/tests/
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Эти ветки не могут удалять обычные программеры
+</span><span class='line'>@old_branches = master$ dev$ hotfixes$ realease$
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># ========== Группы пользователей ==========
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Админы имеют право писать всюду
+</span><span class='line'>@admins = id_rsa
+</span><span class='line'># Гит-админы могут писать в мастер и создавать ветки из @not_create
+</span><span class='line'>@git-admins = zagirov
+</span><span class='line'># Разработчики
+</span><span class='line'>@developers = @git-admins ivanov petrov sidorov
+</span><span class='line'># Тестеры имеют право на запись только в @tester_write_only
+</span><span class='line'>@testers = test-girl
+</span><span class='line'># Только на чтение
+</span><span class='line'>@developers-ro = tech-writer
+</span><span class='line'># Аутсорсеры со своими правилами
+</span><span class='line'>@outsource = five-hard-dev1 five-hard-dev2
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># =========== Правила ===================
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Правила применяются для всех
+</span><span class='line'>repo @all
+</span><span class='line'>  RW+CD                      = @admins
+</span><span class='line'>
+</span><span class='line'># Главный сайт с тестами
+</span><span class='line'>repo  site
+</span><span class='line'>  # Правило для тестировщиков
+</span><span class='line'>  # Если оно создаётся, ниже должно быть правило, RWCD NAME/ = @developers
+</span><span class='line'>  # Оно разрешает другим писать сюда
+</span><span class='line'>  RW                         = @testers
+</span><span class='line'>  RW   @tester_write_only    = @testers
+</span><span class='line'>  R                          = @testers
+</span><span class='line'>  -                          = @testers
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>#Группа, куда применяются общие правила работы с ветками @git-branch-rules
+</span><span class='line'>@git-branch-rules = site mobile api common-modules
+</span><span class='line'>
+</span><span class='line'>repo @git-branch-rules
+</span><span class='line'>  # Разрешаем писать в @not_write для @git-admins
+</span><span class='line'>  # У @developers на @not_write только чтение
+</span><span class='line'>  RWCD @not_write            = @git-admins
+</span><span class='line'>  -    @not_write            = @git-admins
+</span><span class='line'>  R    @not_write            = @developers
+</span><span class='line'>  -    @not_write            = @developers
+</span><span class='line'>
+</span><span class='line'>  # Разрешаем создавать и удалять ветки @not_create для @git-admins
+</span><span class='line'>  # @developers не могут создавать удалять @not_create
+</span><span class='line'>  RWCD @not_create           = @git-admins
+</span><span class='line'>  -    @not_create           = @git-admins
+</span><span class='line'>  RW   @not_create           = @developers
+</span><span class='line'>  -    @not_create           = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers могуть писать и создавать в @old_branches, но не удалять их
+</span><span class='line'>  RWC  @old_branches         = @developers
+</span><span class='line'>  -    @old_branches         = @developers
+</span><span class='line'>
+</span><span class='line'>  # Для всего остального разрешаем доступ для @developers
+</span><span class='line'>  RWCD                       = @developers
+</span><span class='line'>  # Это нужно, т.к раньше для @testers запретили запись для определённых файлов
+</span><span class='line'>  RWCD NAME/                 = @developers
+</span><span class='line'>
+</span><span class='line'>  # @developers-ro могут только читать
+</span><span class='line'>  R                          = @developers-ro
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Это обычный реп, без жёстких правил. Здесь просто запрещается удалять ветки master dev hotfixes realease
+</span><span class='line'>repo  outsource-site
+</span><span class='line'>  RWC  @old_branches         = @outsource
+</span><span class='line'>  -    @old_branches         = @outsource
+</span><span class='line'>  RWCD                       = @outsource</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Если вы используете не gitolite, а другой продукт: gitosis или github, то скорее всего сделать это можно на хуках.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Удаление данных из коллекции в Mongodb без блокировки]]></title>
+    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <updated>2012-09-07T19:35:00+04:00</updated>
+    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <content type="html"><![CDATA[<p>Задача: удалять устаревшие данные из большой коллекции монги. Можно пойти в лоб и удалять так:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span>
+</span><span class='line'><span class="nx">db</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">remove</span><span class="p">({</span><span class="nx">updating_time</span><span class="o">:</span> <span class="p">{</span><span class="nx">$lte</span><span class="o">:</span> <span class="nx">time</span><span class="p">}})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>В этом случае возникнет блокировка, и запросы на чтение будут очень долго выполняется. А система устроена таким образом, что постоянно вставлять и обновлять данные из этой коллекции.</p>
+
+<p>Удаление с указанием лимита в монге не существует, поэтому приходиться писать свои велосипеды.</p>
+
+<p>Скрипт выбирает от 10к до 20к записей и удаляет их по _id (по 3к за раз). Если выборка + удаление длилось больше 10 секунд, то удаляется только 1000 записей. Это сделано на всякий случай, когда идёт активная нагрузка на коллекцию (в моём случае активная вставка по 10к элементов).</p>
+
+<p>Все приведённые значения подобраны импирическим путём под конкретную задачу.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">microtime</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Удаляет данные из монги частями</span>
+</span><span class='line'><span class="cm"> * @param last_time - время последнего запроса</span>
+</span><span class='line'><span class="cm"> * @param collection - имя коллекции</span>
+</span><span class='line'><span class="cm"> * @param criteria - критерия для удаления</span>
+</span><span class='line'><span class="cm"> * @return {Array}</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">delete_data</span><span class="p">(</span><span class="nx">last_time</span><span class="p">,</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">ids</span> <span class="o">=</span> <span class="p">[],</span>
+</span><span class='line'>    <span class="nx">start_time</span> <span class="o">=</span> <span class="nx">microtime</span><span class="p">(),</span>
+</span><span class='line'>    <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">last_time</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">count</span> <span class="o">=</span> <span class="mi">10000</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">((</span><span class="nb">Math</span><span class="p">.</span><span class="nx">random</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="mi">20000</span><span class="o">-</span><span class="mi">10000</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">count</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">find</span><span class="p">(</span><span class="nx">criteria</span><span class="p">,</span> <span class="p">{</span><span class="nx">_id</span><span class="o">:</span> <span class="mi">1</span><span class="p">}).</span><span class="nx">limit</span><span class="p">(</span><span class="nx">count</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">u</span><span class="p">){</span>
+</span><span class='line'>    <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">ids</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">_id</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">%</span> <span class="mi">3000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">remove</span><span class="p">({</span><span class="nx">_id</span><span class="o">:</span> <span class="p">{</span><span class="nx">$in</span><span class="o">:</span> <span class="nx">ids</span> <span class="p">}});</span>
+</span><span class='line'>      <span class="nx">ids</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">ids</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">remove</span><span class="p">({</span><span class="nx">_id</span><span class="o">:</span> <span class="p">{</span><span class="nx">$in</span><span class="o">:</span> <span class="nx">ids</span> <span class="p">}});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">last_time</span> <span class="o">=</span> <span class="nx">microtime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start_time</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="p">[</span><span class="nx">i</span><span class="p">,</span> <span class="nx">last_time</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="k">delete</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">last_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">last_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">while</span> <span class="p">(</span><span class="nx">last_count</span> <span class="o">&amp;&amp;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">1000</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nx">result</span> <span class="o">=</span> <span class="nx">delete_data</span><span class="p">(</span><span class="nx">last_time</span><span class="p">,</span> <span class="nx">collection</span><span class="p">,</span> <span class="nx">criteria</span><span class="p">);</span>
+</span><span class='line'>    <span class="nx">last_count</span> <span class="o">=</span> <span class="nx">result</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>    <span class="nx">last_time</span> <span class="o">=</span> <span class="nx">result</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>    <span class="nx">print</span><span class="p">(</span><span class="nx">last_count</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">last_time</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">i</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">print</span><span class="p">(</span><span class="s2">&quot;count: &quot;</span> <span class="o">+</span> <span class="nx">db</span><span class="p">[</span><span class="nx">collection</span><span class="p">].</span><span class="nx">count</span><span class="p">());</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">time</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">;</span>
+</span><span class='line'><span class="k">delete</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">{</span><span class="nx">updating_time</span><span class="o">:</span> <span class="p">{</span><span class="nx">$lte</span><span class="o">:</span> <span class="nx">time</span><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Вызывать так:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">mongo</span> <span class="o">-</span><span class="nx">u</span> <span class="s2">&quot;user&quot;</span> <span class="o">-</span><span class="nx">p</span> <span class="o">&lt;</span> <span class="nx">mongo_remove</span><span class="p">.</span><span class="nx">js</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Яндекс.танк — инструмент нагрузочного тестирования]]></title>
+    <link href="http://stamm.github.io/yandex-tank-load-testing/"/>
+    <updated>2012-08-02T19:30:00+04:00</updated>
+    <id>http://stamm.github.io/yandex-tank-load-testing</id>
+    <content type="html"><![CDATA[<p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
+
+<p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+<p>Вот сам интерфейс:</p>
+
+<p><img src="http://stamm.github.io/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
+
+<p>Сам проект и документация находится на github&#8217;е: <a href="https://github.com/yandex-load/yandex-tank">https://github.com/yandex-load/yandex-tank</a></p>
+
+<p>В кратце обрисую возможности:</p>
+
+<p>Можно нагружать одну страницу или сразу список урлов (которые будут запрашиваться примерно в одинаковых соотношениях).</p>
+
+<p>А можно самому составить список запросов со своими заголовками. Например, можно реализовать нагрузку от запросов от анонимных пользователей и залогиненных. Через скрипт (php, python, bash, etc) залогиниться на сайте и получить нужные куки. Сгенерировать в нужном формате данные для танка и запустить тест.</p>
+
+<p>Танк позволяет создать <a href="https://github.com/yandex-load/yandex-tank#first-step">3 вида нагрузки</a>:</p>
+
+<ul>
+<li>Постоянная &ndash; указывается количество запросов и время</li>
+<li>Линейный рост &ndash; указывается начальное и конечное значение и время</li>
+<li>Рост шагами &ndash; указывается начальное и конечное значение, шаг увеличения нагрузки и время.</li>
+</ul>
+
+
+<p>Причём эти виды нагрузки можно комбинировать в одном тесте.</p>
+
+<p>Особенно хочеться отметить простоту и понятность синтаксиса.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#Подогреваем кэш
+</span><span class='line'>load = const(1, 10s)
+</span><span class='line'># Линейно увеличиваем нагрузку с одного запроса в секунду до 10 в течение 2 минут
+</span><span class='line'>load = line(1, 10, 2m)
+</span><span class='line'># Начинаем нагружать 10 запросами в секунду в течение 1 минуты, потом увеличиваем на 5 запросов и так до 40. Т.е. на каждый шаг будет затрачено по минут
+</span><span class='line'>load = line(10, 40, 5, 1m)
+</span><span class='line'># Указываем нагружаемых хост, только ip (!)
+</span><span class='line'>address = 192.168.100.254:80
+</span><span class='line'># Посылаемые заголовки
+</span><span class='line'>header = [Host: test.server]
+</span><span class='line'>header = [Connection: close]
+</span><span class='line'>header_http = 1.1
+</span><span class='line'># Нагружаемые страницы
+</span><span class='line'>uri = / uri = /another_page/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Вот что случается, когда сервер не справляется:</p>
+
+<p><img src="http://stamm.github.io/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
+
+<p>Думаю, что проект со временем будет обрастаться графическими интерфейсами, разработанными самим яндексом или сообществом.</p>
+
+<p>Я даже уже придумал, что можно сделать. Получать статистику на нагружаемом сервере через vmstat и выводить красивые графики для быстрого нахождения наиболее узкого места: память, cpu, io.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: рецепты №2]]></title>
+    <link href="http://stamm.github.io/yii-cookbook-2/"/>
+    <updated>2012-03-26T19:23:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cookbook-2</id>
+    <content type="html"><![CDATA[<p>Продолжаю делится интересным о Yii</p>
+
+<h3>Шифрование данных</h3>
+
+<p>Иногда требуется зашировать данные с возможностью последующей обратной дешифровкой.</p>
+
+<p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
+
+<p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;components&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;securityManager&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;cryptAlgorithm&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;rijndael-256&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;ofb&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span class='line'>    <span class="s1">&#39;encryptionKey&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;pnkRVLZC6Oj87H2G8qmsNN&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$encrypt</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">securityManager</span><span class="o">-&gt;</span><span class="na">encrypt</span><span class="p">(</span><span class="s1">&#39;очень важные данные&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">securityManager</span><span class="o">-&gt;</span><span class="na">decrypt</span><span class="p">(</span><span class="nv">$encrypt</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Примечания:</p>
+
+<ul>
+<li>Чтобы использовать шифрованные данные в виде параметров в get-запросе, нужно использовать функцию base64_encode() и base64_decode()</li>
+<li>Можно использовать разные ключи, передав второй параметр в функции CSecurityManager::encrypt() и CSecurityManager::decrypt()</li>
+</ul>
+
+
+<h3>Организация конфигураций</h3>
+
+<p>В Yii существует 3 уровня конфигураций: веб-приложение, консольное приложение, тесты. Требуется прописывать в этих 3 файлах часть одинаковых конфигураций: пути для импорта, конфигурация базы, правила роутов. Так же нужно убрать настройки из системы контроля версии файлы, которые могут быть разные на разных серверах или компьютерах разработчиков: подключение к базе, разных уровень логирования, кэширование. Нужно оставить только &ldquo;болванку&rdquo; конфигураций, которые корректируются в связи с необходимостью.</p>
+
+<p>Схемотично такую систему можно изобразить так:</p>
+
+<p><img src="http://stamm.github.io/images/yii-cookbook-2/yii-config.png" alt="yii-config" /></p>
+
+<p>Все файлы, имеющие custom в имени, убираются из системы контроля версии (в моём случае добавляются в <a href="https://github.com/stamm/yii.blog/blob/master/.gitignore">.gitignore</a>). Вместо них создаются файлы-примеры для настройки: example.main.custom.php, example.console.custom.php, example.test.custom.php.</p>
+
+<p>Для веб-приложения используются 2 файла: main.php и main.custom.php.</p>
+
+<p>В main.custom.php пишутся индивидуальные настройки: подключение к mysql, сервер кэширования. У разработчика включаются gii, yii-debug-toolbar, добавляются вспомогательные режимы логирования, профилирования.</p>
+
+<p>В main.php пишутся все настройки, которые не будут менятся для конкретного сервера: пути импорта, правила роутинга и т.п. И эти настройки сливаются с настройками с main.custom.php через функцию CMap::mergeArray(). Приоритет имеют настройки из main.custom.php</p>
+
+<p>Примеры файлов <a href="https://github.com/stamm/yii.blog/blob/master/src/protected/config/main.php">main.php</a>, <a href="https://github.com/Stamm/yii.blog/blob/master/src/protected/config/example.main.custom.php">main.custom.php</a></p>
+
+<p>Конфигурация консольного приложения работает схоже: сначала сливаются изменения из main.php ( включая main.custom.php) c console.php, а затем накладываются из console.custom.php. Настройки тестов работают аналогично.</p>
+
+<p>Естественно, у этой схемы есть свои минусы:</p>
+
+<p>В консольном приложении не может быть некоторых параметров, а некоторые нужно удалить. Например, нужно удалить параметр defaultController:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nb">unset</span><span class="p">(</span><span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;defaultController&#39;</span><span class="p">]);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Или отключить Yii debug toolbar:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">][</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;routes&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$k</span> <span class="o">=&gt;</span> <span class="nv">$v</span> <span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="nv">$v</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;XWebDebugRouter&#39;</span> <span class="p">){</span>
+</span><span class='line'>    <span class="nb">unset</span><span class="p">(</span> <span class="nv">$aConfig</span><span class="p">[</span><span class="s1">&#39;components&#39;</span><span class="p">][</span><span class="s1">&#39;log&#39;</span><span class="p">][</span><span class="s1">&#39;routes&#39;</span><span class="p">][</span><span class="nv">$k</span><span class="p">]</span> <span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://github.com/Stamm/yii.blog/tree/master/src/protected/config">Пример такой конфигурации</a></p>
+
+<h3>SphinxSQL</h3>
+
+<p>Есть 2 способа работы со sphinx из php: через api (используя библиотеку) и воспользоваться SphinxQL: получение данных через протокол mysql и используя запросы, очень схожие с синтаксисом MySQL-запросов.</p>
+
+<p>Для меня более предпочтителен второй вариант, не нужно таскать с собой библиотеку и все новые фишки будут реализованы в первую очередь в SphinxQL.</p>
+
+<p>Включаем в параметрах sphinx прослушивание через протокол mysql</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>searchd {
+</span><span class='line'>listen = 127.0.0.1:9306:mysql41
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Включаем в настройках yii компонент sphinx</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">sphinx</span><span class="s1">&#39; =&gt; array(</span>
+</span><span class='line'><span class="s1">    &#39;</span><span class="nx">class</span><span class="s1">&#39; =&gt; &#39;</span><span class="nb">system</span><span class="o">.</span><span class="nx">db</span><span class="o">.</span><span class="nx">CDbConnection</span><span class="s1">&#39;,</span>
+</span><span class='line'><span class="s1">    &#39;</span><span class="nx">connectionString</span><span class="s1">&#39; =&gt; &#39;</span><span class="nx">mysql</span><span class="o">:</span><span class="nx">host</span><span class="o">=</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">;</span><span class="nx">port</span><span class="o">=</span><span class="mi">9306</span><span class="err">&#39;</span><span class="p">,</span>
+</span><span class='line'><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь мы можем делать запросы:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$sSql</span> <span class="o">=</span> <span class="s1">&#39;SELECT post_id</span>
+</span><span class='line'><span class="s1">    FROM main</span>
+</span><span class='line'><span class="s1">    WHERE</span>
+</span><span class='line'><span class="s1">        MATCH(&#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sphinx</span><span class="o">-&gt;</span><span class="na">quoteValue</span><span class="p">(</span><span class="s1">&#39;yii&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;)</span>
+</span><span class='line'><span class="s1">        AND iscomment = 0</span>
+</span><span class='line'><span class="s1">    ORDER BY @weight</span>
+</span><span class='line'><span class="s1">OPTION field_weights=(title=10,content=1)&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$ids</span> <span class="o">=</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">sphinx</span>
+</span><span class='line'>  <span class="o">-&gt;</span><span class="na">createCommand</span><span class="p">(</span><span class="nv">$sSql</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">-&gt;</span><span class="na">queryColumn</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: рецепты №1]]></title>
+    <link href="http://stamm.github.io/yii-cookbook-1/"/>
+    <updated>2012-03-23T19:19:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cookbook-1</id>
+    <content type="html"><![CDATA[<h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
+
+<p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;clientScript&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;packages&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>       <span class="s1">&#39;highcharts&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>            <span class="s1">&#39;baseUrl&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;/js/highcharts/&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="s1">&#39;js&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="nx">YII_DEBUG</span> <span class="o">?</span> <span class="s1">&#39;highcharts.src.js&#39;</span> <span class="o">:</span> <span class="s1">&#39;highcharts.js&#39;</span><span class="p">),</span>
+</span><span class='line'>            <span class="s1">&#39;css&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;highcharts.css&#39;</span><span class="p">),</span>
+</span><span class='line'>            <span class="s1">&#39;depends&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">),</span>
+</span><span class='line'>        <span class="p">),</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь вместо</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">clientScript</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerPackage</span><span class="p">(</span><span class="s1">&#39;jquery&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerScriptFile</span><span class="p">(</span><span class="s1">&#39;/js/highcharts/highcharts.js&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerCssFile</span><span class="p">(</span><span class="s1">&#39;/js/highcharts/highcharts.css&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Пишем</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">clientScript</span>
+</span><span class='line'><span class="o">-&gt;</span><span class="na">registerPackage</span><span class="p">(</span><span class="s1">&#39;highcharts&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>YII_DEBUG</h3>
+
+<p>Эта константа позволяет включать режим дебага и она же доставляет немного неудобства. Локально нужно устанавливать констатну YII_DEBUG в true, но не комитить это изменение нельзя. Т.е. перед комитом нужно выставлять значение в false. Мы же программисты, народ ленивый, поэтому тем меньше пальцедвижений, тем лучше.</p>
+
+<ul>
+<li>Можно воспользовать <a href="http://stamm.github.io/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
+<li>Можно не добавлять файл в коммит</li>
+</ul>
+
+
+<p>Но эти варианты не подходят, когда используется консоль, нельзя будет использовать команду <strong>git add .</strong></p>
+
+<p>Решение очевидное: использовать директивы <a href="http://www.php.net/manual/en/ini.core.php#ini.auto-prepend-file">auto_prepend_file</a> При запуске любого php-файла, будет предварительно выполнятся наш файлик с установленной константой.</p>
+
+<p>Теперь пишем в файл с настройками сайта php-fpm <strong>/etc/php5/fpm/pool.d/super-site-on-yii.conf</strong></p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="p">[</span><span class="nx">php</span><span class="p">]</span>
+</span><span class='line'><span class="nx">php_admin_value</span><span class="p">[</span><span class="nx">auto_prepend_file</span><span class="p">]</span> <span class="o">=</span> <span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="nx">www</span><span class="o">/</span><span class="nx">yii_debug</span><span class="o">.</span><span class="nx">php</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файл /var/www/yii_debug.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="c1">// Если включен профайлер xdebug</span>
+</span><span class='line'><span class="c1">//define(&#39;YII_DEBUG&#39;, empty($_GET[&#39;XDEBUG_PROFILE&#39;]));</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;YII_DEBUG&#39;</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Автодополнение в PhpStorm</h3>
+
+<p>При подключении стороннего компонента или расширении стандартного хотелось бы «научить» IDE подсказывать</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;components&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="s1">&#39;user&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;WebUser&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span><span class='line'>  <span class="s1">&#39;myext&#39;</span><span class="o">=&gt;</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;MyExt&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">),</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файлик в любом месте, из которого он не сможет подключится автолоадерем. Например, в protected/autocomplete.php</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * @property WebUser $user</span>
+</span><span class='line'><span class="sd"> * @property MyExt $myext</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CApplication</span> <span class="p">{}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь по вводу Yii::app()&ndash;>myext PhpStorm будет посказывать методы из класса MyExt.</p>
+
+<p>Ещё можно заставить PhpStorm подсказывать в файлах представления (views)</p>
+
+<p>Обычно хватает стандартного набора ($this и $form), но в каждой конкретной view может быть свой набор переменных</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="sd">/** @var $this Controller */</span>
+</span><span class='line'><span class="sd">/** @var $form CActiveForm */</span>
+</span><span class='line'><span class="sd">/** @var $model User */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Последний метод можно полу-автоматизировать через шаблоны gii. Это остаётся в качестве самостоятельной работы читателя.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Редирект при вставки сайта через iframe]]></title>
+    <link href="http://stamm.github.io/redirect-iframe/"/>
+    <updated>2012-02-02T19:17:00+04:00</updated>
+    <id>http://stamm.github.io/redirect-iframe</id>
+    <content type="html"><![CDATA[<p>Довольно долго бился c запрещением вставки сайта в iframe с указанием белого списка сайтов, которые могу это сделать</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">top</span> <span class="o">!=</span> <span class="nx">self</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">white_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;yandex.ru&#39;</span><span class="p">,</span> <span class="s1">&#39;google.com&#39;</span><span class="p">];</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">isFriend</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">hostname</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">referrer</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">white_list</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nx">hostname</span> <span class="o">==</span> <span class="nx">white_list</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">||</span> <span class="nx">hostname</span> <span class="o">==</span> <span class="s2">&quot;www.&quot;</span> <span class="o">+</span> <span class="nx">white_list</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nx">isFriend</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nx">isFriend</span> <span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nb">window</span><span class="p">.</span><span class="nx">top</span><span class="p">.</span><span class="nx">location</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Эмуляция хоткея с участием Alt в midnight commander]]></title>
+    <link href="http://stamm.github.io/mc-alt-mac/"/>
+    <updated>2011-12-14T19:15:00+04:00</updated>
+    <id>http://stamm.github.io/mc-alt-mac</id>
+    <content type="html"><![CDATA[<p>После перехода на Mac OS X, не как не мог отвыкнуть от использования хоткеев с участием клавиши Alt.</p>
+
+<p>Нашёл наконец-то способ, как съэмулировать хоткеи в сочении с Alt. Например, чтобы сделать действие по <strong>Alt+c</strong> нужно последовательно нажать <strong>Esc</strong> и <strong>c</strong>. «А ларчик просто открывался» ©.</p>
+
+<p>Тех, кто не знаком с хоткеями в mc, предлагаю ознакомиться с <a href="https://www.midnight-commander.org/wiki/ru/doc/filePanels/hotkeys">листингом горячих сочетаний mc</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bacula - резервное копирование: быстро, бесплатно, без смс]]></title>
+    <link href="http://stamm.github.io/bacula-backup/"/>
+    <updated>2011-11-27T19:08:00+04:00</updated>
+    <id>http://stamm.github.io/bacula-backup</id>
+    <content type="html"><![CDATA[<p>Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу поделиться реально работающими конфигами. Теперь седина пропала и мои волосы вновь мягкие и шелковистые =)</p>
+
+<p>Использовать буду систему под названием <a href="http://www.bacula.org/">bacula</a>. Соответственно всё проверялось и работает под ОС GNU/Debian 6.</p>
+
+<p>В интернете <a href="http://habrahabr.ru/blogs/sysadm/86526/">видел</a> много <a href="http://www.ignix.ru/book/freebsd/daemon/bacula">довольно</a> <a href="http://bog.pp.ru/work/bacula.html">полных</a> мануалов, где описывается конфигурация. Я описывать почти ничего не буду, просто приведу рабочие конфиги и скажу что копировать, чтобы начать бэкапить с ещё одного сервера. Можно считать статью предназначенной для тех, кто не осилил man, ну или хочет съэкономить своё время и получить работающую систему резервирования &ldquo;побыстрее&rdquo;.</p>
+
+<p>Имеется 2 машины</p>
+
+<ul>
+<li>home.zagirov.name (1.1.1.1) &ndash; сам сервер bacula (bacula director и storage director), mysql + www</li>
+<li>www.zagirov.name (2.2.2.2) &ndash; mysql + www</li>
+</ul>
+
+
+<p>Для mysql будем использовать собственный скрипт, который запускает <a href="http://www.percona.com/software/percona-xtrabackup/">xtrabackup</a>.</p>
+
+<p>Устанавливаем на обоих серверах sudo (чтобы запускать бэкапилку базы от рута через sudo) и file director</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install sudo bacula-fd openssh-server</span></code></pre></td></tr></table></div></figure>
+
+
+<p>А на сервере, который будет хранить все бэкапы (home.zagirov.name &ndash; 1.1.1.1) установим ещё bacula director и storage director:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>aptitude install bacula-director-mysql bacula-sd-mysql bacula-console</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Выполняем на обоих серверах:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>usermod -s /bin/bash bacula</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Выполняем на home.zagirov.name (1.1.1.1)</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>su - bacula
+</span><span class='line'>mkdir -p ~/.ssh
+</span><span class='line'>chmod 700 ~/.ssh
+</span><span class='line'>cd ~/.ssh
+</span><span class='line'>ssh-keygen -b 4096 -t rsa -f bacula -N ""
+</span><span class='line'>chmod 400 ~/.ssh/*</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Добавляем правило для пользователя bacula запускать xtrabackup под sudo без запрашивания пароля.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo "bacula ALL=NOPASSWD: /usr/bin/xtrabackup" > /etc/sudoers.d/bacula</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Создаём файлы для создания бэкапов. Храниться они будут централизовано на сервере бэкапов, а запускаться на удалённых машинах будут через sudo bash -s</p>
+
+<p><strong>/etc/bacula/scripts/xtrabackup.sh</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/bin/sh
+</span><span class='line'>
+</span><span class='line'>DIR="/bacula/create/xtrabackup"
+</span><span class='line'>if [ -d "$DIR" ]; then
+</span><span class='line'>  rm -r $DIR
+</span><span class='line'>fi
+</span><span class='line'>mkdir -p $DIR
+</span><span class='line'>
+</span><span class='line'>sudo xtrabackup --defaults-file=/etc/mysql/my.cnf --datadir=/var/lib/mysql \
+</span><span class='line'> --target-dir=$DIR --backup</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>/etc/bacula/scripts/xtrabackup_rm.sh</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#!/bin/sh
+</span><span class='line'>
+</span><span class='line'>DIR="/bacula/create/xtrabackup"
+</span><span class='line'>rm -r $DIR</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-dir.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  QueryFile = "/etc/bacula/scripts/query.sql"
+</span><span class='line'>  WorkingDirectory = "/var/lib/bacula"
+</span><span class='line'>  PidDirectory = "/var/run/bacula"
+</span><span class='line'>  Maximum Concurrent Jobs = 1
+</span><span class='line'>  Password = "password-director"
+</span><span class='line'>  Messages = Daemon
+</span><span class='line'>  DirAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Catalog {
+</span><span class='line'>  Name = MyCatalog
+</span><span class='line'>  dbname = "bacula"; DB Address = ""; dbuser = "bacula"; dbpassword = "password_for_db"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Console {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-console"
+</span><span class='line'>  CommandACL = status, .status
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Daemon
+</span><span class='line'>  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula daemon message\" %r"
+</span><span class='line'>  mail = root@localhost = all, !skipped            
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = "/var/lib/bacula/log" = all, !skipped
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  mailcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula: %t %e of %c %l\" %r"
+</span><span class='line'>  operatorcommand = "/usr/lib/bacula/bsmtp -h localhost -f \"\(Bacula\) \&lt;%r\>\" -s \"Bacula: Intervention needed for %j\" %r"
+</span><span class='line'>  mail = rustam@zagirov.name = all, !skipped            
+</span><span class='line'>  operator = rustam@zagirov.name = mount
+</span><span class='line'>  console = all, !skipped, !saved
+</span><span class='line'>  append = "/var/lib/bacula/log" = all, !skipped
+</span><span class='line'>  catalog = all
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Storage {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  Password = "password-storage"
+</span><span class='line'>  Device = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>#Расписания
+</span><span class='line'>Schedule {
+</span><span class='line'>  Name = "WeeklyCycle"
+</span><span class='line'>  Run = Full 1st sun at 02:05
+</span><span class='line'>  Run = Differential 2nd-5th sun at 02:05
+</span><span class='line'>  Run = Incremental mon-sat at 02:05
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Schedule {
+</span><span class='line'>  Name = "WeeklyCycleAfterBackup"
+</span><span class='line'>  Run = Full sun-sat at 02:10
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = Default
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = File
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>  Recycle = yes                       # Bacula can automatically recycle Volumes
+</span><span class='line'>  AutoPrune = yes                     # Prune expired volumes
+</span><span class='line'>  Volume Retention = 365 days         # one year
+</span><span class='line'>  Maximum Volume Jobs = 1
+</span><span class='line'>  Maximum Volume Bytes = 10G          # Limit Volume size to something reasonable
+</span><span class='line'>  Maximum Volumes = 100               # Limit number of Volumes in Pool
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'># Scratch pool definition
+</span><span class='line'>Pool {
+</span><span class='line'>  Name = Scratch
+</span><span class='line'>  Pool Type = Backup
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>@/etc/bacula/client_home.zagirov.name.conf
+</span><span class='line'>@/etc/bacula/client_www.zagirov.name.conf</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_home.zagirov.name.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>### backup for home.zagirov.name
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Client {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  Address = 1.1.1.1
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = "password-fd-home.zagirov.name"
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>JobDefs {
+</span><span class='line'>  Name = "DefaultJob"
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = home.zagirov.name-fd
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "RestoreFiles"
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=home.zagirov.name-fd
+</span><span class='line'>  FileSet="home.zagirov.name-www"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "BackupCatalog"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="Catalog"
+</span><span class='line'>  Schedule = "WeeklyCycleAfterBackup"
+</span><span class='line'>  RunBeforeJob = "/etc/bacula/scripts/make_catalog_backup.pl MyCatalog"
+</span><span class='line'>  RunAfterJob  = "/etc/bacula/scripts/delete_catalog_backup"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "Catalog"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = "/var/lib/bacula/bacula.sql"
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "home.zagirov.name-www"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  FileSet = "home.zagirov.name-www"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "home.zagirov.name-www"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = /var/www
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "home.zagirov.name-MySQL"
+</span><span class='line'>  JobDefs = "DefaultJob"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="home.zagirov.name-MySQL"
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  RunBeforeJob = "/etc/bacula/scripts/xtrabackup.sh"
+</span><span class='line'>  RunAfterJob  = "/etc/bacula/scripts/xtrabackup_rm.sh"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11                   # run after main backup
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "home.zagirov.name-MySQL"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = "/bacula/create/xtrabackup"
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/client_www.zagirov.name.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>### backup from www.zagirov.name
+</span><span class='line'>
+</span><span class='line'>Client {
+</span><span class='line'>  Name = www.zagirov.name-fd
+</span><span class='line'>  Address = 2.2.2.2
+</span><span class='line'>  FDPort = 9102
+</span><span class='line'>  Catalog = MyCatalog
+</span><span class='line'>  Password = "password-fd-www.zagirov.name"
+</span><span class='line'>  File Retention = 30 days            # 30 days
+</span><span class='line'>  Job Retention = 6 months            # six months
+</span><span class='line'>  AutoPrune = yes                     # Prune expired Jobs/Files
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>JobDefs {
+</span><span class='line'>  Name = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  Type = Backup
+</span><span class='line'>  Level = Incremental
+</span><span class='line'>  Client = www.zagirov.name-fd
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Pool = File
+</span><span class='line'>  Priority = 10
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%c.bsr"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "Restore-www.zagirov.name"
+</span><span class='line'>  Type = Restore
+</span><span class='line'>  Client=www.zagirov.name-fd
+</span><span class='line'>  FileSet="www.zagirov.name"
+</span><span class='line'>  Storage = File
+</span><span class='line'>  Pool = Default
+</span><span class='line'>  Messages = Standard
+</span><span class='line'>  Where = /bacula/restore/
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "www.zagirov.name-www"
+</span><span class='line'>  JobDefs = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  FileSet = "www.zagirov.name-www"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "www.zagirov.name-www"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>    }
+</span><span class='line'>    File = /var/www/www.zagirov.name/www
+</span><span class='line'>  }
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Job {
+</span><span class='line'>  Name = "www.zagirov.name-MySQL"
+</span><span class='line'>  JobDefs = "DefaultJob-www.zagirov.name"
+</span><span class='line'>  Level = Full
+</span><span class='line'>  FileSet="www.zagirov.name-MySQL"
+</span><span class='line'>  Schedule = "WeeklyCycle"
+</span><span class='line'>  RunBeforeJob = "ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name 'sudo bash -s' &lt;/etc/bacula/scripts/xtrabackup.sh"
+</span><span class='line'>  RunAfterJob  = "ssh -i /var/lib/bacula/.ssh/bacula bacula-www.zagirov.name 'sudo bash -s' &lt; /etc/bacula/scripts/xtrabackup_rm.sh"
+</span><span class='line'>  Write Bootstrap = "/var/lib/bacula/%n.bsr"
+</span><span class='line'>  Priority = 11
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileSet {
+</span><span class='line'>  Name = "www.zagirov.name-MySQL"
+</span><span class='line'>  Include {
+</span><span class='line'>    Options {
+</span><span class='line'>      signature = MD5
+</span><span class='line'>      compression = GZIP
+</span><span class='line'>    }
+</span><span class='line'>    File = "/bacula/create/xtrabackup"
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>bacula-sd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Storage {
+</span><span class='line'>  Name = home.zagirov.name-sd
+</span><span class='line'>  SDPort = 9103
+</span><span class='line'>  WorkingDirectory = "/var/lib/bacula"
+</span><span class='line'>  Pid Directory = "/var/run/bacula"
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  SDAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-storage"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-mon"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Device {
+</span><span class='line'>  Name = FileStorage
+</span><span class='line'>  Media Type = File
+</span><span class='line'>  Archive Device = /bacula/
+</span><span class='line'>  LabelMedia = yes;                   # lets Bacula label unlabeled media
+</span><span class='line'>  Random Access = Yes;
+</span><span class='line'>  AutomaticMount = yes;               # when device opened, read it
+</span><span class='line'>  RemovableMedia = no;
+</span><span class='line'>  AlwaysOpen = no;
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-fd-home.zagirov.name"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-mon
+</span><span class='line'>  Password = "password-mon-fd-home.zagirov.name"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FileDaemon {
+</span><span class='line'>  Name = home.zagirov.name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 1.1.1.1
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>home.zagirov.name: <strong>/etc/bacula/bconsole.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = localhost-dir
+</span><span class='line'>  DIRport = 9101
+</span><span class='line'>  address = 1.1.1.1
+</span><span class='line'>  Password = "password-director"
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>А на удалённом настраиваем только fd</p>
+
+<p>www.zagirov.name: <strong>/etc/bacula/bacula-fd.conf</strong></p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Director {
+</span><span class='line'>  Name = home.zagirov.name-dir
+</span><span class='line'>  Password = "password-fd-www.zagirov.name"
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Director {
+</span><span class='line'>  Name = stamm-server-mon
+</span><span class='line'>  Password = "password-mon-fd-www.zagirov.name"
+</span><span class='line'>  Monitor = yes
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>FileDaemon {
+</span><span class='line'>  Name = www.zagirov-name-fd
+</span><span class='line'>  FDport = 9102
+</span><span class='line'>  WorkingDirectory = /var/lib/bacula
+</span><span class='line'>  Pid Directory = /var/run/bacula
+</span><span class='line'>  Maximum Concurrent Jobs = 20
+</span><span class='line'>  FDAddress = 109.234.152.187
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>Messages {
+</span><span class='line'>  Name = Standard
+</span><span class='line'>  director = home.zagirov.name-dir = all, !skipped, !restored
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Внимание!</p>
+
+<p>Не забываем поменять пароли на свои!</p>
+
+<p>Запускаем в консоле bconsole</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*label
+</span><span class='line'>Automatically selected Storage: File
+</span><span class='line'>Enter new Volume name: backup
+</span><span class='line'>Defined Pools:
+</span><span class='line'>     1: Default
+</span><span class='line'>     2: File
+</span><span class='line'>     3: Scratch
+</span><span class='line'>Select the Pool (1-3): 2
+</span><span class='line'>Connecting to Storage daemon File at 95.31.29.182:9103 ...
+</span><span class='line'>Sending label command for Volume "backup" Slot 0 ...
+</span><span class='line'>3000 OK label. VolBytes=210 DVD=0 Volume="backup" Device="FileStorage" (/bacula/)
+</span><span class='line'>Catalog record for Volume "backup", Slot 0  successfully created.
+</span><span class='line'>Requesting to mount FileStorage ...
+</span><span class='line'>3906 File device "FileStorage" (/bacula/) is always mounted.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Восстановление происходит тоже через команду bconsole. Например, мы захотели восстановить файлы веб-сайта с www.zagirov.name на home.zagirov.name:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>*restore
+</span><span class='line'>Automatically selected Catalog: MyCatalog
+</span><span class='line'>Using Catalog "MyCatalog"
+</span><span class='line'>
+</span><span class='line'>First you select one or more JobIds that contain files
+</span><span class='line'>to be restored. You will be presented several methods
+</span><span class='line'>of specifying the JobIds. Then you will be allowed to
+</span><span class='line'>select which files from those JobIds are to be restored.
+</span><span class='line'>
+</span><span class='line'>To select the JobIds, you have the following choices:
+</span><span class='line'>     1: List last 20 Jobs run
+</span><span class='line'>     2: List Jobs where a given File is saved
+</span><span class='line'>     3: Enter list of comma separated JobIds to select
+</span><span class='line'>     4: Enter SQL list command
+</span><span class='line'>     5: Select the most recent backup for a client
+</span><span class='line'>     6: Select backup for a client before a specified time
+</span><span class='line'>     7: Enter a list of files to restore
+</span><span class='line'>     8: Enter a list of files to restore before a specified time
+</span><span class='line'>     9: Find the JobIds of the most recent backup for a client
+</span><span class='line'>    10: Find the JobIds for a backup for a client before a specified time
+</span><span class='line'>    11: Enter a list of directories to restore for found JobIds
+</span><span class='line'>    12: Select full restore to a specified Job date
+</span><span class='line'>    13: Cancel
+</span><span class='line'>Select item:  (1-13): 5
+</span><span class='line'>Defined Clients:
+</span><span class='line'>     1: home.zagirov.name-fd
+</span><span class='line'>     2: www.zagirov.name-fd
+</span><span class='line'>Select the Client (1-2): 2
+</span><span class='line'>The defined FileSet resources are:
+</span><span class='line'>     1: www.zagirov.name
+</span><span class='line'>     2: www.zagirov.name-MySQL
+</span><span class='line'>Select FileSet resource (1-2): 1
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>| JobId | Level | JobFiles | JobBytes   | StartTime           | VolumeName |
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>|    66 | F     |    3,327 | 32,960,325 | 2011-11-19 03:47:28 | Backup     |
+</span><span class='line'>|   138 | D     |        7 |  5,973,688 | 2011-11-27 02:08:41 | Backup     |
+</span><span class='line'>+-------+-------+----------+------------+---------------------+------------+
+</span><span class='line'>You have selected the following JobIds: 66,138
+</span><span class='line'>
+</span><span class='line'>Building directory tree for JobId(s) 66,138 ...  ++++++++++++++++++++++++++++++++++++++++++++
+</span><span class='line'>2,959 files inserted into the tree.
+</span><span class='line'>
+</span><span class='line'>You are now entering file selection mode where you add (mark) and
+</span><span class='line'>remove (unmark) files to be restored. No files are initially added, unless
+</span><span class='line'>you used the "all" keyword on the command line.
+</span><span class='line'>Enter "done" to leave this mode.
+</span><span class='line'>
+</span><span class='line'>cwd is: /
+</span><span class='line'>$ add *
+</span><span class='line'>3,327 files marked.
+</span><span class='line'>$ done
+</span><span class='line'>Bootstrap records written to /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr
+</span><span class='line'>
+</span><span class='line'>The job will require the following
+</span><span class='line'>   Volume(s)                 Storage(s)                SD Device(s)
+</span><span class='line'>===========================================================================
+</span><span class='line'>   
+</span><span class='line'>    Backup                    File                      FileStorage              
+</span><span class='line'>
+</span><span class='line'>Volumes marked with "*" are online.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>3,327 files selected to be restored.
+</span><span class='line'>
+</span><span class='line'>The defined Restore Job resources are:
+</span><span class='line'>     1: home.zagirov.name-restore
+</span><span class='line'>     2: www.zagirov.name-restore
+</span><span class='line'>Select Restore Job (1-2): 1
+</span><span class='line'>Run Restore job
+</span><span class='line'>JobName:         home.zagirov.name-restore
+</span><span class='line'>Bootstrap:       /var/lib/bacula/home.zagirov.name-dir.restore.1.bsr
+</span><span class='line'>Where:           /bacula/restore/
+</span><span class='line'>Replace:         always
+</span><span class='line'>FileSet:         home.zagirov.name-105
+</span><span class='line'>Backup Client:   www.zagirov.name-fd
+</span><span class='line'>Restore Client:  www.zagirov.name-fd
+</span><span class='line'>Storage:         File
+</span><span class='line'>When:            2011-11-27 02:56:27
+</span><span class='line'>Catalog:         MyCatalog
+</span><span class='line'>Priority:        10
+</span><span class='line'>Plugin Options:  *None*
+</span><span class='line'>OK to run? (yes/mod/no): y
+</span><span class='line'>Job queued. JobId=143
+</span><span class='line'>You have messages.</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Для добавления нового сервера необходимо добавить в конфиг bacula director инклуд нового файла, который будет содержать следующие директивы:</p>
+
+<ul>
+<li><strong>Client</strong>, в который прописываем имя, ip и пароль</li>
+<li><strong>JobDefs</strong> &ndash; исходный джоб, от которого все будут наследоваться</li>
+<li><strong>Job</strong> восстановления впринципе не обязательно прописывать, но это удобно, когда нужно восстанавливать прямо на нужный сервер</li>
+<li><strong>Job</strong> и <strong>FileSet</strong> &ndash; собственно сам джоб и список файлов для этого джоба
+Думаю, теперь bacula кажется не такой уж и страшной как в начале?</li>
+</ul>
+
+
+<p>Ссылки:</p>
+
+<ul>
+<li><a href="http://habrahabr.ru/blogs/sysadm/86526/">http://habrahabr.ru/blogs/sysadm/86526/</a></li>
+<li><a href="http://bog.pp.ru/work/bacula.html">http://bog.pp.ru/work/bacula.html</a></li>
+<li><a href="http://www.ignix.ru/book/freebsd/daemon/bacula">http://www.ignix.ru/book/freebsd/daemon/bacula</a></li>
+<li><a href="http://habrahabr.ru/blogs/sysadm/111555/">http://habrahabr.ru/blogs/sysadm/111555/</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Nginx: общие принципы конфигурации]]></title>
+    <link href="http://stamm.github.io/nginx-config/"/>
+    <updated>2011-10-30T18:59:00+04:00</updated>
+    <id>http://stamm.github.io/nginx-config</id>
+    <content type="html"><![CDATA[<p>На днях посмотрел <a href="http://video.yandex.ru/users/ibondarets/view/1/">видео с участием Игоря Сысоева</a> &ndash; отца русского nginx =)</p>
+
+<p>В выступлении Игорь говорит не о мастабировании в привычном для всех понимании (высокая нагрузка), а в плане рекомендаций к написанию конфигурации для nginx, чтобы при росте конфигурации не было проблем с его редактированием.</p>
+
+<h2>Виды location:</h2>
+
+<ol>
+<li>Описанные простыми строками (статические)</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {} - обычный префиксный location
+</span><span class='line'>location = /dir/ {} - точное совпадение по запросу
+</span><span class='line'>location ^~ /dir/ {} - префиксный location, но после него не идёт проверка по location на регулярных выражениях</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Описанные регулярными выражениями</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ /dir/ {} - с учётом регистра
+</span><span class='line'>location ~* /dir/ {} - без учёта регистра</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>Именнованные location</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location @php {}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Расположение статических location не играет роли.</p>
+
+<p>Location&#8217;ы, написанные с помощью регулярных выражений, выполянются в порядке написания.</p>
+
+<p>По возможности используйте статические location&#8217;ы. Например, вместо</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ .(css|js|jpe?g|png)$ {}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>выносить все статические файлы в определённый каталог</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /static/ {}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Заворачивание location на регулярном выражении в статический location</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* ^/i/(.)(.-\.gif)(
+</span><span class='line'>  alias /images/$1$1$2
+</span><span class='line'>)</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /i/ {
+</span><span class='line'>  location ~* ^/i/(.)(.-\.gif)$ {
+</span><span class='line'>    alias /images/$1$1$2
+</span><span class='line'>  }
+</span><span class='line'>  return 404
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Понимание директив root и alias:</p>
+
+<p>В общем смысле, root &ndash; добавляем в запрос путь в качестве префикса, а alias &ndash; заменяет location на указанный в директиве alias</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {
+</span><span class='line'>    root /path/to/data;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/data/dir/a/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {
+</span><span class='line'>     alias /path/to/data/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/data/a/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/ {
+</span><span class='line'>  root /path/to/$subdomain;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/shop/dir/a/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/.+/(.)(.*)$ {
+</span><span class='line'>    alias /path/to/data/$1/$1$2;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/data/i/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~ ^/dir/ {
+</span><span class='line'>    alias /path/to/data/0.gif
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/path/to/data/0.gif</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Обратите внимание на конечных слэш в proxy_pass</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {
+</span><span class='line'>  proxy_pass http://back
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>/dir/a/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location /dir/ {
+</span><span class='line'>    proxy_pass http://back/
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>/dir/a/image.gif
+</span><span class='line'>    /a/image.gif</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Большинство директив носит декларативный характер, а это значит нет разницы, где их определять.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>server {
+</span><span class='line'>    location / {}
+</span><span class='line'>    location /images/ {}
+</span><span class='line'>    
+</span><span class='line'>    root /path/;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Не рекомендуется использовать if. В примере сработает только последний if. Игорь рекомендует использовать if в связке с return.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>
+</span><span class='line'>  if (1) {
+</span><span class='line'>    gzip off;
+</span><span class='line'>  }
+</span><span class='line'>
+</span><span class='line'>  if (1) {
+</span><span class='line'>    keepalive off;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Распространённые ошибки:</h2>
+
+<p>В этом примере break вообще не нужен, а expires можно вынести в location</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(gif|jpe?g|png)$ {
+</span><span class='line'>  root /data;
+</span><span class='line'>  if (-e $request_filename) {
+</span><span class='line'>     expires 1y;
+</span><span class='line'>     break;
+</span><span class='line'>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Break тут не нужен.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location ~* \.(gif|jpe?g|png)$ {
+</span><span class='line'>   root /data;
+</span><span class='line'>   break;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Такое возникает у переходящих с apache. Тут нужно заменить всё на статические location.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>location / {
+</span><span class='line'>  if ($uri ~ ^/login.php$) { }
+</span><span class='line'>
+</span><span class='line'>  if ($uri ~ ^/image.php$) { }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: автодополнение в консоли]]></title>
+    <link href="http://stamm.github.io/yii-console-completion/"/>
+    <updated>2011-10-23T18:57:00+04:00</updated>
+    <id>http://stamm.github.io/yii-console-completion</id>
+    <content type="html"><![CDATA[<p>Очень не хватало автодополнения комманд при вызове консольных комманд yii, чувствовал какую-то неполноценность yii в bash.</p>
+
+<p>На просторах интернета была найдена статья, позволяющая реализовать автодополнение с помощью родной unix-утилиты bash_completion.</p>
+
+<p>Если у вас проект находиться под управлением git, то просто добавляем сабмодуль:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git submodule add git://github.com/Stamm/yii-console-completion protected/extensions/complete/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Или создайте файл LCompleteCommand.php в protected/extensions/complete/</p>
+
+<p>Теперь подключаем класс в конфигурационном файле для консольного приложения (обычно это console.php):</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="s1">&#39;commandMap&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;complete&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;class&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;ext.complete.LCompleteCommand&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="c1">//&#39;bashFile&#39; =&gt; &#39;/etc/bash_completion.d/yii_applications&#39; //Defaults to &lt;/etc/bash_completion.d/yii_applications&gt;. May be changed if needed</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'><span class="p">),</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Пути до директории bash-completion могут различаться в зависимости от системы. Для Debian и Ubuntu можно оставить стандартный путь. В Mac OS X bash-completion был установлен с помощью homebrew, так что путь нужно сменить на /usr/local/etc/bash_completion.d/yii_applications</p>
+
+<p>Теперь выполняем комманду для создания bash-completion файла от root:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo ./yiic <span class="nb">complete </span>install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Теперь при создании новой сессии в bash будет работать автодополнение для yiic:</p>
+
+<ol>
+<li>Для приложения — набор возможных команд</li>
+<li>Для команды — набор возможных действий (actions) и именованых параметров действия по умолчанию</li>
+<li>Для действия — подсказки по ее именованым параметрам</li>
+</ol>
+
+
+<p>Источник: <a href="http://habr-sandbox.livejournal.com/230319.html">http://habr-sandbox.livejournal.com/230319.html</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Организация рабочего потока: Phpstorm, Redmine, Changelists]]></title>
+    <link href="http://stamm.github.io/phpstorm-redmine-changelist-workflow/"/>
+    <updated>2011-10-23T18:53:00+04:00</updated>
+    <id>http://stamm.github.io/phpstorm-redmine-changelist-workflow</id>
+    <content type="html"><![CDATA[<p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
+
+<ul>
+<li>Есть задача в redmine.</li>
+<li>Я начинаю её выполнять.</li>
+<li>Всё проверяю локально и коммичу в репозиторий.</li>
+<li>Выливаю изменения на тестовый сервер.</li>
+</ul>
+
+
+<p>Есть несколько ньюансов. Бывают задачи очень объёмные и/или не очень срочные, которые я делаю в перерывах между задачами с более высокими приоритетами. Или спокойно делаю задачу, но прибегает менеджер с огромными глазами и криками, что сайт выдаёт ошибку, и нужно сделать быстрый hotfix.</p>
+
+<p>В этом случае очень помогают changelist в PhpStorm.</p>
+
+<p>Смысл changelist&#8217;а заключается в логическом разделении группы файлов для коммита. Т.е. файлы &ldquo;прикрепляются&rdquo; к определённому changelist&#8217;у. И при коммите мы выбираем нужный changelist и коммитим только файлы из этого changelist&#8217;а. Changelist есть всегда, по-умолчанию название default.</p>
+
+<p>Настраиваем Redmine:</p>
+
+<p>Нужно включить в параметрах redmine пункт <strong>Enable REST web service</strong></p>
+
+<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
+
+<p>Добавляем новый Task server в PhpStorm. Api token можно найти в личном разделе в redmine.</p>
+
+<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
+
+<p>И добавляем парсинг номера задачи из описания коммита для отображения её как ссылки на задачу в redmine.</p>
+
+<p>Project Settings → Version Control → Issue Navigation</p>
+
+<p>Вводим паттерн регулярного выражения <strong>#(\d+)</strong> и генерируемую ссылку: **<a href="http://redmine.company.com/issues/$1**">http://redmine.company.com/issues/$1**</a></p>
+
+<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
+
+<p>Теперь открываем задачу Tools → Task → Open. Тут работает автодополнение для имени задачи.</p>
+
+<p>Если были открытые файлы, то они все скроются. Сейчас мы работаем в своём наборе открытых файлов. Если откроем changelist под названием default, то все открытые файлы вернуться в редактор. Нужно понимать, что изменения в скрытых файлах остаются (это вам не git stash), а просто скрываются из вида.</p>
+
+<p>Мы можем создать множество changelist&#8217;ов. Они не обязательно создаются из задачи, можно создать свой changelist. Я, например, создаю changelist NO для временных файлов, файлов своих настроек, декларативные скрипты для работы автодополнения, которые мне не нужно включать в коммит.</p>
+
+<p>Теперь при коммите будут выбраны только файлы, которые находяться в выбранном changelist&#8217;е.</p>
+
+<p>Откройте в разделе changes (alt+9 или ⌘+9) вкладку Local. Тут показаны изменённые файлы, сгруппированные по changelist&#8217;ам. Здесь файлы можно перемещать между changelist&#8217;ами.</p>
+
+<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
+
+<p>Кликнув правой кнопкой по changelist, вы можете изменить его комментарий. Этот комментарий потом автоматически вставиться в описание коммита.</p>
+
+<p>Для запуска сборки проекта в TeamCity из PhpStorm нужно поставить соответсвующий плагин.</p>
+
+<p>Получилась вот такая схема работы. Ребята из JetBrains очень крутые: развивают продукт очень стремительно, вводять очень удобные фишки. Кто ещё не пробывал PhpStorm &ndash; обязательно попробуйте. А на него перешёл с Netbeans и нисколько не жалею.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: используем кэш в CActiveDataProvider]]></title>
+    <link href="http://stamm.github.io/yii-cache-cactivedataprovider/"/>
+    <updated>2011-10-17T18:48:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cache-cactivedataprovider</id>
+    <content type="html"><![CDATA[<p>Репост моей заметки из wiki: <a href="http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.">http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.</a></p>
+
+<p>Первый параметр в конструкторе <a href="http://www.yiiframework.com/doc/api/1.1/CActiveDataProvider/">CActiveDataProvider</a> может быть строковым значением с названием модели или экземпляр класса модели.</p>
+
+<p>Поэтому можно использовать <a href="http://www.yiiframework.com/doc/api/1.1/CActiveRecord#cache-detail">CActiveRecord::cache()</a> для кэширования, но нужно установить значение 3 у третьего параметра, потому что мы должны закэшировать 2 запроса: получение количества записей и само получение записей.</p>
+
+<p>Не забудьте использовать зависимости для принудительного протухания кэша.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$dependecy</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CDbCacheDependency</span><span class="p">(</span><span class="s1">&#39;SELECT MAX(update_time) FROM {{post}}&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nx">Post</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">cache</span><span class="p">(</span><span class="nv">$duration</span><span class="p">,</span> <span class="nv">$dependecy</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="k">array</span> <span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;criteria&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;condition&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;status = 1&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s1">&#39;order&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;DESC create_time&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>    <span class="s1">&#39;pagination&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span>
+</span><span class='line'>        <span class="s1">&#39;pageSize&#39;</span> <span class="o">=&gt;</span> <span class="mi">20</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'><span class="p">));</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Yii: CGridView и запрос с group by и having by]]></title>
+    <link href="http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by/"/>
+    <updated>2011-10-15T18:46:00+04:00</updated>
+    <id>http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by</id>
+    <content type="html"><![CDATA[<p>Задача такая: вывести данные через компонент CGridView в YII, сгруппированные по определённому полю, а также применение условий по агрегированным данным.</p>
+
+<p>Возьмём простую таблицу:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>date | clicks</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Нам нужно получить сгруппированные данные по каждому часу.</p>
+
+<p>По сути нужно применить следующий запрос</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span>
+</span><span class='line'><span class="k">FROM</span> <span class="k">table</span>
+</span><span class='line'><span class="k">GROUP</span> <span class="k">BY</span> <span class="k">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Возникают следующие трудности в реализации через Yii:</p>
+
+<ul>
+<li>Yii не может посчитать общее количество, а соответственно будет неправильно создавать пагинатор. Yii просто обнуляет поля group by и having при подсчёте общего количества. Да ещё count(*) тут не сработает, нужно просто. посчитать количество строк, которое вернул запрос с группировкой</li>
+<li>Также нам не подходит использование where, чтобы искать по группированным данным. Тут нужно использовать having by.</li>
+<li>Сортировка. Yii автоматически подставляет поле без агрегирующей функции. А если использовать отношения, то ещё и подставит алиас главной таблицы (t.clicks).</li>
+</ul>
+
+
+<p>Соответственно, мы руками высчитываем общее количество и устанавливаем найденное значение в атрибут totalItemCount компонента CActiveDataProvider</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">search</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">=</span><span class="k">new</span> <span class="nx">CDbCriteria</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">compare</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span><span class="k">true</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Скопипастил из исходников yii</span>
+</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^(?:\s*(&lt;&gt;|&lt;=|&gt;=|&lt;|&gt;|=))(.*)$/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$clicks</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$clicks</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">;</span>
+</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">// Проставляем having by</span>
+</span><span class='line'>    <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">having</span> <span class="o">=</span> <span class="s1">&#39;SUM(clicks) &#39;</span> <span class="o">.</span> <span class="nv">$op</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">quoteValue</span><span class="p">(</span><span class="nv">$clicks</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="c1">// Выбираем дату без минут и секунд И сумму кликов за определённый час</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13) AS date, SUM(clicks) AS clicks&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="c1">// Применяем группировку по часам</span>
+</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">group</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13)&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Клонируем объект критерии, чтобы посчитать общее количество записей</span>
+</span><span class='line'>  <span class="nv">$countCriteria</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$criteria</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$countCriteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$sum</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findAll</span><span class="p">(</span><span class="nv">$countCriteria</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">$pages</span><span class="o">=</span><span class="k">new</span> <span class="nx">CPagination</span><span class="p">(</span><span class="nv">$sum</span><span class="p">);</span>
+</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">pageSize</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">applyLimit</span><span class="p">(</span><span class="nv">$criteria</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nb">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="s1">&#39;totalItemCount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$sum</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;criteria&#39;</span><span class="o">=&gt;</span><span class="nv">$criteria</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;pagination&#39;</span><span class="o">=&gt;</span><span class="nv">$pages</span><span class="p">,</span>
+</span><span class='line'>    <span class="s1">&#39;sort&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>      <span class="s1">&#39;attributes&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>        <span class="c1">// Тут устанавливаем свою сортировку по нужному полю</span>
+</span><span class='line'>        <span class="s1">&#39;clicks&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>          <span class="s1">&#39;asc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) ASC&#39;</span><span class="p">,</span>
+</span><span class='line'>          <span class="s1">&#39;desc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) DESC&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="p">)</span>
+</span><span class='line'>      <span class="p">),</span>
+</span><span class='line'>      <span class="s1">&#39;defaultOrder&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;date DESC&#39;</span><span class="p">,</span>
+</span><span class='line'>    <span class="p">),</span>
+</span><span class='line'>   <span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Настройка exim на почту для доменов от Яндекса (pdd.yandex.ru)]]></title>
+    <link href="http://stamm.github.io/exim-pdd-yandex-ru/"/>
+    <updated>2011-09-18T18:44:00+04:00</updated>
+    <id>http://stamm.github.io/exim-pdd-yandex-ru</id>
+    <content type="html"><![CDATA[<p>Настраиваем отправку почты с нашего сервера через почту для доменов от Яндекса.</p>
+
+<p>Для примера, используем домен zagirov.name.</p>
+
+<p>Запускаем конфигурирование exim&#8217;а:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>dpkg-reconfigure exim4-config</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Отвечаем на вопросы:</p>
+
+<ul>
+<li>mail sent by SMARTHOST; received via SMTP or fetchmail</li>
+<li>Type System Mail Name: пусто</li>
+<li>Type IP Adresses to listen on for incoming SMTP connections: 127.0.0.1 ; ::1</li>
+<li>Other destinations for which mail: пусто</li>
+<li>Machines to relay mail for: пусто</li>
+<li>Type Machine handling outgoing mail for this host (smarthost): smtp.yandex.ru:587</li>
+<li>Hide local mail name in outgoing mail: Нет</li>
+<li>Keep number of DNS-queries minimal (Dial-on-Demand): Нет</li>
+<li>Delivery method for local mail: mbox format in /var/mail/ /exim4/conf.d/rewrite/00_exim4-config_header</li>
+<li>split configuration into small files: Да</li>
+</ul>
+
+
+<p>Теперь прописываем пароль для ящика в файле <strong>/etc/exim4/passwd.client</strong>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>smtp.yandex.ru:no-reply@zagirov.name:СВОЙ_ПАРОЛЬ</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Почтовый сервер яндекс ругается, что нужно заполненное поле FROM. Прописываем его в файле <strong>/etc/exim4/conf.d/rewrite/00_exim4-config_header</strong>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite *@* no-reply@zagirov.name Ffr</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Сохраняем письма, отправленные из php, в файлы]]></title>
+    <link href="http://stamm.github.io/php-sendmail-save-to-file/"/>
+    <updated>2011-06-03T18:42:00+04:00</updated>
+    <id>http://stamm.github.io/php-sendmail-save-to-file</id>
+    <content type="html"><![CDATA[<p>При разработке нужно как-то складировать письма, отправляемые из php через функцию mail. Был написан такой скрипт:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="c1">#!/usr/bin/env php</span>
+</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;SENDMAIL_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp/mail/&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nb">mkdir</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">,</span> <span class="mo">0777</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">generateFileName</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$fileName</span> <span class="o">=</span> <span class="nx">SENDMAIL_DIR</span> <span class="o">.</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m-d_H-i-s_&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;.eml&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$fileName</span><span class="p">)</span> <span class="o">?</span> <span class="nx">generateFileName</span><span class="p">(</span><span class="o">++</span><span class="nv">$i</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$fileName</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$mail</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;php://stdin&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$file</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nx">generateFileName</span><span class="p">(),</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">while</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">feof</span><span class="p">(</span><span class="nv">$mail</span><span class="p">))</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nb">fgets</span><span class="p">(</span><span class="nv">$mail</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$mail</span><span class="p">);</span>
+</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Даём ему право на исполнение для пользователя веб-сервера (обычно www-data).</p>
+
+<p>Теперь создаём файл конфига для php в debian <strong>/etc/php5/conf.d/sendmail-local.conf</strong> со следующим содержимым:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
+</span><span class='line'><span class="na">sendmail_path</span> <span class="o">=</span> <span class="s">&quot;/path/to/script/sendmail&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Яндекс.танк — инструмент нагрузочного тестирования - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="28 июля на я.субботнике был представлен новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/yandex-tank-load-testing">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Яндекс.танк — инструмент нагрузочного тестирования</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-02T19:30:00+04:00" pubdate data-updated="true">2012-08-02</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
+
+<p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+<p>Вот сам интерфейс:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
+
+<p>Сам проект и документация находится на github&#8217;е: <a href="https://github.com/yandex-load/yandex-tank">https://github.com/yandex-load/yandex-tank</a></p>
+
+<p>В кратце обрисую возможности:</p>
+
+<p>Можно нагружать одну страницу или сразу список урлов (которые будут запрашиваться примерно в одинаковых соотношениях).</p>
+
+<p>А можно самому составить список запросов со своими заголовками. Например, можно реализовать нагрузку от запросов от анонимных пользователей и залогиненных. Через скрипт (php, python, bash, etc) залогиниться на сайте и получить нужные куки. Сгенерировать в нужном формате данные для танка и запустить тест.</p>
+
+<p>Танк позволяет создать <a href="https://github.com/yandex-load/yandex-tank#first-step">3 вида нагрузки</a>:</p>
+
+<ul>
+<li>Постоянная &ndash; указывается количество запросов и время</li>
+<li>Линейный рост &ndash; указывается начальное и конечное значение и время</li>
+<li>Рост шагами &ndash; указывается начальное и конечное значение, шаг увеличения нагрузки и время.</li>
+</ul>
+
+
+<p>Причём эти виды нагрузки можно комбинировать в одном тесте.</p>
+
+<p>Особенно хочеться отметить простоту и понятность синтаксиса.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>#Подогреваем кэш
+</span><span class='line'>load = const(1, 10s)
+</span><span class='line'># Линейно увеличиваем нагрузку с одного запроса в секунду до 10 в течение 2 минут
+</span><span class='line'>load = line(1, 10, 2m)
+</span><span class='line'># Начинаем нагружать 10 запросами в секунду в течение 1 минуты, потом увеличиваем на 5 запросов и так до 40. Т.е. на каждый шаг будет затрачено по минут
+</span><span class='line'>load = line(10, 40, 5, 1m)
+</span><span class='line'># Указываем нагружаемых хост, только ip (!)
+</span><span class='line'>address = 192.168.100.254:80
+</span><span class='line'># Посылаемые заголовки
+</span><span class='line'>header = [Host: test.server]
+</span><span class='line'>header = [Connection: close]
+</span><span class='line'>header_http = 1.1
+</span><span class='line'># Нагружаемые страницы
+</span><span class='line'>uri = / uri = /another_page/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Вот что случается, когда сервер не справляется:</p>
+
+<p><img src="/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
+
+<p>Думаю, что проект со временем будет обрастаться графическими интерфейсами, разработанными самим яндексом или сообществом.</p>
+
+<p>Я даже уже придумал, что можно сделать. Получать статистику на нагружаемом сервере через vmstat и выводить красивые графики для быстрого нахождения наиболее узкого места: память, cpu, io.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-02T19:30:00+04:00" pubdate data-updated="true">2012-08-02</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/load/'>load</a>, <a class='category' href='/blog/categories/testing/'>testing</a>, <a class='category' href='/blog/categories/yandex/'>yandex</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/yandex-tank-load-testing/" data-via="" data-counturl="http://stamm.github.io/yandex-tank-load-testing/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/yii-cookbook-2/" title="Previous Post: Yii: рецепты №2">&laquo; Yii: рецепты №2</a>
+      
+      
+        <a class="basic-alignment right" href="/remove-data-from-mongo-without-blocking/" title="Next Post: Удаление данных из коллекции в Mongodb без блокировки">Удаление данных из коллекции в Mongodb без блокировки &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/yandex-tank-load-testing/';
+        var disqus_url = 'http://stamm.github.io/yandex-tank-load-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

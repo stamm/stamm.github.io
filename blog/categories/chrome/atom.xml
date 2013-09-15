@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: chrome | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/chrome/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Расширение для Google Chrome: local database storage]]></title>
+    <link href="http://stamm.github.io/google-chrome-extensions-local-database-storage/"/>
+    <updated>2011-01-02T16:12:00+03:00</updated>
+    <id>http://stamm.github.io/google-chrome-extensions-local-database-storage</id>
+    <content type="html"><![CDATA[<p>Продолжаем осваивать плагинописание для браузеров на основе chromium и ,соответственно, для google chrome. Текущая тема: научиться использовать local database storage. Local database storage &ndash; это база данных, использумая из javascript. Представляет она собой SQLite внутри. Синтаксис привычный для SQL баз. Я буду использовать базу для запоминания всех полученных цитат. Логически все действия можно разделить на 4 операции:</p>
+
+<ol>
+<li>Открытие базы и получение коннекта к ней</li>
+<li>Создание таблицы</li>
+<li>Запись в таблицу</li>
+<li>Чтение из таблицы</li>
+</ol>
+
+
+<p>Открытие базы и получение коннекта</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">function</span> <span class="nx">get_db</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">openDatabase</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">quotes</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="mf">1.0</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">A</span> <span class="nx">list</span> <span class="nx">of</span> <span class="nx">quotes</span><span class="p">.</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="mi">2</span><span class="o">&lt;</span><span class="nx">em</span><span class="o">&gt;</span><span class="mi">1024</span><span class="o">&lt;</span><span class="err">/em&gt;1024);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+где quotes &ndash; название базы данных 1.0 &ndash; версия БД (не изменять) A list of quotes &ndash; комментарий 210241024 &ndash; максимальный размер базы данных в байтах</p>
+
+<p>Создание таблицы</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">get_db</span><span class="p">().</span><span class="nx">transaction</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">tx</span><span class="p">.</span><span class="nx">executeSql</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">CREATE</span> <span class="nx">TABLE</span> <span class="nx">quotes</span> <span class="p">(</span><span class="nx">text</span> <span class="nx">TEXT</span><span class="p">,</span> <span class="nx">author</span> <span class="nx">TEXT</span><span class="p">,</span> <span class="nx">timestamp</span> <span class="nx">REAL</span><span class="p">)</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Запись в таблицу</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">get_db</span><span class="p">().</span><span class="nx">transaction</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">tx</span><span class="p">.</span><span class="nx">executeSql</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">INSERT</span> <span class="nx">INTO</span> <span class="nx">quotes</span> <span class="p">(</span><span class="nx">text</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="nx">timestamp</span><span class="p">)</span> <span class="nx">VALUES</span> <span class="p">(</span><span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">,</span> <span class="o">?</span><span class="p">)</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="p">[</span><span class="nx">text</span><span class="p">,</span> <span class="nx">author</span><span class="p">,</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()]);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Чтение из таблицы</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">get_db</span><span class="p">().</span><span class="nx">transaction</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">tx</span><span class="p">.</span><span class="nx">executeSql</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">ldquo</span><span class="p">;</span><span class="nx">SELECT</span> <span class="o">*</span> <span class="nx">FROM</span> <span class="nx">quotes</span> <span class="nx">ORDER</span> <span class="nx">BY</span> <span class="nx">rowid</span> <span class="nx">DESC</span> <span class="nx">LIMIT</span> <span class="mi">3</span><span class="o">&amp;</span><span class="nx">rdquo</span><span class="p">;,</span> <span class="p">[],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;</span><span class="err">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">pre</span><span class="o">&gt;&lt;</span><span class="nx">code</span><span class="o">&gt;</span><span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">alert</span><span class="p">(</span><span class="nx">result</span><span class="p">.</span><span class="nx">rows</span><span class="p">.</span><span class="nx">item</span><span class="p">(</span><span class="nx">i</span><span class="p">)[</span><span class="s1">&#39;text&#39;</span><span class="p">]);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="o">&lt;</span><span class="err">/code&gt;&lt;/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span>  <span class="p">},</span> <span class="kc">null</span><span class="p">)</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>rowid &ndash; &ldquo;скрытое&rdquo; поле, с типом autoinc</p>
+
+<p><a href="https://github.com/Stamm/chrome.extension.forismatic">Исходный код на github</a></p>
+
+<p>Ссылки по теме:</p>
+
+<ul>
+<li><a href="http://dev.w3.org/html5/webdatabase/">http://dev.w3.org/html5/webdatabase/</a></li>
+<li><a href="http://www.sqlite.org/docs.html">http://www.sqlite.org/docs.html</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Пишем расширение под Google Chrome]]></title>
+    <link href="http://stamm.github.io/write-extension-to-google-chrome/"/>
+    <updated>2010-12-08T16:02:00+03:00</updated>
+    <id>http://stamm.github.io/write-extension-to-google-chrome</id>
+    <content type="html"><![CDATA[<p>В связи с последними тенденциями в вебе (в том числе и недавний запуск <a href="https://chrome.google.com/webstore">webstore</a>), возникла идея попрактиковаться в написании плагина под Google Chrome. Решил написать плагин, который бы показывал цитаты с сайта <a href="http://forismatic.com/">Forismatic.com</a>, после прочтения <a href="http://habrahabr.ru/blogs/personal/102076/">статьи о написании аналогичного апплета для gnome</a>.</p>
+
+<p><a href="https://chrome.google.com/extensions/detail/aegemfnepncjfdnlphmlpmfaninhgafg">Страница установки плагина</a>.</p>
+
+<h3>Требования:</h3>
+
+<ul>
+<li>показ уведомлений через всплывающее окошко.</li>
+<li>двуязычность: русский и английский, причём язык должен подцепляться автоматически в зависимости от выставленного в браузере. Но при этом оставлять выбор на каком языке получать цитаты.</li>
+<li>настройка интервала обновления</li>
+</ul>
+
+
+<p>Всем начинающим рекомендую сначала прочитать <a href="http://code.google.com/chrome/extensions/getstarted.html">отличный мануал от самого google</a>. В нём всё подробно описано, также есть примеры. Вообще можно увидеть исходники любого приложения: достаточно зайти в папку ~/.config/chromium/Default/Extensions (используется Chromium на Ubuntu).</p>
+
+<p>Весь исходный код моего расширения <a href="https://github.com/Stamm/chrome.extension.forismatic">доступен на гитхабе</a>.</p>
+
+<p>Получать цитаты будем с помощью <a href="http://ru.forismatic.com/api/">api forismatic.com</a> в формате json.</p>
+
+<p>Вот такой GET-запрос должен получится:
+<a href="http://api.forismatic.com/api/1.0/?method=getQuote&amp;format=json&amp;key=123456lang=ru">http://api.forismatic.com/api/1.0/?method=getQuote&amp;format=json&amp;key=123456lang=ru</a></p>
+
+<p>Меняем lang на выбранный язык, а параметр key произвольно.</p>
+
+<p>Теперь перейдём непосредственно к созданию приложения
+Необходимо создать такую структуру:</p>
+
+<ul>
+<li><strong>_locales/en/messages.json</strong> #для перевода на английский язык</li>
+<li><strong>_locales/ru/messages.json</strong> #для перевода на русский язык</li>
+<li><strong>background.html</strong> #файл, который выполняется при запуске плагина</li>
+<li><strong>functions.js</strong> #небольшая библиотечка написанных функций</li>
+<li><strong>icon.png</strong> #В связи с запуском webstore рекомендую использовать иконки по-качественней</li>
+<li><strong>manifest.json</strong> #файл описания плагина</li>
+<li><strong>options.html</strong> #html-файл настроек</li>
+</ul>
+
+
+<p>Сначала создаём файлы переводы.</p>
+
+<p><strong>_locales/en/messages.json</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  &ldquo;extName&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Forismatic quotes"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;extDescr&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Show quote from Forismatic.com"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;language&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Language"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;refresh&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Time refresh"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;save&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Save"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;options&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Options"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;options_saved&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Options saved"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;minutes&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "in minutes"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p><strong>_locales/ru/messages.json</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  &ldquo;extName&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Forismatic цицаты"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;extDescr&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Показывает цитаты с сайта Forismatic.com"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;language&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Язык"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;refresh&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Время обновления"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;save&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Сохранить"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;options&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Опции"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;options_saved&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "Настройки сохранены"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  },
+</span><span class='line'>  &ldquo;minutes&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"message": "в минутах"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь можно описать расширение в манифесте</p>
+
+<p><strong>manifest.json</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>{
+</span><span class='line'>  &ldquo;default_locale&rdquo;:&ldquo;en&rdquo;,
+</span><span class='line'>  &ldquo;name&rdquo;: &ldquo;&lt;strong>MSG_extName&lt;/strong>&rdquo;,
+</span><span class='line'>  &ldquo;description&rdquo;: &ldquo;&lt;strong>MSG_extDescr&lt;/strong>&rdquo;,
+</span><span class='line'>  &ldquo;version&rdquo;: &ldquo;0.1.1&rdquo;,
+</span><span class='line'>  &ldquo;background_page&rdquo;: &ldquo;background.html&rdquo;,
+</span><span class='line'>  &ldquo;options_page&rdquo;: &ldquo;options.html&rdquo;,
+</span><span class='line'>  &ldquo;permissions&rdquo;: [&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"notifications",
+</span><span class='line'>"http://api.forismatic.com/*"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  ],
+</span><span class='line'>  &ldquo;icons&rdquo;: {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>"128": "icon.png"
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Параметр <strong>default_locale</strong> определяет стандартную локаль.</p>
+
+<p>Параметр name описывает имя расширения. Мы его задаём в зависимости от языка, используя ранее описанную переменную в файлах локализации <strong>extName</strong>, предварительно обернув её: <strong>MSG_extName</strong> Также поступим и с параметром <strong>description</strong>. Кстати, при отображении расширения на <a href="https://chrome.google.com/extensions/">https://chrome.google.com/extensions/</a> или на <a href="https://chrome.google.com/webstore">https://chrome.google.com/webstore</a> будет тоже подставляться значение в зависимости от выбранного языка.</p>
+
+<p>В значении <strong>version</strong> указываем версию плагина (причём при заливке новых версий, она должна быть больше предыдущей, что логично). Chrome будет раз в несколько часов и при загрузке проверять обновление плагина и автоматически обновлять его.</p>
+
+<p>Параметры <strong>background_page</strong> и <strong>options_page</strong> указывают на страницу, выполняющуюся в фоне, и страницу настроек. В параметре permissions передаем массив, в котором описываем, что может делать расширение. Мы включили доступ к уведомлениям (notifications) и доступ к сайту api (<a href="http://api.forismatic.com/*">http://api.forismatic.com/*</a>).</p>
+
+<p>С параметром <strong>icons</strong> всё понятно.</p>
+
+<p>Библиотека функций для javascript</p>
+
+<p><strong>functions.js</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>//&ldquo;Главная&rdquo; функция, которая будет показывать всплывающее окно с цитатой
+</span><span class='line'>function main()
+</span><span class='line'>{
+</span><span class='line'>  req = new XMLHttpRequest();
+</span><span class='line'>  req.onload = function () {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>var doc = req.responseText;
+</span><span class='line'>if (doc) {
+</span><span class='line'>  //Хак, позволяющий получить json как объект
+</span><span class='line'>  var json = eval('(' + doc + ')');
+</span><span class='line'>  author = json.quoteAuthor;
+</span><span class='line'>  text = json.quoteText;
+</span><span class='line'>  link = json.quoteLink;
+</span><span class='line'>  //Можно создать запись в логе
+</span><span class='line'>  console.log(author + ' ' + text);
+</span><span class='line'>  //Показываем цитату
+</span><span class='line'>  showNotification(author, text);
+</span><span class='line'>}
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  };
+</span><span class='line'>  req.open(&ldquo;GET&rdquo;, &ldquo;&lt;a href="http://api.forismatic.com/api/1.0/?method=getQuote&amp;format=json&amp;key=">http://api.forismatic.com/api/1.0/?method=getQuote&amp;format=json&amp;key=&lt;/a>&rdquo; + Math.random()*1000000 + &ldquo;&amp;lang=&rdquo; + localStorage[&lsquo;lang&rsquo;], true);
+</span><span class='line'>  req.send(null);
+</span><span class='line'>}
+</span><span class='line'>//Хелпер для показа всплывающего окна
+</span><span class='line'>function showNotification(title, text)
+</span><span class='line'>{
+</span><span class='line'>  var notification = webkitNotifications.createNotification(&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>'',
+</span><span class='line'>title,
+</span><span class='line'>text
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  );
+</span><span class='line'>  notification.show();
+</span><span class='line'>  //Убираем окно через 15 секунд
+</span><span class='line'>  window.setInterval(function() {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>notification.cancel();
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }, 15000);
+</span><span class='line'>}
+</span><span class='line'>//Глобальная переменная для сохранения setInterval
+</span><span class='line'>var interval;
+</span><span class='line'>//Функция для запуска, которая через выставленное время в настройках будет запускать функцию main. Также запускается при измении времени обновления
+</span><span class='line'>function init() {
+</span><span class='line'>  if ( ! localStorage[&lsquo;refresh&rsquo;])&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>return;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  window.clearInterval(interval)
+</span><span class='line'>  interval = window.setInterval(function() {&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>main();
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  }, localStorage[&lsquo;refresh&rsquo;] * 60000);
+</span><span class='line'>  console.log(localStorage[&lsquo;refresh&rsquo;] * 60000);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Файл, который выполняется при запуске плагина.</p>
+
+<p><strong>background.html</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!DOCTYPE html>
+</span><span class='line'>&lt;html>
+</span><span class='line'>&lt;head>
+</span><span class='line'>&lt;meta charset=utf-8 />&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;script src="functions.js">&lt;/script>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;script>
+</span><span class='line'>
+</span><span class='line'>//Поставить дефолтные значения при первом запуске
+</span><span class='line'>if( ! localStorage['refresh'])
+</span><span class='line'>{
+</span><span class='line'>  localStorage['refresh'] = 30;
+</span><span class='line'>}
+</span><span class='line'>if( ! localStorage['lang'])
+</span><span class='line'>{
+</span><span class='line'>  //Получаем язык, используемый в браузере
+</span><span class='line'>  var lang = chrome.i18n.getMessage("@@ui_locale");
+</span><span class='line'>  if (lang == 'ru')
+</span><span class='line'>    localStorage['lang'] = "ru";
+</span><span class='line'>  else
+</span><span class='line'>    localStorage['lang'] = "en";
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>//Добавляем listener, для приёма вызова со страницы опций, чтобы обновить время обновления цитат
+</span><span class='line'>chrome.extension.onRequest.addListener(
+</span><span class='line'>  function(request, sender, sendResponse) {
+</span><span class='line'>    //Проверка, что данные пришли со страницы опций этого же плагина и параметр do равен update
+</span><span class='line'>    if (sender.tab.url == chrome.extension.getURL(«options.html») && request.do == "update")
+</span><span class='line'>   {
+</span><span class='line'>     //Показываем цитату
+</span><span class='line'>     main();
+</span><span class='line'>      init();
+</span><span class='line'>      console.log('Update refresh time from options !');
+</span><span class='line'>    }
+</span><span class='line'>  }
+</span><span class='line'>);
+</span><span class='line'>//Показываем цитату при запуске
+</span><span class='line'>main();
+</span><span class='line'>
+</span><span class='line'>init();
+</span><span class='line'>&lt;/script>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/head>
+</span><span class='line'>&lt;/html></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Настройки плагина</p>
+
+<p><strong>options.html</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;!DOCTYPE html>
+</span><span class='line'>&lt;html>
+</span><span class='line'>&lt;meta charset=utf-8 />
+</span><span class='line'>&lt;head>&lt;title>Options&lt;/title>&lt;/head>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;script src="functions.js">&lt;/script>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;script type="text/javascript">
+</span><span class='line'>
+</span><span class='line'>//Сохраняем опции
+</span><span class='line'>function save_options()
+</span><span class='line'>{
+</span><span class='line'>  localStorage['lang'] = document.getElementById("lang").value;
+</span><span class='line'>  localStorage['refresh'] = parseFloat(document.getElementById("refresh").value);
+</span><span class='line'>
+</span><span class='line'>  //Показываем пользователю, что настройки сохранены
+</span><span class='line'>  var status = document.getElementById("status");
+</span><span class='line'>  status.innerHTML = chrome.i18n.getMessage("options_saved");
+</span><span class='line'>  setTimeout(function() {
+</span><span class='line'>    status.innerHTML = "";
+</span><span class='line'>  }, 1750);
+</span><span class='line'>
+</span><span class='line'>  //Посылаем запрос на background.html
+</span><span class='line'>  chrome.extension.sendRequest({do: "update"});
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>//Восстанавливаем значения из localStorage
+</span><span class='line'>function restore_options()
+</span><span class='line'>{
+</span><span class='line'>  //Выставляем язык
+</span><span class='line'>  document.getElementById("locale_refresh").innerHTML = chrome.i18n.getMessage("refresh");
+</span><span class='line'>  document.getElementById("locale_minutes").innerHTML = chrome.i18n.getMessage("minutes");
+</span><span class='line'>  document.getElementById("locale_language").innerHTML = chrome.i18n.getMessage("language");
+</span><span class='line'>  document.getElementById("locale_save").value = chrome.i18n.getMessage("save");
+</span><span class='line'>  document.title = chrome.i18n.getMessage("options");
+</span><span class='line'>
+</span><span class='line'>  //Выставляем значения
+</span><span class='line'>  //Можно поставить:
+</span><span class='line'>  //document.getElementById("lang").value = localStorage["lang"] == undefined ? 'en' : localStorage["lang"];
+</span><span class='line'>  //Но в background.html уже выставлены значения по-умолчанию
+</span><span class='line'>  document.getElementById("lang").value = localStorage["lang"];
+</span><span class='line'>  document.getElementById("refresh").value = localStorage["refresh"];
+</span><span class='line'>}
+</span><span class='line'>&lt;/script>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;body onload="restore_options()">
+</span><span class='line'>&lt;form action="" onsubmit="save_options();return false;">
+</span><span class='line'>&lt;span id="locale_refresh">Time refresh&lt;/span>: &lt;input name="refresh" id="refresh" size="1" /> &lt;span id="locale_minutes">in minutes&lt;/span> &lt;br />
+</span><span class='line'>&lt;span id="locale_language">Language&lt;/span>:
+</span><span class='line'>  &lt;select name="lang" id="lang">&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>&lt;option value="ru"&gt;Русский&lt;/option&gt;
+</span><span class='line'>&lt;option value="en"&gt;English&lt;/option&gt;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;/select>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;br />
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;input type="submit" value="Save" id="locale_save"/>
+</span><span class='line'>&lt;/form>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;div id="status">&lt;/div>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>&lt;p>&lt;/body>
+</span><span class='line'>&lt;/html></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Cкрипт, который помогает упаковывать расширение:</p>
+
+<p><strong>zip.sh</strong></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/sh&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>zip -r chrome-ext-forismatic.zip ./* -x &ldquo;.git&rdquo; -x &ldquo;zip.sh&rdquo;</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Теперь можно запустить плагин в браузере: Tools » Расширения » Загрузить распакованное расширение Должно появиться всплывающее окно с цитатой. Можно зайти в настройки, сменить язык. При сохранении, должная появиться цитата на другом языке.</p>
+
+<p>После создания и тестирования необходимо выложить плагин. Заходим на страницу: <a href="https://chrome.google.com/extensions/developer/dashboard?hl=ru,">https://chrome.google.com/extensions/developer/dashboard?hl=ru,</a> загружаем архив с плагином, указываем нужные параметры (скриншоты, разделы) и нажимаем Publish changes и наше приложение уже на странице плагинов и на webstore.</p>
+]]></content>
+  </entry>
+  
+</feed>

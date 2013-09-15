@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: git | Блог Загирова Рустама]]></title>
+  <link href="http://stamm.github.io/blog/categories/git/atom.xml" rel="self"/>
+  <link href="http://stamm.github.io/"/>
+  <updated>2013-09-15T19:29:08+04:00</updated>
+  <id>http://stamm.github.io/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ограничение прав пользователей в git]]></title>
+    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <updated>2012-10-03T19:38:00+04:00</updated>
+    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <content type="html"><![CDATA[<p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
+
+<p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
+
+<p>Поэтому нужно ограничивать push в репозиторий на основе этих правил: тестерам дать право изменять файлы только в рамках одной директории. А программистам не давать возможность пушить в мастер, только какой-то группе доверенных программистов, а по сути тим-лиду.</p>
+
+<p>Мы используем gitolite и он позволяет это сделать на уровне конфигурации.</p>
+
+<p>Есть следующие группы пользователей</p>
+
+<ul>
+<li>мега-админы &ndash; они и только они могут менять историю в репе. Это чревато, но разрешено только одному человеку для непредвиденных ситуаций =)</li>
+<li>гит-мастера — это те, кто может пушить в мастер (по сути мёржить тоже), тэгировать, создавать и удалять ветки с версией релиза и хотфиксные ветки. Название веток начинается соответственно с v и hf. Т.е: v1.0.1 и hf.1.0.1</li>
+<li>разработчики — это пользователи, которые не могут пушить в мастер и создавать тэги. Также не могут удалить вертку с версией релиза и хотфиксную ветку. Могут создавать и удалять любые другие ветки.</li>
+<li>тестеры — ограниченные пользователи. Могут менять файлы в только пределах директории protected/test.</li>
+<li>только чтение — давать возможность только для чтения репы. Например, для технических писателей.</li>
+<li>группа аутсорсеров &ndash; у них свои порядки, но они не могут удалить ветки master, dev, hotfixes, release</li>
+</ul>
+
+
+<p>Есть 5 репозиториев: site, mobile, api, common-modules, outsource-site</p>
+
+<p>Только на site распространяются правила для тестировщиков.</p>
+
+<p>На site, mobile, api, common-modules — наши основные диктаторские правила</p>
+
+<p>На outsource-site — «мягкие» правила.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>repo    gitolite-admin&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>    RW+     =   id_rsa
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>========== Группировка веток или путей =============&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Не разрешать писать в master и создавать тэги&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@not_write = master$ refs/tags&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Не разрешать создавать ветки и удалять начинающиеся с v и hf.&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@not_create = v hf.&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Тестеры могут писать только сюда&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@tester_write_only = NAME/protected/tests/&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Эти ветки не могут удалять обычные программеры&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@old_branches = master$ dev$ hotfixes$ realease$&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>========== Группы пользователей ==========&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Админы имеют право писать всюду&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@admins = id_rsa&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Гит-админы могут писать в мастер и создавать ветки из @not_create&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@git-admins = zagirov&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Разработчики&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@developers = @git-admins ivanov petrov sidorov&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Тестеры имеют право на запись только в @tester_write_only&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@testers = test-girl&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Только на чтение&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@developers-ro = tech-writer&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Аутсорсеры со своими правилами&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@outsource = five-hard-dev1 five-hard-dev2&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>=========== Правила ===================&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Правила применяются для всех&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>repo @all
+</span><span class='line'>  RW+CD                      = @admins&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Главный сайт с тестами&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>repo  site
+</span><span class='line'>  # Правило для тестировщиков
+</span><span class='line'>  # Если оно создаётся, ниже должно быть правило, RWCD NAME/ = @developers
+</span><span class='line'>  # Оно разрешает другим писать сюда
+</span><span class='line'>  RW                         = @testers
+</span><span class='line'>  RW   @tester_write_only    = @testers
+</span><span class='line'>  R                          = @testers
+</span><span class='line'>  &ndash;                          = @testers&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Группа, куда применяются общие правила работы с ветками @git-branch-rules&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>@git-branch-rules = site mobile api common-modules&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>repo @git-branch-rules
+</span><span class='line'>  # Разрешаем писать в @not_write для @git-admins
+</span><span class='line'>  # У @developers на @not_write только чтение
+</span><span class='line'>  RWCD @not_write            = @git-admins
+</span><span class='line'>  &ndash;    @not_write            = @git-admins
+</span><span class='line'>  R    @not_write            = @developers
+</span><span class='line'>  &ndash;    @not_write            = @developers&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  # Разрешаем создавать и удалять ветки @not_create для @git-admins
+</span><span class='line'>  # @developers не могут создавать удалять @not_create
+</span><span class='line'>  RWCD @not_create           = @git-admins
+</span><span class='line'>  &ndash;    @not_create           = @git-admins
+</span><span class='line'>  RW   @not_create           = @developers
+</span><span class='line'>  &ndash;    @not_create           = @developers&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  # @developers могуть писать и создавать в @old_branches, но не удалять их
+</span><span class='line'>  RWC  @old_branches         = @developers
+</span><span class='line'>  &ndash;    @old_branches         = @developers&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  # Для всего остального разрешаем доступ для @developers
+</span><span class='line'>  RWCD                       = @developers
+</span><span class='line'>  # Это нужно, т.к раньше для @testers запретили запись для определённых файлов
+</span><span class='line'>  RWCD NAME/                 = @developers&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  # @developers-ro могут только читать
+</span><span class='line'>  R                          = @developers-ro&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>Это обычный реп, без жёстких правил. Здесь просто запрещается удалять ветки master dev hotfixes realease&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>repo  outsource-site
+</span><span class='line'>  RWC  @old_branches         = @outsource
+</span><span class='line'>  &ndash;    @old_branches         = @outsource
+</span><span class='line'>  RWCD                       = @outsource&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Если вы используете не gitolite, а другой продукт: gitosis или github, то скорее всего сделать это можно на хуках.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Перенос svn-репозитария в git]]></title>
+    <link href="http://stamm.github.io/svn-to-git/"/>
+    <updated>2011-04-07T18:33:00+04:00</updated>
+    <id>http://stamm.github.io/svn-to-git</id>
+    <content type="html"><![CDATA[<p>Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)</p>
+
+<p>Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/usr/bin/env bash&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;authors<span class="o">=</span><span class="k">$(</span>svn log -q | grep -e &amp;lsquo;^r&amp;rsquo; | awk &amp;lsquo;BEGIN <span class="o">{</span> <span class="nv">FS</span> <span class="o">=</span> &amp;ldquo;|&amp;rdquo; <span class="o">}</span> ; <span class="o">{</span> print <span class="nv">$2</span> <span class="o">}</span>&amp;rsquo; | sort | uniq<span class="k">)</span>
+</span><span class='line'><span class="k">for </span>author in <span class="k">${</span><span class="nv">authors</span><span class="k">}</span>; <span class="k">do</span>
+</span><span class='line'><span class="k">  </span><span class="nb">echo</span> &amp;ldquo;<span class="k">${</span><span class="nv">author</span><span class="k">}</span> <span class="o">=</span> <span class="k">${</span><span class="nv">author</span><span class="k">}</span> &lt;email&gt;&amp;rdquo;;
+</span><span class='line'><span class="k">done</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Сохраняем вывод в какой-нибудь файл (/home/user/svn-authors.txt) и проставляем у всех авторов email. Иногда первый коммит совершается из консоли и он получается от неизвестного пользователя, поэтому стоит добавить строку об этом неизвестном пользователе, иначе экспорт в git не сработает.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(no author) = Name Surname &lt; email ></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И вот собственно скрипт. Он вытягивает репозиторий из svn (используя файл соотношения авторов с email), проставляет тэги и пушит изменения на удалённый git-репозитарий. В данном случае вытягивается исходники yii и пушаться на github.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;h1&gt;!/usr/bin/env bash&lt;/h1&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;AUTHOR_FILE<span class="o">=</span>&amp;ldquo;/home/user/svn-authors.txt&amp;rdquo;
+</span><span class='line'><span class="nv">SVN_PATH</span><span class="o">=</span>&amp;ldquo;&lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;http://yii.googlecode.com/svn/&quot;</span>&gt;http://yii.googlecode.com/svn/&lt;/a&gt;&amp;rdquo;
+</span><span class='line'><span class="nb">cd</span> /path/to/git/repo&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;git svn clone -s &amp;mdash;authors-file<span class="o">=</span><span class="nv">$AUTHOR_FILE</span> <span class="nv">$SVN_PATH</span> .
+</span><span class='line'>git merge remotes/trunk &gt; /dev/null 2&gt;&amp;amp;1&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;git <span class="k">for</span>-each-ref refs/remotes/tags | cut -d / -f 4- |
+</span><span class='line'><span class="k">while </span><span class="nb">read </span>ref
+</span><span class='line'><span class="k">do</span>&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;pre&gt;&lt;code&gt; git tag -a <span class="s2">&quot;$ref&quot;</span> <span class="s2">&quot;refs/remotes/tags/$ref&quot;</span> &amp;gt; /dev/null 2&amp;gt;&amp;amp;1
+</span><span class='line'>&lt;/code&gt;&lt;/pre&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;p&gt;done
+</span><span class='line'>git push &amp;mdash;all &gt; /dev/null 2&gt;&amp;amp;1
+</span><span class='line'>git push &amp;mdash;tags &gt; /dev/null 2&gt;&amp;amp;1
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Этот скрипт можно поставить в крон. Скрипт не будет вытягивать весь svn-репозиторий заново (если уже был раз вытянут), а только изменения.</p>
+
+<p>Можно даже <a href="http://linsovet.com/git-svn-sync-changes">использовать git совместно с svn</a>.</p>
+
+<p>Используемые ссылки: <a href="http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git">http://leonid.shevtsov.me/ru/perenos-svn-repozitariya-v-git</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Непрерывная интеграция: jenkins + yii + git]]></title>
+    <link href="http://stamm.github.io/continuous-integration-jenkins-yii-git/"/>
+    <updated>2011-03-06T18:24:00+03:00</updated>
+    <id>http://stamm.github.io/continuous-integration-jenkins-yii-git</id>
+    <content type="html"><![CDATA[<p>Услышав шумиху про некую систему интеграционного тестирования hudson, который переименовали в jenkins, я захотел узнать что это и как это можно использовать. Для чего собственно он нужен? В кратце: он вытягивает последнюю версию из git/svn-репозитория и выполняет определённые действия (тестирует, выкладывает на другой сервер, делает отчёты). Всё это происходит автоматически: можно задать время, когда будет выполнятся задания. Можно почитать про <a href="http://habrahabr.ru/blogs/testing/108928/">пример использования jenkins</a>.</p>
+
+<p>Задача такая: Выполнение unit тестов для yii с отображением покрытия кода</p>
+
+<p>Все действия проводятся на сервере debian squeeze от root.</p>
+
+<h3>Установка jenkins</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>echo &ldquo;deb &lt;a href="http://pkg.jenkins-ci.org/debian">http://pkg.jenkins-ci.org/debian&lt;/a> binary/&rdquo; > /etc/apt/sources.list.d/jenkins.list
+</span><span class='line'>wget -q -O &ndash; &lt;a href="http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key">http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key&lt;/a> | sudo apt-key add &ndash;
+</span><span class='line'>aptitude update
+</span><span class='line'>aptitude install jenkins</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>По адресу <a href="http://serverName:8080/">http://serverName:8080/</a> должен открыться jenkins.</p>
+
+<h3>Установка плагинов</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd /tmp
+</span><span class='line'>wget &lt;a href="http://localhost:8080/jnlpJars/jenkins-cli.jar">http://localhost:8080/jnlpJars/jenkins-cli.jar&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Если от jenkins нужно, чтобы выполнял unit-тесты и делал code coverage, то достаточно установить несколько плагинов, но на самом деле их очень много.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin xunit &amp;&amp; \
+</span><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin clover &amp;&amp; \
+</span><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> install-plugin git</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Перезапускаем jenkins:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>java -jar jenkins-cli.jar -s &lt;a href="http://localhost:8080">http://localhost:8080&lt;/a> safe-restart</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Настройка проекта</h3>
+
+<p>Создаём проект. Открываем Новая задача → Имя: Yii. Выбираем &ldquo;Создать задачу со свободной конфигурацией&rdquo; → Сохранить.</p>
+
+<p>Меняем файл <a href="https://github.com/stamm/jenkins-yii/raw/master/phpunit.xml">protected/tests/phpunit.xml</a>
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;phpunit bootstrap="bootstrap.php"
+</span><span class='line'>   colors="false"
+</span><span class='line'>   convertErrorsToExceptions="true"
+</span><span class='line'>   convertNoticesToExceptions="true"
+</span><span class='line'>   convertWarningsToExceptions="true"
+</span><span class='line'>   stopOnFailure="false">&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;selenium>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>&lt;browser name="Internet Explorer" browser="*iexplore" /&gt;
+</span><span class='line'>&lt;browser name="Firefox" browser="*firefox" /&gt;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;/selenium>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;logging>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;pre>&lt;code>&lt;log type="coverage-html" target="../../build/coverage" title="prj"
+</span><span class='line'> charset="UTF-8" yui="true" highlight="true"
+</span><span class='line'> lowUpperBound="35" highLowerBound="70"/&gt;
+</span><span class='line'>&lt;log type="coverage-clover" target="../../build/logs/clover.xml"/&gt;
+</span><span class='line'>&lt;log type="junit" target="../../build/logs/junit.xml" logIncompleteSkipped="false"/&gt;
+</span><span class='line'>&lt;/code>&lt;/pre>
+</span><span class='line'>
+</span><span class='line'>&lt;p>  &lt;/logging>
+</span><span class='line'>&lt;/phpunit></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>../../build &ndash; должен указывать на папку build в корневой папке репозитория, создавать её не нужно.</p>
+
+<p>Теперь создаём конфиги, скачивая из <a href="https://github.com/Stamm/jenkins-yii/:">https://github.com/Stamm/jenkins-yii/:</a></p>
+
+<ul>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/config.xml">config.xml</a></li>
+<li><a href="https://github.com/stamm/jenkins-yii/raw/master/build.xml">build.xml</a></li>
+</ul>
+
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rm /var/lib/jenkins/jobs/yii/config.xml
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/config.xml &mdash;no-check-certificate &lt;a href="https://github.com/Stamm/jenkins-yii/raw/master/config.xml">https://github.com/Stamm/jenkins-yii/raw/master/config.xml&lt;/a>
+</span><span class='line'>sudo -u jenkins mkdir /var/lib/jenkins/jobs/yii/workspace
+</span><span class='line'>sudo -u jenkins wget -O /var/lib/jenkins/jobs/yii/workspace/build.xml &mdash;no-check-certificate &lt;a href="https://github.com/Stamm/jenkins-yii/raw/master/build.xml">https://github.com/Stamm/jenkins-yii/raw/master/build.xml&lt;/a></span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Чтобы наши конфиги подхватились идём в настройки jenkins и кликаем по ссылке &ldquo;Пересчитать настройки из файла&rdquo;. В настройках проекта yii указываем git репозиторий до нашего проекта. Можно даже указать локальный путь, но должны быть права для пользователя jenkins. Добавляем <a href="https://github.com/stamm/jenkins-yii/raw/master/ExampleTest.xml">файл теста</a> в protected/unit/</p>
+
+<p>Теперь запускаем сборку. Вот как примерно это выглядит.</p>
+
+<p><img src="/images/continuous-integration-jenkins-yii-git/jenkins-board.png" alt="jenkis board" /></p>
+
+<h3>Уведомления по email</h3>
+
+<p>В конфиге jenkins указываем параметры для подключения к SMTP. Если настроен sendmail или exim, то нужно указать только от кого отсылать письмо. И теперь в настройках проекта yii указываем кому слать письмо об упавших тестах.</p>
+
+<h3>Авто-сборка</h3>
+
+<p>Можно настроить, чтобы сборки проводились автоматически. Для этого в настройках проекта yii ставим галку у Собирать периодически и в появившемся тестовом поле указываем время запуска в формате cron. Или сделать hook в git:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;/p>
+</span><span class='line'>
+</span><span class='line'>&lt;h1>!/bin/sh&lt;/h1>
+</span><span class='line'>
+</span><span class='line'>&lt;p>echo &ldquo;Running jenkins&rdquo;
+</span><span class='line'>wget &lt;a href="http://serverName:8080/job/yii/build">http://serverName:8080/job/yii/build&lt;/a> > /dev/null 2>&amp;1</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>P.S. Я показал только малую часть того, что может делать jenkins. Он может создавать документацию по коду, проверять на наличие дублирования в коде, проверять стиль кодирования и многое, многое другое. Примеры более сложных конфигов <a href="https://github.com/sebastianbergmann/php-jenkins-template/raw/master/config.xml">config.xml</a> и <a href="https://github.com/sebastianbergmann/php-object-freezer/raw/master/build.xml">build.xml</a></p>
+
+<p>Используемые ссылки:</p>
+
+<ul>
+<li><a href="http://www.rustyrobot.org/2011/02/continuous-integration.html">http://www.rustyrobot.org/2011/02/continuous-integration.html</a></li>
+<li><a href="http://jenkins-php.org/">http://jenkins-php.org/</a></li>
+<li><a href="http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/">http://blog.jepamedia.org/2009/10/28/continuous-integration-for-php-with-hudson/</a></li>
+<li><a href="http://habrahabr.ru/blogs/testing/108928/">http://habrahabr.ru/blogs/testing/108928/</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

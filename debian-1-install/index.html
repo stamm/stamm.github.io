@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Debian. Часть 1: установка - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="Есть цель написать статьи по настройке домашнего сервера для различных нужд: шлюз для выхода всех компьютеров в квартире в интернет через vpn (pptp &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://stamm.github.io/debian-1-install">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:stamm.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Debian. Часть 1: установка</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-28T00:36:00+04:00" pubdate data-updated="true">2010-07-28</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Есть цель написать статьи по настройке домашнего сервера для различных нужд:</p>
+
+<ul>
+<li>шлюз для выхода всех компьютеров в квартире в интернет через vpn (pptp) + wi-fi</li>
+<li>веб-сервер</li>
+<li>торрент-качалка + samba</li>
+<li>эксперименты</li>
+</ul>
+
+
+<p>Схема сети такая:</p>
+
+<p><img src="/images/debian-1-install//schema.png" alt="Схема сети" /></p>
+
+<p>Эти статьи будут и как напоминающая инструкция самому себе.</p>
+
+<p>Начну с самого начала: установка системы GNU/Linux.</p>
+
+<h2>Лирическое отступление:</h2>
+
+<p>Есть довольного много серверных дистрибутивов: Debian, Ubuntu, Gentoo, Arch, Slackware, etch. Можно много холиварить на эти темы. Мой выбор Debian был обусловлен несколькими факторами:</p>
+
+<p>Человек, который мне порекомендовал посмотреть Linux, пользовался Debian и это оставило свой след: я мог спросить о непонятных вещах и получить быстрый толковый ответ. На мой взгляд, ОС должна быть простой и понятной Люблю пакетные дистрибутивы Почему не Ubuntu, спросите вы? Знакомые linux-админы ставили ubuntu LTS: 6.06 и 8.04 на боевые сервера. По их словам 6.06 был отличным, но 8.04 стал очень медленным. Поставленный Debian на тот же сервак летал по сравнению с Ubuntu 8.04. Сам на домашнем компьютере использую Ubuntu, Debian уж слижком чопорный для десктопа. Но в качестве серверного дистрибутива однозначно Debian.</p>
+
+<p>Другие дистрибутивы пробывал, но они жили в моей виртуалке не больше суток. Каждый выбирает свой дистрибутив, но я покажу установку, а в следующих постах и базовую настройку Debian 5.0.5 с апгрейдом до sid. Вопреки стериотипам, Sid (он же unstable) работает довольно стабильно. За всё время его использования не возникало проблем. Плюс в репозитариях присутствуют свежие пакеты программ.</p>
+
+<h2>Итак, поехали.</h2>
+
+<p><a href="http://www.debian.org/CD/torrent-cd/">Скачиваем последний дистрибутив Debian</a>. Если у вас 64 битный процессор, то лучше скачать amd64, если 32 битный, то i386. В процессе своей работы столкнулся с такой проблемой: на 32-битной системе функция intval работала только с числами от -2147483648 до 2147483647. Решение данной проблемы было найдено только на 2-ой день на php.net.</p>
+
+<blockquote><p>The maximum value depends on the system. 32 bit systems have a maximum signed integer range of -2147483648 to 2147483647. So for example on such a system, intval(’1000000000000′) will return 2147483647. The maximum signed integer value for 64 bit systems is 92233720368547758007<br/>Ставлю Debian на старый компьютер (Athlon 1700, 512 Mb Ram, 40+160 Gb HDD) В моём случае Debian 5.0.5 i386.</p></blockquote>
+
+
+<p>Установка тривиально, в интернете <a href="http://www.mixali4.org.ru/2009/08/shljuz-na-debian-s-shahmatami-i_23.html">полно статей</a> по этому поводу со скриншотами. Несколько замечаний от меня: ставить только английский язык и устанавливать только базовую систему.</p>
+
+<p><a href="/debian-2-setting-network-dhcp-bind9-vpn">Часть 2 →</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-07-28T00:36:00+04:00" pubdate data-updated="true">2010-07-28</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/debian/'>debian</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://stamm.github.io/debian-1-install/" data-via="" data-counturl="http://stamm.github.io/debian-1-install/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/why-you-need-the-firewall-on-the-web-projects/" title="Previous Post: Зачем нужен firewall на веб-проектах">&laquo; Зачем нужен firewall на веб-проектах</a>
+      
+      
+        <a class="basic-alignment right" href="/debian-2-setting-network-dhcp-bind9-vpn/" title="Next Post: Debian. Часть 2. Настройка сети: dhcp, bind9, vpn, wifi-точка на карте dlink dwa-520">Debian. Часть 2. Настройка сети: dhcp, bind9, vpn, wifi-точка на карте dlink dwa-520 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-2/">Парад ссылок №2</a>
+      </li>
+    
+      <li class="post">
+        <a href="/links-parade-1/">Парад ссылок №1</a>
+      </li>
+    
+      <li class="post">
+        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Загиров Рустам -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://stamm.github.io/debian-1-install/';
+        var disqus_url = 'http://stamm.github.io/debian-1-install/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
