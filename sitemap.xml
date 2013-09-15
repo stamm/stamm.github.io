@@ -190,4 +190,8 @@
         <loc>http://stamm.github.io/robots.txt</loc>
         <lastmod>2013-09-15T19:35:42+04:00</lastmod>
     </url>
+    <url>
+        <loc>http://stamm.github.io/rss/</loc>
+        <lastmod>2013-09-15T19:46:00+04:00</lastmod>
+    </url>
 </urlset>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mail | Блог Загирова Рустама]]></title>
   <link href="http://stamm.github.io/blog/categories/mail/atom.xml" rel="self"/>
   <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:35:42+04:00</updated>
+  <updated>2013-09-15T19:59:26+04:00</updated>
   <id>http://stamm.github.io/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
@@ -51,7 +51,7 @@
 <p>Почтовый сервер яндекс ругается, что нужно заполненное поле FROM. Прописываем его в файле <strong>/etc/exim4/conf.d/rewrite/00_exim4-config_header</strong>:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite &lt;em>@&lt;/em> &lt;a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#x3a;&#110;&#x6f;&#45;&#x72;&#x65;&#112;&#108;&#x79;&#64;&#122;&#x61;&#x67;&#105;&#x72;&#111;&#118;&#x2e;&#x6e;&#x61;&#x6d;&#101;">&#110;&#111;&#45;&#114;&#x65;&#x70;&#108;&#x79;&#x40;&#122;&#x61;&#x67;&#105;&#114;&#111;&#118;&#x2e;&#x6e;&#97;&#x6d;&#101;&lt;/a> Ffr</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite &lt;em>@&lt;/em> &lt;a href="&#x6d;&#x61;&#105;&#108;&#x74;&#x6f;&#58;&#110;&#x6f;&#45;&#x72;&#101;&#x70;&#x6c;&#x79;&#64;&#x7a;&#97;&#x67;&#105;&#x72;&#x6f;&#x76;&#x2e;&#110;&#97;&#109;&#101;">&#110;&#111;&#45;&#114;&#x65;&#112;&#108;&#121;&#64;&#122;&#97;&#x67;&#105;&#x72;&#x6f;&#x76;&#46;&#110;&#97;&#x6d;&#101;&lt;/a> Ffr</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   
