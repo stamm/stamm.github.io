@@ -14,6 +14,7 @@ categories:
 
 Есть замечательный инструмент для рисования графиков на js — [highcharts](http://www.highcharts.com/), но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.
 
+<!-- more -->
 
 {% codeblock lang:php %}
 'clientScript'=>array(

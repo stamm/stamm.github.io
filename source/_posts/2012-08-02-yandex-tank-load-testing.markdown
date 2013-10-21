@@ -13,6 +13,8 @@ categories:
 
 Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.
 
+<!-- more -->
+
 Вот сам интерфейс:
 
 ![yandex-tank-good](/images/yandex-tank-load-testing/yandex-tank-good.png)

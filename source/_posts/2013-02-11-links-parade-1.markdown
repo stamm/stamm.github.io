@@ -15,6 +15,8 @@ categories:
 
 Надеюсь, каждый найдёт что-то интересное.
 
+<!-- more -->
+
 ## Развёртывание и деплой
 
 С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение [caphub от компании railsware](http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/), позволяющая структурировать задания для разных приложений.

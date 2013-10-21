@@ -18,6 +18,8 @@ Error running 'env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure --disable-inst
 There has been an error while running configure. Halting the installation. 
 {% endcodeblock %}
 
+<!-- more -->
+
 Или ошибка при запуске bundle install:
 
 {% codeblock %}
