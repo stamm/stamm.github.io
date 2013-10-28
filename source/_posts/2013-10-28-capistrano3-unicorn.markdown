@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Управление unicorn в capistrano 3"
+title: "Unicorn в capistrano 3"
 date: 2013-10-28 17:54
 comments: true
 categories:
@@ -9,7 +9,7 @@ categories:
 - ruby
 ---
 
-Вышла новая версия [capistrano](http://www.capistranorb.com/) под номером 3.
+Вышла новая версия [capistrano](http://www.capistranorb.com/) под номером 3. Можете прочитать [полный анонс](http://www.capistranorb.com/2013/06/01/release-announcement.html) от комманды.
 
 Главные изменения:
 
