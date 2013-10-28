@@ -33,6 +33,8 @@ require 'capistrano/bundler'
 Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
 ```
 
+deploy.rb:
+
 ```ruby
 namespace :deploy do
 
