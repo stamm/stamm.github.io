@@ -65,13 +65,19 @@ namespace :unicorn do
     on roles(:app) do
       if test "[ -f #{unicorn_pid} ]"
         execute :kill, "-QUIT `cat #{unicorn_pid}`"
-        #execute :rm, unicorn_pid
       end
     end
   end
 
+  desc 'Force stop unicorn (kill -9)'
   task :force_stop do
-
+    on roles(:app) do
+      if test "[ -f #{unicorn_pid} ]"
+        execute :kill, "-9 `cat #{unicorn_pid}`"
+        execute :rm, unicorn_pid
+      end
+    end
+  end
 
   desc 'Restart unicorn'
   task :restart do
