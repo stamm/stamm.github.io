@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/rss/" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/rss/" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -14,10 +14,283 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Unicorn в capistrano 3]]></title>
+    <link href="http://www.zagirov.name/capistrano3-unicorn/"/>
+    <updated>2013-10-28T17:54:00+04:00</updated>
+    <id>http://www.zagirov.name/capistrano3-unicorn</id>
+    <content type="html"><![CDATA[<p>Вышла новая версия <a href="http://www.capistranorb.com/">capistrano</a> под номером 3. Можете прочитать <a href="http://www.capistranorb.com/2013/06/01/release-announcement.html">полный анонс</a> от комманды.</p>
+
+<p>Главные изменения:</p>
+
+<ul>
+<li>Под капотом теперь <a href="https://github.com/leehambley/sshkit/">SSHKit</a>, и можно использовать разные фишки <a href="https://github.com/leehambley/sshkit/blob/master/EXAMPLES.md">dsl</a>.
+В частности появился метод test, которым можно проверить возврат и выполнить в зависимости от этого разные комманды.
+Что позволило избавится от выполнения такого: &ldquo;[ -f ] &amp;&amp; unicorn; true&rdquo;</li>
+<li>Модульность: bundler, rbenv, rvm, maintenance. Даже рельсовые assets и migration развели, можно подключать по отдельности. Идут по пути рельс: подключаешь только то, что тебе нужно.</li>
+<li>Теперь поддержка multistage из коробки</li>
+<li>Новые опции linked_files и linked_dirs</li>
+<li>Сломали &mdash;dry-run. К справедливости, это <a href="https://github.com/leehambley/sshkit/issues/39">баг</a> SSHKit, но неприятненько</li>
+</ul>
+
+
+<p>Собственно переписанные правила для unicorn&#8217;а:</p>
+
+<p>Capfile:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;capistrano/setup&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capistrano/deploy&#39;</span>
+</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;capistrano/bundler&#39;</span>
+</span><span class='line'><span class="no">Dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;lib/capistrano/tasks/*.cap&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">r</span><span class="o">|</span> <span class="n">import</span> <span class="n">r</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>deploy.rb:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">namespace</span> <span class="ss">:deploy</span> <span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">desc</span> <span class="s1">&#39;Restart application&#39;</span>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">:restart</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">invoke</span> <span class="s1">&#39;deploy:unicorn:restart&#39;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">namespace</span> <span class="ss">:unicorn</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">pid_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">release_path</span><span class="si">}</span><span class="s2">/tmp/pids&quot;</span>
+</span><span class='line'>  <span class="n">unicorn_pid</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">pid_path</span><span class="si">}</span><span class="s2">/unicorn.pid&quot;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">run_unicorn</span>
+</span><span class='line'>    <span class="n">execute</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:bundle_binstubs</span><span class="p">)</span><span class="si">}</span><span class="s2">/unicorn&quot;</span><span class="p">,</span> <span class="s2">&quot;-c </span><span class="si">#{</span><span class="n">release_path</span><span class="si">}</span><span class="s2">/config/unicorn.rb -D -E </span><span class="si">#{</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:stage</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">desc</span> <span class="s1">&#39;Start unicorn&#39;</span>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">:start</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">on</span> <span class="n">roles</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>      <span class="n">run_unicorn</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">desc</span> <span class="s1">&#39;Stop unicorn&#39;</span>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">:stop</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">on</span> <span class="n">roles</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nb">test</span> <span class="s2">&quot;[ -f </span><span class="si">#{</span><span class="n">unicorn_pid</span><span class="si">}</span><span class="s2"> ]&quot;</span>
+</span><span class='line'>        <span class="n">execute</span> <span class="ss">:kill</span><span class="p">,</span> <span class="s2">&quot;-QUIT `cat </span><span class="si">#{</span><span class="n">unicorn_pid</span><span class="si">}</span><span class="s2">`&quot;</span>
+</span><span class='line'>        <span class="c1">#execute :rm, unicorn_pid</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">:force_stop</span> <span class="k">do</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">desc</span> <span class="s1">&#39;Restart unicorn&#39;</span>
+</span><span class='line'>  <span class="n">task</span> <span class="ss">:restart</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">on</span> <span class="n">roles</span><span class="p">(</span><span class="ss">:app</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>      <span class="k">if</span> <span class="nb">test</span> <span class="s2">&quot;[ -f </span><span class="si">#{</span><span class="n">unicorn_pid</span><span class="si">}</span><span class="s2"> ]&quot;</span>
+</span><span class='line'>        <span class="n">execute</span> <span class="ss">:kill</span><span class="p">,</span> <span class="s2">&quot;-USR2 `cat </span><span class="si">#{</span><span class="n">unicorn_pid</span><span class="si">}</span><span class="s2">`&quot;</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="n">run_unicorn</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Софт на Mac OS X]]></title>
+    <link href="http://www.zagirov.name/mac-environments/"/>
+    <updated>2013-10-21T17:53:00+04:00</updated>
+    <id>http://www.zagirov.name/mac-environments</id>
+    <content type="html"><![CDATA[<p>В информации о блоге есть описание моего окружения 2 годичной давности. Сейчас я уже использую Mac OS X, а не Ubuntu Linux.</p>
+
+<p>Не буду утруждать тут дифирамбами о необходимости прямо сейчас бежать за макбуком в магазин, но поверьте система отлично подходит как для php-разработчика, как и для ruby-разработчика (коим я сейчас и являюсь).
+Это полноценная мощь юникс-консоли вкупе с красивым интерфейсом.</p>
+
+<p>Итак, поехали.</p>
+
+<!-- more -->
+
+
+<p><strong><a href="http://www.alfredapp.com/">Alfred</a></strong> (~880 рублей) — это мегамощная штука для продуктивной работы, у которой есть одна точка входа в виде строки ввода, из которой можно выполнять разнообразные действия или перенаправлять ввод в другие программы. Это своего рода spotlight на стероидах или консоль 2.0 =)
+Тут можно запустить программу по названию, быстро посчитать, погуглить, задать свои поисковые системы.
+Я прикрутил перенаправление поискового запроса в dash (это централизованная документация по различным технологиям, об этой программе будет ниже).
+<img src="http://www.zagirov.name/images/mac-environments/alfred2.png" alt="alfred" /></p>
+
+<p>Очень удобно то, что можно назначить свои скрипты по опредённому слову.
+Например, проиграть <a href="http://nooooooooooooooo.com/">http://nooooooooooooooo.com/</a> по приходу менеджеров в комнату</p>
+
+<p><img src="http://www.zagirov.name/images/mac-environments/alfred3.png" alt="Настройка" /></p>
+
+<p><img src="http://www.zagirov.name/images/mac-environments/alfred4.png" alt="Использование" /></p>
+
+<p>Тем, кто ещё не использовал эту программу, настоятельно рекомендую <a href="http://www.alfredapp.com/">это сделать</a>. Уже вышла вторая версия, но я пока использую первую.</p>
+
+<p><strong><a href="http://spectacleapp.com/">Spectacle</a></strong> (бесплатная) — быстрые хоткеи для изменения размера и расположения окон. Очень не хватало со времён убунты.</p>
+
+<p><strong><a href="http://www.macbartender.com/">Bartender</a></strong> (~500 рублей) — позволяет настроить отображение иконок в статус баре. Позволяет скрыть ненужные иконки, но получить доступ к ним по необходимости. Владельцы буков с 11 диагональю меня поймут.</p>
+
+<p><strong><a href="https://droplr.com/">Droplr</a></strong> (бесплатно) — быстрый шаринг скриншота экрана по хоткею ⌥⇧+4. Хотя, вроде бы, такое уже запилили в дробоксе.</p>
+
+<p><strong><a href="https://itunes.apple.com/us/app/alinof-timer/id512464723?mt=12">Alinof Timer</a></strong> (бесплатно) — простой таймер</p>
+
+<p><strong><a href="https://itunes.apple.com/ua/app/cheatsheet/id529456740?mt=12">CheatSheet</a></strong>  (бесплатно) &ndash; подсказывает горячии клавиши для программы при удержании</p>
+
+<p><strong><a href="http://www.clipmenu.com/">ClipMenu</a></strong> (бесплатно) — менеджер буфера обмена. Запоминает всё, что было занесено в буфер обмена и позволяет выбрать из списка по нажатию ⌘+V</p>
+
+<p><strong><a href="http://kapeli.com/dash">Dash</a></strong> (бесплатна, но настойчиво предлагает купить ~650 рублей) – оффлайный аггрегатор документаций api по языкам и фреймворкам. Список довольно внушительный и обновляется довольно оперативно. Там документация по языкам, базам, js-фреймворкам и многому другому.</p>
+
+<p><strong><a href="http://gfx.io/">gfxCardStatus</a></strong> (бесплатно) — переключалка графических карт между дискретной и встроенной для экономии памяти.</p>
+
+<p><strong><a href="http://www.iterm2.com/">iTerm</a></strong> (бесплатно) – лучший терминал для мака.</p>
+
+<p><strong><a href="http://www.keepassx.org/">KeepassX</a></strong> (бесплатно) — продолжаю пользоватся этой программой, хотя есть более удобный 1password.</p>
+
+<p><strong><a href="https://adium.im/">Adium</a></strong> (бесплатно) — мессенджер icq, jabber</p>
+
+<p><strong><a href="http://archiverapp.com/">Archiver</a></strong> (~650 рублей) – архиватор</p>
+
+<p><strong><a href="http://www.kekaosx.com/">Keka</a></strong> (бесплатно) – архиватор</p>
+
+<p><strong><a href="http://dropbox.com">Дробпокс</a></strong>, <strong><a href="http://disk.yandex.ru">Яндекс.Диск</a></strong>, <strong><a href="http://labs.bittorrent.com/experiments/sync.html">BitTorrentSync</a></strong> (все бесплатны) &ndash; облачная синхронизация данных</p>
+
+<p><strong><a href="http://doit.im/">Doit.im</a></strong> (бесплатна с ограниченным функционалом, ~65 рублей в месяц) &ndash; менеджер задач по GTD</p>
+
+<p><strong><a href="https://www.hipchat.com/">Hipchat</a></strong> (~65 рублей с пользователя в месяц) — прикольный чат для общения между разработчиками.</p>
+
+<p><strong><a href="http://www.cocoatech.com/pathfinder/">Path finder</a></strong> (~1300 рублей) – удобный файловый менеджер, умеет открыватся вместо finder</p>
+
+<p><strong><a href="">Sequel Pro</a></strong> (бесплатно) &ndash; незаменимый менеджер MySQL</p>
+
+<p><strong><a href="http://www.jetbrains.com/">RubyMine, PhpStorm</a></strong> (платно) — лучше IDE для кода нет</p>
+
+<p><strong><a href="http://www.sublimetext.com/">Sublime Text</a></strong> &ndash; ненагруженный редактор для всего</p>
+
+<p><strong><a href="http://www.sourcetreeapp.com/">SourceTree</a></strong> (бесплатно) &ndash; отличный визуальный клиент для git</p>
+
+<p><strong><a href="https://itunes.apple.com/ua/app/transmit/id403388562?mt=12">Transmit</a></strong> (~1100 рублей) — клиент для загрузки файлов через ftp, sftp, s3.</p>
+
+<p><strong><a href="http://mplayerx.org/">MPlayerX</a></strong> (бесплатно) – отличный проигрыватель видео-файлов</p>
+
+<p><strong><a href="http://www.videolan.org/vlc/index.html">VLC</a></strong> (бесплатно) – всеядный проигрыватель видео-файлов</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Бага thinking-sphinx в Mac OS X]]></title>
+    <link href="http://www.zagirov.name/thinking-sphinx-mac-os-x/"/>
+    <updated>2013-09-18T18:33:00+04:00</updated>
+    <id>http://www.zagirov.name/thinking-sphinx-mac-os-x</id>
+    <content type="html"><![CDATA[<p>Возникла ошибка при использовании thinking-sphinx под Mac OS X. Убил полдня на её решение. Надеюсь этот пост поможет быстрей справиться с этим багом таким же как и я программистам, которые используют методику google driven development.</p>
+
+<p>Эта ошибка воспроизводилась на Mac OS X 10.8.4, thinking-sphinx 3.0.5, и sphinx 2.0.9.</p>
+
+<p>Началось всё с этой ошибки:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>undefined method `inject' for nil:NilClass</span></code></pre></td></tr></table></div></figure>
+
+
+<p>И стектрейсом</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:49:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:14:in `block in call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:13:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/geographer.rb:11:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/sphinxql.rb:13:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/stale_id_filter.rb:10:in `call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/runner.rb:31:in `call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/builder.rb:102:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/search.rb:65:in `populate'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>В логах было только видно, что запрос исполняется.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Query (36.6ms)  SELECT * FROM `index` WHERE MATCH('телеФон*')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>После копаний оказалось, что thinking-sphinx выполняет сразу два запроса: собственно запрос на получение данных из сфинкса и запрос «SHOW META».</p>
+
+<p>Оказалось, что во время второго запроса, сфинкс по неизведанной причине разрывает соединение.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Retrying query "SELECT * FROM `index` WHERE MATCH('телеФон*'); SHOW META" after error: Lost connection to MySQL server during query</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Скачал beta-версию (2.1.1) sphinx&#8217;а, причём сайт при загрузке выдал мне сообщение: «Congratulations! It&rsquo;s official, you&rsquo;re a Sphinxter!!» =)</p>
+
+<p>На этой версии ошибок не было.
+Скорее всего это из-за mac, думаю, что на линуксе было бы всё нормально. Но проверять этот вариант уже нет времени.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
-    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <link href="http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6/"/>
     <updated>2013-03-04T19:02:00+04:00</updated>
-    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <id>http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6</id>
     <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
 
 <p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
@@ -56,9 +329,9 @@
   
   <entry>
     <title type="html"><![CDATA[Как установить ruby 2.0.0-p0]]></title>
-    <link href="http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0/"/>
+    <link href="http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0/"/>
     <updated>2013-02-24T18:56:00+04:00</updated>
-    <id>http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0</id>
+    <id>http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0</id>
     <content type="html"><![CDATA[<p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
 
 <p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
@@ -67,6 +340,11 @@
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>Error running 'env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure --disable-install-doc --prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 --with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite --disable-shared', please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log 
 </span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<!-- more -->
 
 
 <p>Или ошибка при запуске bundle install:</p>
@@ -100,9 +378,9 @@
   
   <entry>
     <title type="html"><![CDATA[Парад ссылок №2]]></title>
-    <link href="http://stamm.github.io/links-parade-2/"/>
+    <link href="http://www.zagirov.name/links-parade-2/"/>
     <updated>2013-02-20T19:48:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-2</id>
+    <id>http://www.zagirov.name/links-parade-2</id>
     <content type="html"><![CDATA[<h2>Yii</h2>
 
 <ul>
@@ -129,7 +407,7 @@
 <h2>Разное</h2>
 
 <ul>
-<li><a href="http://csolg.com/blogs/nastroika-rezervnogo-arhivirovaniya-backup-ruby-on-rails-32-proektov">Создание бэкапов с помощью ruby</a> &ndash; это вам не <a href="http://stamm.github.io/bacula-backup">монструозные конфиги бакулы</a>, тут всё быстро и понятно.</li>
+<li><a href="http://csolg.com/blogs/nastroika-rezervnogo-arhivirovaniya-backup-ruby-on-rails-32-proektov">Создание бэкапов с помощью ruby</a> &ndash; это вам не <a href="http://www.zagirov.name/bacula-backup">монструозные конфиги бакулы</a>, тут всё быстро и понятно.</li>
 <li>Прикольный <a href="http://shopify.github.com/dashing">интерфес для мониторинга показателей</a>, написанные на ruby. Есть несколько предопределённый виджетов для отображения kpi. Добавляется блок очень быстро и приятно. В крайнем случае можно написать свой: ruby + coffee + sass. Работает без ajax-запросов, на основе постоянного соединения.</li>
 <li><a href="http://runnable.com/">http://runnable.com/</a> &ndash; позволяет выполнить код на скриптовом языке прямо в браузере. Что-то типо сервиса <a href="http://jsfiddle.net/">jsfiddle</a>, только для серверных языков. Пока поддерживается nodejs, но обещают поддержку php, ruby.</li>
 <li><a href="http://www.clipmenu.com/">Бесплатный менеджер буфера обмена для MacOS</a>. Теперь работать без неё не могу.</li>
@@ -144,12 +422,15 @@
   
   <entry>
     <title type="html"><![CDATA[Парад ссылок №1]]></title>
-    <link href="http://stamm.github.io/links-parade-1/"/>
+    <link href="http://www.zagirov.name/links-parade-1/"/>
     <updated>2013-02-11T19:43:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-1</id>
+    <id>http://www.zagirov.name/links-parade-1</id>
     <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
 
 <p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<!-- more -->
+
 
 <h2>Развёртывание и деплой</h2>
 
@@ -207,9 +488,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
-    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <link href="http://www.zagirov.name/gnu-grep-faster-than-mac-os-x/"/>
     <updated>2012-11-28T19:40:00+04:00</updated>
-    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <id>http://www.zagirov.name/gnu-grep-faster-than-mac-os-x</id>
     <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep&#8217;а в 10 раз</a></p>
 
 <p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
@@ -236,12 +517,15 @@
   
   <entry>
     <title type="html"><![CDATA[Ограничение прав пользователей в git]]></title>
-    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <link href="http://www.zagirov.name/restriction-access-users-in-git/"/>
     <updated>2012-10-03T19:38:00+04:00</updated>
-    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <id>http://www.zagirov.name/restriction-access-users-in-git</id>
     <content type="html"><![CDATA[<p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
 
 <p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<!-- more -->
+
 
 <p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
 
@@ -467,9 +751,9 @@
   
   <entry>
     <title type="html"><![CDATA[Удаление данных из коллекции в Mongodb без блокировки]]></title>
-    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <link href="http://www.zagirov.name/remove-data-from-mongo-without-blocking/"/>
     <updated>2012-09-07T19:35:00+04:00</updated>
-    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <id>http://www.zagirov.name/remove-data-from-mongo-without-blocking</id>
     <content type="html"><![CDATA[<p>Задача: удалять устаревшие данные из большой коллекции монги. Можно пойти в лоб и удалять так:</p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -480,6 +764,9 @@
 
 
 <p>В этом случае возникнет блокировка, и запросы на чтение будут очень долго выполняется. А система устроена таким образом, что постоянно вставлять и обновлять данные из этой коллекции.</p>
+
+<!-- more -->
+
 
 <p>Удаление с указанием лимита в монге не существует, поэтому приходиться писать свои велосипеды.</p>
 
@@ -611,16 +898,19 @@
   
   <entry>
     <title type="html"><![CDATA[Яндекс.танк — инструмент нагрузочного тестирования]]></title>
-    <link href="http://stamm.github.io/yandex-tank-load-testing/"/>
+    <link href="http://www.zagirov.name/yandex-tank-load-testing/"/>
     <updated>2012-08-02T19:30:00+04:00</updated>
-    <id>http://stamm.github.io/yandex-tank-load-testing</id>
+    <id>http://www.zagirov.name/yandex-tank-load-testing</id>
     <content type="html"><![CDATA[<p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
 
 <p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
 
+<!-- more -->
+
+
 <p>Вот сам интерфейс:</p>
 
-<p><img src="http://stamm.github.io/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
+<p><img src="http://www.zagirov.name/images/yandex-tank-load-testing/yandex-tank-good.png" alt="yandex-tank-good" /></p>
 
 <p>Сам проект и документация находится на github&#8217;е: <a href="https://github.com/yandex-load/yandex-tank">https://github.com/yandex-load/yandex-tank</a></p>
 
@@ -675,7 +965,7 @@
 
 <p>Вот что случается, когда сервер не справляется:</p>
 
-<p><img src="http://stamm.github.io/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
+<p><img src="http://www.zagirov.name/images/yandex-tank-load-testing/yandex-tank-bad.png" alt="yandex-tank-good" /></p>
 
 <p>Думаю, что проект со временем будет обрастаться графическими интерфейсами, разработанными самим яндексом или сообществом.</p>
 
@@ -685,9 +975,9 @@
   
   <entry>
     <title type="html"><![CDATA[Yii: рецепты №2]]></title>
-    <link href="http://stamm.github.io/yii-cookbook-2/"/>
+    <link href="http://www.zagirov.name/yii-cookbook-2/"/>
     <updated>2012-03-26T19:23:00+04:00</updated>
-    <id>http://stamm.github.io/yii-cookbook-2</id>
+    <id>http://www.zagirov.name/yii-cookbook-2</id>
     <content type="html"><![CDATA[<p>Продолжаю делится интересным о Yii</p>
 
 <h3>Шифрование данных</h3>
@@ -697,6 +987,11 @@
 <p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
 
 <p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+<!-- more -->
+
+
+
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -734,7 +1029,7 @@
 
 <p>Схемотично такую систему можно изобразить так:</p>
 
-<p><img src="http://stamm.github.io/images/yii-cookbook-2/yii-config.png" alt="yii-config" /></p>
+<p><img src="http://www.zagirov.name/images/yii-cookbook-2/yii-config.png" alt="yii-config" /></p>
 
 <p>Все файлы, имеющие custom в имени, убираются из системы контроля версии (в моём случае добавляются в <a href="https://github.com/stamm/yii.blog/blob/master/.gitignore">.gitignore</a>). Вместо них создаются файлы-примеры для настройки: example.main.custom.php, example.console.custom.php, example.test.custom.php.</p>
 
@@ -834,12 +1129,17 @@
   
   <entry>
     <title type="html"><![CDATA[Yii: рецепты №1]]></title>
-    <link href="http://stamm.github.io/yii-cookbook-1/"/>
+    <link href="http://www.zagirov.name/yii-cookbook-1/"/>
     <updated>2012-03-23T19:19:00+04:00</updated>
-    <id>http://stamm.github.io/yii-cookbook-1</id>
+    <id>http://www.zagirov.name/yii-cookbook-1</id>
     <content type="html"><![CDATA[<h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
 
 <p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+<!-- more -->
+
+
+
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -891,7 +1191,7 @@
 <p>Эта константа позволяет включать режим дебага и она же доставляет немного неудобства. Локально нужно устанавливать констатну YII_DEBUG в true, но не комитить это изменение нельзя. Т.е. перед комитом нужно выставлять значение в false. Мы же программисты, народ ленивый, поэтому тем меньше пальцедвижений, тем лучше.</p>
 
 <ul>
-<li>Можно воспользовать <a href="http://stamm.github.io/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
+<li>Можно воспользовать <a href="http://www.zagirov.name/phpstorm-redmine-changelist-workflow">changelist в PhpStorm</a></li>
 <li>Можно не добавлять файл в коммит</li>
 </ul>
 
@@ -983,9 +1283,9 @@
   
   <entry>
     <title type="html"><![CDATA[Редирект при вставки сайта через iframe]]></title>
-    <link href="http://stamm.github.io/redirect-iframe/"/>
+    <link href="http://www.zagirov.name/redirect-iframe/"/>
     <updated>2012-02-02T19:17:00+04:00</updated>
-    <id>http://stamm.github.io/redirect-iframe</id>
+    <id>http://www.zagirov.name/redirect-iframe</id>
     <content type="html"><![CDATA[<p>Довольно долго бился c запрещением вставки сайта в iframe с указанием белого списка сайтов, которые могу это сделать</p>
 
 <figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1023,9 +1323,9 @@
   
   <entry>
     <title type="html"><![CDATA[Эмуляция хоткея с участием Alt в midnight commander]]></title>
-    <link href="http://stamm.github.io/mc-alt-mac/"/>
+    <link href="http://www.zagirov.name/mc-alt-mac/"/>
     <updated>2011-12-14T19:15:00+04:00</updated>
-    <id>http://stamm.github.io/mc-alt-mac</id>
+    <id>http://www.zagirov.name/mc-alt-mac</id>
     <content type="html"><![CDATA[<p>После перехода на Mac OS X, не как не мог отвыкнуть от использования хоткеев с участием клавиши Alt.</p>
 
 <p>Нашёл наконец-то способ, как съэмулировать хоткеи в сочении с Alt. Например, чтобы сделать действие по <strong>Alt+c</strong> нужно последовательно нажать <strong>Esc</strong> и <strong>c</strong>. «А ларчик просто открывался» ©.</p>
@@ -1036,9 +1336,9 @@
   
   <entry>
     <title type="html"><![CDATA[Bacula - резервное копирование: быстро, бесплатно, без смс]]></title>
-    <link href="http://stamm.github.io/bacula-backup/"/>
+    <link href="http://www.zagirov.name/bacula-backup/"/>
     <updated>2011-11-27T19:08:00+04:00</updated>
-    <id>http://stamm.github.io/bacula-backup</id>
+    <id>http://www.zagirov.name/bacula-backup</id>
     <content type="html"><![CDATA[<p>Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу поделиться реально работающими конфигами. Теперь седина пропала и мои волосы вновь мягкие и шелковистые =)</p>
 
 <p>Использовать буду систему под названием <a href="http://www.bacula.org/">bacula</a>. Соответственно всё проверялось и работает под ОС GNU/Debian 6.</p>
@@ -2136,9 +2436,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nginx: общие принципы конфигурации]]></title>
-    <link href="http://stamm.github.io/nginx-config/"/>
+    <link href="http://www.zagirov.name/nginx-config/"/>
     <updated>2011-10-30T18:59:00+04:00</updated>
-    <id>http://stamm.github.io/nginx-config</id>
+    <id>http://www.zagirov.name/nginx-config</id>
     <content type="html"><![CDATA[<p>На днях посмотрел <a href="http://video.yandex.ru/users/ibondarets/view/1/">видео с участием Игоря Сысоева</a> &ndash; отца русского nginx =)</p>
 
 <p>В выступлении Игорь говорит не о мастабировании в привычном для всех понимании (высокая нагрузка), а в плане рекомендаций к написанию конфигурации для nginx, чтобы при росте конфигурации не было проблем с его редактированием.</p>
@@ -2438,9 +2738,9 @@
   
   <entry>
     <title type="html"><![CDATA[Yii: автодополнение в консоли]]></title>
-    <link href="http://stamm.github.io/yii-console-completion/"/>
+    <link href="http://www.zagirov.name/yii-console-completion/"/>
     <updated>2011-10-23T18:57:00+04:00</updated>
-    <id>http://stamm.github.io/yii-console-completion</id>
+    <id>http://www.zagirov.name/yii-console-completion</id>
     <content type="html"><![CDATA[<p>Очень не хватало автодополнения комманд при вызове консольных комманд yii, чувствовал какую-то неполноценность yii в bash.</p>
 
 <p>На просторах интернета была найдена статья, позволяющая реализовать автодополнение с помощью родной unix-утилиты bash_completion.</p>
@@ -2495,9 +2795,9 @@
   
   <entry>
     <title type="html"><![CDATA[Организация рабочего потока: Phpstorm, Redmine, Changelists]]></title>
-    <link href="http://stamm.github.io/phpstorm-redmine-changelist-workflow/"/>
+    <link href="http://www.zagirov.name/phpstorm-redmine-changelist-workflow/"/>
     <updated>2011-10-23T18:53:00+04:00</updated>
-    <id>http://stamm.github.io/phpstorm-redmine-changelist-workflow</id>
+    <id>http://www.zagirov.name/phpstorm-redmine-changelist-workflow</id>
     <content type="html"><![CDATA[<p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
 
 <ul>
@@ -2518,11 +2818,11 @@
 
 <p>Нужно включить в параметрах redmine пункт <strong>Enable REST web service</strong></p>
 
-<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
+<p><img src="http://www.zagirov.name/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-1.png" alt="phpstorm-changelist" /></p>
 
 <p>Добавляем новый Task server в PhpStorm. Api token можно найти в личном разделе в redmine.</p>
 
-<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
+<p><img src="http://www.zagirov.name/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-3.png" alt="phpstorm-changelist" /></p>
 
 <p>И добавляем парсинг номера задачи из описания коммита для отображения её как ссылки на задачу в redmine.</p>
 
@@ -2530,7 +2830,7 @@
 
 <p>Вводим паттерн регулярного выражения <strong>#(\d+)</strong> и генерируемую ссылку: **<a href="http://redmine.company.com/issues/$1**">http://redmine.company.com/issues/$1**</a></p>
 
-<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
+<p><img src="http://www.zagirov.name/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-4.png" alt="phpstorm-changelist" /></p>
 
 <p>Теперь открываем задачу Tools → Task → Open. Тут работает автодополнение для имени задачи.</p>
 
@@ -2542,7 +2842,7 @@
 
 <p>Откройте в разделе changes (alt+9 или ⌘+9) вкладку Local. Тут показаны изменённые файлы, сгруппированные по changelist&#8217;ам. Здесь файлы можно перемещать между changelist&#8217;ами.</p>
 
-<p><img src="http://stamm.github.io/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
+<p><img src="http://www.zagirov.name/images/phpstorm-redmine-changelist-workflow/phpstorm-changelist-8.1.png" alt="phpstorm-changelist" /></p>
 
 <p>Кликнув правой кнопкой по changelist, вы можете изменить его комментарий. Этот комментарий потом автоматически вставиться в описание коммита.</p>
 
@@ -2554,9 +2854,9 @@
   
   <entry>
     <title type="html"><![CDATA[Yii: используем кэш в CActiveDataProvider]]></title>
-    <link href="http://stamm.github.io/yii-cache-cactivedataprovider/"/>
+    <link href="http://www.zagirov.name/yii-cache-cactivedataprovider/"/>
     <updated>2011-10-17T18:48:00+04:00</updated>
-    <id>http://stamm.github.io/yii-cache-cactivedataprovider</id>
+    <id>http://www.zagirov.name/yii-cache-cactivedataprovider</id>
     <content type="html"><![CDATA[<p>Репост моей заметки из wiki: <a href="http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.">http://www.yiiframework.com/wiki/233/using-cache-in-cactivedataprovider/.</a></p>
 
 <p>Первый параметр в конструкторе <a href="http://www.yiiframework.com/doc/api/1.1/CActiveDataProvider/">CActiveDataProvider</a> может быть строковым значением с названием модели или экземпляр класса модели.</p>
@@ -2587,270 +2887,6 @@
 </span><span class='line'>        <span class="s1">&#39;pageSize&#39;</span> <span class="o">=&gt;</span> <span class="mi">20</span><span class="p">,</span>
 </span><span class='line'>    <span class="p">)</span>
 </span><span class='line'><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Yii: CGridView и запрос с group by и having by]]></title>
-    <link href="http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by/"/>
-    <updated>2011-10-15T18:46:00+04:00</updated>
-    <id>http://stamm.github.io/yii-cgridview-query-with-group-by-and-having-by</id>
-    <content type="html"><![CDATA[<p>Задача такая: вывести данные через компонент CGridView в YII, сгруппированные по определённому полю, а также применение условий по агрегированным данным.</p>
-
-<p>Возьмём простую таблицу:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>date | clicks</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Нам нужно получить сгруппированные данные по каждому часу.</p>
-
-<p>По сути нужно применить следующий запрос</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span>
-</span><span class='line'><span class="k">FROM</span> <span class="k">table</span>
-</span><span class='line'><span class="k">GROUP</span> <span class="k">BY</span> <span class="k">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Возникают следующие трудности в реализации через Yii:</p>
-
-<ul>
-<li>Yii не может посчитать общее количество, а соответственно будет неправильно создавать пагинатор. Yii просто обнуляет поля group by и having при подсчёте общего количества. Да ещё count(*) тут не сработает, нужно просто. посчитать количество строк, которое вернул запрос с группировкой</li>
-<li>Также нам не подходит использование where, чтобы искать по группированным данным. Тут нужно использовать having by.</li>
-<li>Сортировка. Yii автоматически подставляет поле без агрегирующей функции. А если использовать отношения, то ещё и подставит алиас главной таблицы (t.clicks).</li>
-</ul>
-
-
-<p>Соответственно, мы руками высчитываем общее количество и устанавливаем найденное значение в атрибут totalItemCount компонента CActiveDataProvider</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">search</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">=</span><span class="k">new</span> <span class="nx">CDbCriteria</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">compare</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span><span class="k">true</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// Скопипастил из исходников yii</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^(?:\s*(&lt;&gt;|&lt;=|&gt;=|&lt;|&gt;|=))(.*)$/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">))</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="nv">$clicks</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="nv">$clicks</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">;</span>
-</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="c1">// Проставляем having by</span>
-</span><span class='line'>    <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">having</span> <span class="o">=</span> <span class="s1">&#39;SUM(clicks) &#39;</span> <span class="o">.</span> <span class="nv">$op</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">quoteValue</span><span class="p">(</span><span class="nv">$clicks</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="c1">// Выбираем дату без минут и секунд И сумму кликов за определённый час</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13) AS date, SUM(clicks) AS clicks&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="c1">// Применяем группировку по часам</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">group</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13)&#39;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Клонируем объект критерии, чтобы посчитать общее количество записей</span>
-</span><span class='line'>  <span class="nv">$countCriteria</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$criteria</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$countCriteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$sum</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findAll</span><span class="p">(</span><span class="nv">$countCriteria</span><span class="p">));</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">=</span><span class="k">new</span> <span class="nx">CPagination</span><span class="p">(</span><span class="nv">$sum</span><span class="p">);</span>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">pageSize</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">applyLimit</span><span class="p">(</span><span class="nv">$criteria</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nb">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>    <span class="s1">&#39;totalItemCount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$sum</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;criteria&#39;</span><span class="o">=&gt;</span><span class="nv">$criteria</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;pagination&#39;</span><span class="o">=&gt;</span><span class="nv">$pages</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;sort&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>      <span class="s1">&#39;attributes&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>        <span class="c1">// Тут устанавливаем свою сортировку по нужному полю</span>
-</span><span class='line'>        <span class="s1">&#39;clicks&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>          <span class="s1">&#39;asc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) ASC&#39;</span><span class="p">,</span>
-</span><span class='line'>          <span class="s1">&#39;desc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) DESC&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>      <span class="p">),</span>
-</span><span class='line'>      <span class="s1">&#39;defaultOrder&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;date DESC&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="p">),</span>
-</span><span class='line'>   <span class="p">));</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Настройка exim на почту для доменов от Яндекса (pdd.yandex.ru)]]></title>
-    <link href="http://stamm.github.io/exim-pdd-yandex-ru/"/>
-    <updated>2011-09-18T18:44:00+04:00</updated>
-    <id>http://stamm.github.io/exim-pdd-yandex-ru</id>
-    <content type="html"><![CDATA[<p>Настраиваем отправку почты с нашего сервера через почту для доменов от Яндекса.</p>
-
-<p>Для примера, используем домен zagirov.name.</p>
-
-<p>Запускаем конфигурирование exim&#8217;а:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>dpkg-reconfigure exim4-config</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Отвечаем на вопросы:</p>
-
-<ul>
-<li>mail sent by SMARTHOST; received via SMTP or fetchmail</li>
-<li>Type System Mail Name: пусто</li>
-<li>Type IP Adresses to listen on for incoming SMTP connections: 127.0.0.1 ; ::1</li>
-<li>Other destinations for which mail: пусто</li>
-<li>Machines to relay mail for: пусто</li>
-<li>Type Machine handling outgoing mail for this host (smarthost): smtp.yandex.ru:587</li>
-<li>Hide local mail name in outgoing mail: Нет</li>
-<li>Keep number of DNS-queries minimal (Dial-on-Demand): Нет</li>
-<li>Delivery method for local mail: mbox format in /var/mail/ /exim4/conf.d/rewrite/00_exim4-config_header</li>
-<li>split configuration into small files: Да</li>
-</ul>
-
-
-<p>Теперь прописываем пароль для ящика в файле <strong>/etc/exim4/passwd.client</strong>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>smtp.yandex.ru:no-reply@zagirov.name:СВОЙ_ПАРОЛЬ</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Почтовый сервер яндекс ругается, что нужно заполненное поле FROM. Прописываем его в файле <strong>/etc/exim4/conf.d/rewrite/00_exim4-config_header</strong>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite *@* no-reply@zagirov.name Ffr</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Сохраняем письма, отправленные из php, в файлы]]></title>
-    <link href="http://stamm.github.io/php-sendmail-save-to-file/"/>
-    <updated>2011-06-03T18:42:00+04:00</updated>
-    <id>http://stamm.github.io/php-sendmail-save-to-file</id>
-    <content type="html"><![CDATA[<p>При разработке нужно как-то складировать письма, отправляемые из php через функцию mail. Был написан такой скрипт:</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="c1">#!/usr/bin/env php</span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;SENDMAIL_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp/mail/&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nb">mkdir</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">,</span> <span class="mo">0777</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">function</span> <span class="nf">generateFileName</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nv">$fileName</span> <span class="o">=</span> <span class="nx">SENDMAIL_DIR</span> <span class="o">.</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m-d_H-i-s_&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;.eml&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$fileName</span><span class="p">)</span> <span class="o">?</span> <span class="nx">generateFileName</span><span class="p">(</span><span class="o">++</span><span class="nv">$i</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$fileName</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$mail</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;php://stdin&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">();</span>
-</span><span class='line'><span class="nv">$file</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nx">generateFileName</span><span class="p">(),</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">while</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">feof</span><span class="p">(</span><span class="nv">$mail</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nb">fgets</span><span class="p">(</span><span class="nv">$mail</span><span class="p">));</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$mail</span><span class="p">);</span>
-</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Даём ему право на исполнение для пользователя веб-сервера (обычно www-data).</p>
-
-<p>Теперь создаём файл конфига для php в debian <strong>/etc/php5/conf.d/sendmail-local.conf</strong> со следующим содержимым:</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
-</span><span class='line'><span class="na">sendmail_path</span> <span class="o">=</span> <span class="s">&quot;/path/to/script/sendmail&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>

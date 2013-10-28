@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: nat | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/nat/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/nat/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debian. Часть 3. Настройка iptables: NAT, фаервол]]></title>
-    <link href="http://stamm.github.io/debian-3-setting-iptables-forward-nat-firewall/"/>
+    <link href="http://www.zagirov.name/debian-3-setting-iptables-forward-nat-firewall/"/>
     <updated>2010-07-28T00:59:00+04:00</updated>
-    <id>http://stamm.github.io/debian-3-setting-iptables-forward-nat-firewall</id>
+    <id>http://www.zagirov.name/debian-3-setting-iptables-forward-nat-firewall</id>
     <content type="html"><![CDATA[<p>Фаервол нам нужен для ограничения подключения из вне, NATа, а также проброса портов. Для удоства написал скрипт на bash. Вставляем в файл /etc/init.d/rc.firewall</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

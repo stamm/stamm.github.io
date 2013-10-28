@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: aptitude | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/aptitude/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/aptitude/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Apt: управление приоритетами пакетов из stable, testing, unstable, experimental]]></title>
-    <link href="http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental/"/>
+    <link href="http://www.zagirov.name/apt-pinning-packages-stable-testing-unstable-experimental/"/>
     <updated>2010-08-20T01:22:00+04:00</updated>
-    <id>http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental</id>
+    <id>http://www.zagirov.name/apt-pinning-packages-stable-testing-unstable-experimental</id>
     <content type="html"><![CDATA[<p>Есть несколько &ldquo;виртуальных&rdquo; релизов у debian: stable &ndash; на текущий момент это 5 версия (lenny), testing &ndash; squeeze (когда он будет выпущен, то перейдёт в релиз stable). Unstable и experimental &ndash; экспериментальные релизы, не для продакшена!. Пакет проходит путь из experimental => unstable => testing => stable. Иногда бывают ситуации, когда нужно установить пакеты поновее. Можно, конечно, скачать отдельно deb-пакет и установить его, но в этом случае одни минусы: возможно требуются удовлетворения зависимостей и лишаемся обновлений. А можно рулить приоритетами пакетов в зависимости от релиза (stable, testing, unstable, experimental).</p>
 
 <p>Создаём файлы в /etc/apt/sources.list.d</p>

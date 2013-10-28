@@ -9,20 +9,7 @@
   <meta name="author" content="Загиров Рустам">
 
   
-  <meta name="description" content="Довольно долго бился c запрещением вставки сайта в iframe с указанием белого списка сайтов, которые могу это сделать 1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14 &hellip;">
+  <meta name="description" content="28 июля на я.субботнике был представлен новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,10 +18,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://stamm.github.io/blog/page/2">
+  <link rel="canonical" href="http://www.zagirov.name/blog/page/2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <link href="/rss/" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -44,6 +31,18 @@
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
   
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-15241274-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
 
 </head>
 
@@ -57,14 +56,14 @@
 
 </header>
   <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  <li><a href="/rss/" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
   
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:stamm.github.io" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+    <input type="hidden" name="q" value="site:www.zagirov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
   </fieldset>
 </form>
   
@@ -79,6 +78,147 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yandex-tank-load-testing/">Яндекс.танк — инструмент нагрузочного тестирования</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-08-02T19:30:00+04:00" pubdate data-updated="true">2012-08-02</time>
+        
+         | <a href="/yandex-tank-load-testing/#disqus_thread">Комментарии</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
+
+<p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/yandex-tank-load-testing/">Продолжение &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yii-cookbook-2/">Yii: рецепты №2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-26T19:23:00+04:00" pubdate data-updated="true">2012-03-26</time>
+        
+         | <a href="/yii-cookbook-2/#disqus_thread">Комментарии</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Продолжаю делится интересным о Yii</p>
+
+<h3>Шифрование данных</h3>
+
+<p>Иногда требуется зашировать данные с возможностью последующей обратной дешифровкой.</p>
+
+<p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
+
+<p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/yii-cookbook-2/">Продолжение &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/yii-cookbook-1/">Yii: рецепты №1</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-23T19:19:00+04:00" pubdate data-updated="true">2012-03-23</time>
+        
+         | <a href="/yii-cookbook-1/#disqus_thread">Комментарии</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>Пакетирование js и css-файлов и использование зависимостей между этими пакетами.</h3>
+
+<p>Есть замечательный инструмент для рисования графиков на js — <a href="http://www.highcharts.com/">highcharts</a>, но он использует фреймворк jQuery и сам jQuery не подключает. Соответственно, мы создаём наш пакет, где указываем js и css файлы из highcharts и прописываем зависимость от jQuery.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/yii-cookbook-1/">Продолжение &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -103,7 +243,7 @@
 
 <time datetime="2012-02-02T19:17:00+04:00" pubdate data-updated="true">2012-02-02</time>
         
-         | <a href="/redirect-iframe/#disqus_thread">Comments</a>
+         | <a href="/redirect-iframe/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -172,7 +312,7 @@
 
 <time datetime="2011-12-14T19:15:00+04:00" pubdate data-updated="true">2011-12-14</time>
         
-         | <a href="/mc-alt-mac/#disqus_thread">Comments</a>
+         | <a href="/mc-alt-mac/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -214,7 +354,7 @@
 
 <time datetime="2011-11-27T19:08:00+04:00" pubdate data-updated="true">2011-11-27</time>
         
-         | <a href="/bacula-backup/#disqus_thread">Comments</a>
+         | <a href="/bacula-backup/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -1343,7 +1483,7 @@
 
 <time datetime="2011-10-30T18:59:00+04:00" pubdate data-updated="true">2011-10-30</time>
         
-         | <a href="/nginx-config/#disqus_thread">Comments</a>
+         | <a href="/nginx-config/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -1674,7 +1814,7 @@
 
 <time datetime="2011-10-23T18:57:00+04:00" pubdate data-updated="true">2011-10-23</time>
         
-         | <a href="/yii-console-completion/#disqus_thread">Comments</a>
+         | <a href="/yii-console-completion/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -1760,7 +1900,7 @@
 
 <time datetime="2011-10-23T18:53:00+04:00" pubdate data-updated="true">2011-10-23</time>
         
-         | <a href="/phpstorm-redmine-changelist-workflow/#disqus_thread">Comments</a>
+         | <a href="/phpstorm-redmine-changelist-workflow/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -1848,7 +1988,7 @@
 
 <time datetime="2011-10-17T18:48:00+04:00" pubdate data-updated="true">2011-10-17</time>
         
-         | <a href="/yii-cache-cactivedataprovider/#disqus_thread">Comments</a>
+         | <a href="/yii-cache-cactivedataprovider/#disqus_thread">Комментарии</a>
         
       </p>
     
@@ -1894,357 +2034,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/yii-cgridview-query-with-group-by-and-having-by/">Yii: CGridView и запрос с Group by и Having By</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-10-15T18:46:00+04:00" pubdate data-updated="true">2011-10-15</time>
-        
-         | <a href="/yii-cgridview-query-with-group-by-and-having-by/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Задача такая: вывести данные через компонент CGridView в YII, сгруппированные по определённому полю, а также применение условий по агрегированным данным.</p>
-
-<p>Возьмём простую таблицу:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>date | clicks</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Нам нужно получить сгруппированные данные по каждому часу.</p>
-
-<p>По сути нужно применить следующий запрос</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span>
-</span><span class='line'><span class="k">FROM</span> <span class="k">table</span>
-</span><span class='line'><span class="k">GROUP</span> <span class="k">BY</span> <span class="k">LEFT</span><span class="p">(</span><span class="nb">date</span><span class="p">,</span> <span class="mi">13</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Возникают следующие трудности в реализации через Yii:</p>
-
-<ul>
-<li>Yii не может посчитать общее количество, а соответственно будет неправильно создавать пагинатор. Yii просто обнуляет поля group by и having при подсчёте общего количества. Да ещё count(*) тут не сработает, нужно просто. посчитать количество строк, которое вернул запрос с группировкой</li>
-<li>Также нам не подходит использование where, чтобы искать по группированным данным. Тут нужно использовать having by.</li>
-<li>Сортировка. Yii автоматически подставляет поле без агрегирующей функции. А если использовать отношения, то ещё и подставит алиас главной таблицы (t.clicks).</li>
-</ul>
-
-
-<p>Соответственно, мы руками высчитываем общее количество и устанавливаем найденное значение в атрибут totalItemCount компонента CActiveDataProvider</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">search</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">=</span><span class="k">new</span> <span class="nx">CDbCriteria</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">compare</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">date</span><span class="p">,</span><span class="k">true</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>    <span class="c1">// Скопипастил из исходников yii</span>
-</span><span class='line'>    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^(?:\s*(&lt;&gt;|&lt;=|&gt;=|&lt;|&gt;|=))(.*)$/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">))</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="nv">$clicks</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
-</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="nv">$matches</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>      <span class="nv">$clicks</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">clicks</span><span class="p">;</span>
-</span><span class='line'>      <span class="nv">$op</span><span class="o">=</span><span class="s1">&#39;=&#39;</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="c1">// Проставляем having by</span>
-</span><span class='line'>    <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">having</span> <span class="o">=</span> <span class="s1">&#39;SUM(clicks) &#39;</span> <span class="o">.</span> <span class="nv">$op</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nx">Yii</span><span class="o">::</span><span class="na">app</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">db</span><span class="o">-&gt;</span><span class="na">quoteValue</span><span class="p">(</span><span class="nv">$clicks</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  <span class="c1">// Выбираем дату без минут и секунд И сумму кликов за определённый час</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13) AS date, SUM(clicks) AS clicks&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="c1">// Применяем группировку по часам</span>
-</span><span class='line'>  <span class="nv">$criteria</span><span class="o">-&gt;</span><span class="na">group</span> <span class="o">=</span> <span class="s1">&#39;LEFT(date, 13)&#39;</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="c1">// Клонируем объект критерии, чтобы посчитать общее количество записей</span>
-</span><span class='line'>  <span class="nv">$countCriteria</span> <span class="o">=</span> <span class="k">clone</span> <span class="nv">$criteria</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$countCriteria</span><span class="o">-&gt;</span><span class="na">select</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$sum</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="k">static</span><span class="o">::</span><span class="na">model</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">findAll</span><span class="p">(</span><span class="nv">$countCriteria</span><span class="p">));</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">=</span><span class="k">new</span> <span class="nx">CPagination</span><span class="p">(</span><span class="nv">$sum</span><span class="p">);</span>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">pageSize</span><span class="o">=</span><span class="mi">50</span><span class="p">;</span>
-</span><span class='line'>  <span class="nv">$pages</span><span class="o">-&gt;</span><span class="na">applyLimit</span><span class="p">(</span><span class="nv">$criteria</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">return</span> <span class="k">new</span> <span class="nx">CActiveDataProvider</span><span class="p">(</span><span class="nb">get_class</span><span class="p">(</span><span class="nv">$this</span><span class="p">),</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>    <span class="s1">&#39;totalItemCount&#39;</span> <span class="o">=&gt;</span> <span class="nv">$sum</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;criteria&#39;</span><span class="o">=&gt;</span><span class="nv">$criteria</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;pagination&#39;</span><span class="o">=&gt;</span><span class="nv">$pages</span><span class="p">,</span>
-</span><span class='line'>    <span class="s1">&#39;sort&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>      <span class="s1">&#39;attributes&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>        <span class="c1">// Тут устанавливаем свою сортировку по нужному полю</span>
-</span><span class='line'>        <span class="s1">&#39;clicks&#39;</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span>
-</span><span class='line'>          <span class="s1">&#39;asc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) ASC&#39;</span><span class="p">,</span>
-</span><span class='line'>          <span class="s1">&#39;desc&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;SUM(clicks) DESC&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="p">)</span>
-</span><span class='line'>      <span class="p">),</span>
-</span><span class='line'>      <span class="s1">&#39;defaultOrder&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;date DESC&#39;</span><span class="p">,</span>
-</span><span class='line'>    <span class="p">),</span>
-</span><span class='line'>   <span class="p">));</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/exim-pdd-yandex-ru/">Настройка Exim на почту для доменов от Яндекса (pdd.yandex.ru)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-18T18:44:00+04:00" pubdate data-updated="true">2011-09-18</time>
-        
-         | <a href="/exim-pdd-yandex-ru/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Настраиваем отправку почты с нашего сервера через почту для доменов от Яндекса.</p>
-
-<p>Для примера, используем домен zagirov.name.</p>
-
-<p>Запускаем конфигурирование exim&#8217;а:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>dpkg-reconfigure exim4-config</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Отвечаем на вопросы:</p>
-
-<ul>
-<li>mail sent by SMARTHOST; received via SMTP or fetchmail</li>
-<li>Type System Mail Name: пусто</li>
-<li>Type IP Adresses to listen on for incoming SMTP connections: 127.0.0.1 ; ::1</li>
-<li>Other destinations for which mail: пусто</li>
-<li>Machines to relay mail for: пусто</li>
-<li>Type Machine handling outgoing mail for this host (smarthost): smtp.yandex.ru:587</li>
-<li>Hide local mail name in outgoing mail: Нет</li>
-<li>Keep number of DNS-queries minimal (Dial-on-Demand): Нет</li>
-<li>Delivery method for local mail: mbox format in /var/mail/ /exim4/conf.d/rewrite/00_exim4-config_header</li>
-<li>split configuration into small files: Да</li>
-</ul>
-
-
-<p>Теперь прописываем пароль для ящика в файле <strong>/etc/exim4/passwd.client</strong>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>smtp.yandex.ru:no-reply@zagirov.name:СВОЙ_ПАРОЛЬ</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Почтовый сервер яндекс ругается, что нужно заполненное поле FROM. Прописываем его в файле <strong>/etc/exim4/conf.d/rewrite/00_exim4-config_header</strong>:</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite *@* no-reply@zagirov.name Ffr</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/php-sendmail-save-to-file/">Сохраняем письма, отправленные из Php, в файлы</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-03T18:42:00+04:00" pubdate data-updated="true">2011-06-03</time>
-        
-         | <a href="/php-sendmail-save-to-file/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>При разработке нужно как-то складировать письма, отправляемые из php через функцию mail. Был написан такой скрипт:</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="c1">#!/usr/bin/env php</span>
-</span><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="nb">define</span><span class="p">(</span><span class="s1">&#39;SENDMAIL_DIR&#39;</span><span class="p">,</span> <span class="s1">&#39;/tmp/mail/&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nb">mkdir</span><span class="p">(</span><span class="nx">SENDMAIL_DIR</span><span class="p">,</span> <span class="mo">0777</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">function</span> <span class="nf">generateFileName</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nv">$fileName</span> <span class="o">=</span> <span class="nx">SENDMAIL_DIR</span> <span class="o">.</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m-d_H-i-s_&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;.eml&#39;</span><span class="p">;</span>
-</span><span class='line'>  <span class="k">return</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$fileName</span><span class="p">)</span> <span class="o">?</span> <span class="nx">generateFileName</span><span class="p">(</span><span class="o">++</span><span class="nv">$i</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$fileName</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$mail</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s1">&#39;php://stdin&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">or</span> <span class="k">die</span><span class="p">();</span>
-</span><span class='line'><span class="nv">$file</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="nx">generateFileName</span><span class="p">(),</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">while</span> <span class="p">(</span> <span class="o">!</span> <span class="nb">feof</span><span class="p">(</span><span class="nv">$mail</span><span class="p">))</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nb">fwrite</span><span class="p">(</span><span class="nv">$file</span><span class="p">,</span> <span class="nb">fgets</span><span class="p">(</span><span class="nv">$mail</span><span class="p">));</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$mail</span><span class="p">);</span>
-</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$file</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Даём ему право на исполнение для пользователя веб-сервера (обычно www-data).</p>
-
-<p>Теперь создаём файл конфига для php в debian <strong>/etc/php5/conf.d/sendmail-local.conf</strong> со следующим содержимым:</p>
-
-<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
-</span><span class='line'><span class="na">sendmail_path</span> <span class="o">=</span> <span class="s">&quot;/path/to/script/sendmail&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Старее</a>
@@ -2258,8 +2047,20 @@
 <aside class="sidebar">
   
     <section>
-  <h1>Recent Posts</h1>
+  <h1>Недавнее</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/capistrano3-unicorn/">Unicorn в Capistrano 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/mac-environments/">Софт на Mac OS X</a>
+      </li>
+    
+      <li class="post">
+        <a href="/thinking-sphinx-mac-os-x/">Бага Thinking-sphinx в Mac OS X</a>
+      </li>
     
       <li class="post">
         <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
@@ -2269,23 +2070,8 @@
         <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
       </li>
     
-      <li class="post">
-        <a href="/links-parade-2/">Парад ссылок №2</a>
-      </li>
-    
-      <li class="post">
-        <a href="/links-parade-1/">Парад ссылок №1</a>
-      </li>
-    
-      <li class="post">
-        <a href="/gnu-grep-faster-than-mac-os-x/">Ускорение скорости работы Grep в Mac OS X</a>
-      </li>
-    
   </ul>
 </section>
-
-
-
 
   
 </aside>
@@ -2293,8 +2079,8 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Загиров Рустам -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+  Copyright &copy; 2010-2013 — Загиров Рустам. 
+  <span class="credit"><a href="http://octopress.org">Octopress</a> помогает в создании блога</span>
 </p>
 
 </footer>
@@ -2340,7 +2126,33 @@
 
 
 
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter1233706 = new Ya.Metrika({id:1233706,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+            } catch(e) { }
+        });
 
+        var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/1233706" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
 
 </body>
 </html>

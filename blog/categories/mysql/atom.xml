@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mysql | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/mysql/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/mysql/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
-    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <link href="http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6/"/>
     <updated>2013-03-04T19:02:00+04:00</updated>
-    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <id>http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6</id>
     <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
 
 <p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
@@ -51,9 +51,9 @@
   
   <entry>
     <title type="html"><![CDATA[MySQL запросы через консоль]]></title>
-    <link href="http://stamm.github.io/mysql-query-console/"/>
+    <link href="http://www.zagirov.name/mysql-query-console/"/>
     <updated>2010-09-14T14:05:00+04:00</updated>
-    <id>http://stamm.github.io/mysql-query-console</id>
+    <id>http://www.zagirov.name/mysql-query-console</id>
     <content type="html"><![CDATA[<p>Обнаружил очень простой способ выполнения MySQL запросов в Debian. Причём без указания логина и пароля. В Debian'е создаётся системный пользователь debian-sys-maint, от которого и будут идти запросы. Например выборка:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -68,9 +68,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
-    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <link href="http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
     <updated>2010-07-28T01:14:00+04:00</updated>
-    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <id>http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
     <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
 
 <p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>

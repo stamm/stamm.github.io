@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: phpunit | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/phpunit/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/phpunit/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Настройка Netbeans для yii с поддержкой xdebug, тестов phpunit и selenium]]></title>
-    <link href="http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests/"/>
+    <link href="http://www.zagirov.name/configure-netbeans-to-yii-with-xdebug-unit-tests/"/>
     <updated>2010-10-24T14:05:00+04:00</updated>
-    <id>http://stamm.github.io/configure-netbeans-to-yii-with-xdebug-unit-tests</id>
+    <id>http://www.zagirov.name/configure-netbeans-to-yii-with-xdebug-unit-tests</id>
     <content type="html"><![CDATA[<p>После прочтения книги <a href="http://www.amazon.com/dp/1847199585?tag=gii20f-20&amp;camp=0&amp;creative=0&amp;linkCode=as1&amp;creativeASIN=1847199585&amp;adid=0BHF2HS6FNS82M85KJQT">Agile Web Application Development with Yii 1.1 and PHP5</a> захотелось рассказать о настройке NetBeans для работы с yii, включая поддержку unit-тестов + тесты через selenium.</p>
 
 <p>Selenium позволяет проводить тесты, почти полностью эмулируя действия через браузер: кликать по ссылкам, вводить текст.</p>

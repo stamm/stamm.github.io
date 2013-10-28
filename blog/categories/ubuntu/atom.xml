@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ubuntu | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/ubuntu/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/ubuntu/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ubuntu 11.04 alpha 2. Asus EeePC 1000H. Не работает wifi RaLink 2790 (RT2860)]]></title>
-    <link href="http://stamm.github.io/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860/"/>
+    <link href="http://www.zagirov.name/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860/"/>
     <updated>2011-02-26T16:26:00+03:00</updated>
-    <id>http://stamm.github.io/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860</id>
+    <id>http://www.zagirov.name/ubuntu-11-04-alpha-2-asus-eeepc-1000h-dont-work-wifi-ralink-2790-rt2860</id>
     <content type="html"><![CDATA[<p>Нашёл как исправить баг с глючащим wifi в моём нетбуке Asus EeePC 1000H. Карточка RaLink 2790 (RT2860). Нетбук подключался к wifi, получал ip-адрес по DHCP, но ничего не работало. Потом разрывалось соединение и заново подключалось с тем же печальным эффектом. Решение подсмотрел тут. Комманда lspci -vv выдала</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -50,9 +50,9 @@
   
   <entry>
     <title type="html"><![CDATA[Голосовое напоминание в Ubuntu Gnu/Linux]]></title>
-    <link href="http://stamm.github.io/voice-remind-in-ubuntu-gnu-linux/"/>
+    <link href="http://www.zagirov.name/voice-remind-in-ubuntu-gnu-linux/"/>
     <updated>2011-01-17T16:20:00+03:00</updated>
-    <id>http://stamm.github.io/voice-remind-in-ubuntu-gnu-linux</id>
+    <id>http://www.zagirov.name/voice-remind-in-ubuntu-gnu-linux</id>
     <content type="html"><![CDATA[<p>Сидя за компом забываешь кое-что сделать, например, выключить плиту. В линуксе это можно реализовать так:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -74,9 +74,9 @@
   
   <entry>
     <title type="html"><![CDATA[3G интернет в Ubuntu]]></title>
-    <link href="http://stamm.github.io/3g-internet-in-ubuntu/"/>
+    <link href="http://www.zagirov.name/3g-internet-in-ubuntu/"/>
     <updated>2011-01-15T16:16:00+03:00</updated>
-    <id>http://stamm.github.io/3g-internet-in-ubuntu</id>
+    <id>http://www.zagirov.name/3g-internet-in-ubuntu</id>
     <content type="html"><![CDATA[<p>Хочу показать насколько просто настраивать 3G интернет в Ubuntu. Имеется huawei E1550 от МТС и Ubuntu 10.10. Хочу обратить внимание, что это всё работает &ldquo;из коробки&rdquo;.</p>
 
 <p><img src="/images/3g-internet-in-ubuntu/3g-1.png" alt="3g-internet-in-ubuntu" />

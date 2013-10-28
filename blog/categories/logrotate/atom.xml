@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: logrotate | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/logrotate/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/logrotate/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
-    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <link href="http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
     <updated>2010-07-28T01:14:00+04:00</updated>
-    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <id>http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
     <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
 
 <p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>

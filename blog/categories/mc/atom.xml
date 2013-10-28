@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mc | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/mc/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/mc/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Эмуляция хоткея с участием Alt в midnight commander]]></title>
-    <link href="http://stamm.github.io/mc-alt-mac/"/>
+    <link href="http://www.zagirov.name/mc-alt-mac/"/>
     <updated>2011-12-14T19:15:00+04:00</updated>
-    <id>http://stamm.github.io/mc-alt-mac</id>
+    <id>http://www.zagirov.name/mc-alt-mac</id>
     <content type="html"><![CDATA[<p>После перехода на Mac OS X, не как не мог отвыкнуть от использования хоткеев с участием клавиши Alt.</p>
 
 <p>Нашёл наконец-то способ, как съэмулировать хоткеи в сочении с Alt. Например, чтобы сделать действие по <strong>Alt+c</strong> нужно последовательно нажать <strong>Esc</strong> и <strong>c</strong>. «А ларчик просто открывался» ©.</p>

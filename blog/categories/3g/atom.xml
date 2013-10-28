@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 3g | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/3g/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/3g/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[3G интернет в Ubuntu]]></title>
-    <link href="http://stamm.github.io/3g-internet-in-ubuntu/"/>
+    <link href="http://www.zagirov.name/3g-internet-in-ubuntu/"/>
     <updated>2011-01-15T16:16:00+03:00</updated>
-    <id>http://stamm.github.io/3g-internet-in-ubuntu</id>
+    <id>http://www.zagirov.name/3g-internet-in-ubuntu</id>
     <content type="html"><![CDATA[<p>Хочу показать насколько просто настраивать 3G интернет в Ubuntu. Имеется huawei E1550 от МТС и Ubuntu 10.10. Хочу обратить внимание, что это всё работает &ldquo;из коробки&rdquo;.</p>
 
 <p><img src="/images/3g-internet-in-ubuntu/3g-1.png" alt="3g-internet-in-ubuntu" />

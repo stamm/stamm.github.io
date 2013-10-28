@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: парад ссылок | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/parad-ssylok/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/parad-ssylok/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Парад ссылок №2]]></title>
-    <link href="http://stamm.github.io/links-parade-2/"/>
+    <link href="http://www.zagirov.name/links-parade-2/"/>
     <updated>2013-02-20T19:48:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-2</id>
+    <id>http://www.zagirov.name/links-parade-2</id>
     <content type="html"><![CDATA[<h2>Yii</h2>
 
 <ul>
@@ -59,12 +59,15 @@
   
   <entry>
     <title type="html"><![CDATA[Парад ссылок №1]]></title>
-    <link href="http://stamm.github.io/links-parade-1/"/>
+    <link href="http://www.zagirov.name/links-parade-1/"/>
     <updated>2013-02-11T19:43:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-1</id>
+    <id>http://www.zagirov.name/links-parade-1</id>
     <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
 
 <p>Надеюсь, каждый найдёт что-то интересное.</p>
+
+<!-- more -->
+
 
 <h2>Развёртывание и деплой</h2>
 

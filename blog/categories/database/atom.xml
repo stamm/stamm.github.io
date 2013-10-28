@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: database | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/database/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/database/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Расширение для Google Chrome: local database storage]]></title>
-    <link href="http://stamm.github.io/google-chrome-extensions-local-database-storage/"/>
+    <link href="http://www.zagirov.name/google-chrome-extensions-local-database-storage/"/>
     <updated>2011-01-02T16:12:00+03:00</updated>
-    <id>http://stamm.github.io/google-chrome-extensions-local-database-storage</id>
+    <id>http://www.zagirov.name/google-chrome-extensions-local-database-storage</id>
     <content type="html"><![CDATA[<p>Продолжаем осваивать плагинописание для браузеров на основе chromium и ,соответственно, для google chrome. Текущая тема: научиться использовать local database storage. Local database storage &ndash; это база данных, использумая из javascript. Представляет она собой SQLite внутри. Синтаксис привычный для SQL баз. Я буду использовать базу для запоминания всех полученных цитат. Логически все действия можно разделить на 4 операции:</p>
 
 <ol>

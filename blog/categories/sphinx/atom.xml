@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: sphinx | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/sphinx/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/sphinx/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -14,10 +14,63 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Бага thinking-sphinx в Mac OS X]]></title>
+    <link href="http://www.zagirov.name/thinking-sphinx-mac-os-x/"/>
+    <updated>2013-09-18T18:33:00+04:00</updated>
+    <id>http://www.zagirov.name/thinking-sphinx-mac-os-x</id>
+    <content type="html"><![CDATA[<p>Возникла ошибка при использовании thinking-sphinx под Mac OS X. Убил полдня на её решение. Надеюсь этот пост поможет быстрей справиться с этим багом таким же как и я программистам, которые используют методику google driven development.</p>
+
+<p>Эта ошибка воспроизводилась на Mac OS X 10.8.4, thinking-sphinx 3.0.5, и sphinx 2.0.9.</p>
+
+<p>Началось всё с этой ошибки:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>undefined method `inject' for nil:NilClass</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И стектрейсом
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:49:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:14:in&lt;/code>block in call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:13:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/geographer.rb:11:in&lt;/code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/sphinxql.rb:13:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/stale_id_filter.rb:10:in&lt;/code>call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/runner.rb:31:in &lt;code>call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/builder.rb:102:in&lt;/code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/search.rb:65:in `populate'</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>В логах было только видно, что запрос исполняется.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Query (36.6ms)  SELECT * FROM &lt;code>index&lt;/code> WHERE MATCH(&lsquo;телеФон*&rsquo;)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>После копаний оказалось, что thinking-sphinx выполняет сразу два запроса: собственно запрос на получение данных из сфинкса и запрос «SHOW META».</p>
+
+<p>Оказалось, что во время второго запроса, сфинкс по неизведанной причине разрывает соединение.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Retrying query &ldquo;SELECT * FROM &lt;code>index&lt;/code> WHERE MATCH(&lsquo;телеФон*&rsquo;); SHOW META&rdquo; after error: Lost connection to MySQL server during query</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Скачал beta-версию (2.1.1) sphinx'а, причём сайт при загрузке выдал мне сообщение: «Congratulations! It&rsquo;s official, you&rsquo;re a Sphinxter!!» =)</p>
+
+<p>На этой версии ошибок не было.
+Скорее всего это из-за mac, думаю, что на линуксе было бы всё нормально. Но проверять этот вариант уже нет времени.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Yii: рецепты №2]]></title>
-    <link href="http://stamm.github.io/yii-cookbook-2/"/>
+    <link href="http://www.zagirov.name/yii-cookbook-2/"/>
     <updated>2012-03-26T19:23:00+04:00</updated>
-    <id>http://stamm.github.io/yii-cookbook-2</id>
+    <id>http://www.zagirov.name/yii-cookbook-2</id>
     <content type="html"><![CDATA[<p>Продолжаю делится интересным о Yii</p>
 
 <h3>Шифрование данных</h3>
@@ -27,6 +80,9 @@
 <p>В yii есть отличная обёртка для такого рода операций: <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#encrypt-detail">CSecurityManager::encrypt()</a> и <a href="http://www.yiiframework.com/doc/api/1.1/CSecurityManager#decrypt-detail">CSecurityManager::decrypt()</a></p>
 
 <p>Настраиваем <a href="http://ru.wikipedia.org/wiki/Advanced_Encryption_Standard">алгоритм</a>, <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B6%D0%B8%D0%BC_%D1%88%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F">режим</a> и ключ шифрования.</p>
+
+<!-- more -->
+
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mac | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/mac/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/mac/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -14,10 +14,89 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Софт на Mac OS X]]></title>
+    <link href="http://www.zagirov.name/mac-environments/"/>
+    <updated>2013-10-21T17:53:00+04:00</updated>
+    <id>http://www.zagirov.name/mac-environments</id>
+    <content type="html"><![CDATA[<p>В информации о блоге есть описание моего окружения 2 годичной давности. Сейчас я уже использую Mac OS X, а не Ubuntu Linux.</p>
+
+<p>Не буду утруждать тут дифирамбами о необходимости прямо сейчас бежать за макбуком в магазин, но поверьте система отлично подходит как для php-разработчика, как и для ruby-разработчика (коим я сейчас и являюсь).
+Это полноценная мощь юникс-консоли вкупе с красивым интерфейсом.</p>
+
+<p>Итак, поехали.</p>
+
+<!-- more -->
+
+
+<p><strong><a href="http://www.alfredapp.com/">Alfred</a></strong> (~880 рублей) — это мегамощная штука для продуктивной работы, у которой есть одна точка входа в виде строки ввода, из которой можно выполнять разнообразные действия или перенаправлять ввод в другие программы. Это своего рода spotlight на стероидах или консоль 2.0 =)
+Тут можно запустить программу по названию, быстро посчитать, погуглить, задать свои поисковые системы.
+Я прикрутил перенаправление поискового запроса в dash (это централизованная документация по различным технологиям, об этой программе будет ниже).
+<img src="/images/mac-environments/alfred2.png" alt="alfred" /></p>
+
+<p>Очень удобно то, что можно назначить свои скрипты по опредённому слову.
+Например, проиграть <a href="http://nooooooooooooooo.com/">http://nooooooooooooooo.com/</a> по приходу менеджеров в комнату</p>
+
+<p><img src="/images/mac-environments/alfred3.png" alt="Настройка" /></p>
+
+<p><img src="/images/mac-environments/alfred4.png" alt="Использование" /></p>
+
+<p>Тем, кто ещё не использовал эту программу, настоятельно рекомендую <a href="http://www.alfredapp.com/">это сделать</a>. Уже вышла вторая версия, но я пока использую первую.</p>
+
+<p><strong><a href="http://spectacleapp.com/">Spectacle</a></strong> (бесплатная) — быстрые хоткеи для изменения размера и расположения окон. Очень не хватало со времён убунты.</p>
+
+<p><strong><a href="http://www.macbartender.com/">Bartender</a></strong> (~500 рублей) — позволяет настроить отображение иконок в статус баре. Позволяет скрыть ненужные иконки, но получить доступ к ним по необходимости. Владельцы буков с 11 диагональю меня поймут.</p>
+
+<p><strong><a href="https://droplr.com/">Droplr</a></strong> (бесплатно) — быстрый шаринг скриншота экрана по хоткею ⌥⇧+4. Хотя, вроде бы, такое уже запилили в дробоксе.</p>
+
+<p><strong><a href="https://itunes.apple.com/us/app/alinof-timer/id512464723?mt=12">Alinof Timer</a></strong> (бесплатно) — простой таймер</p>
+
+<p><strong><a href="https://itunes.apple.com/ua/app/cheatsheet/id529456740?mt=12">CheatSheet</a></strong>  (бесплатно) &ndash; подсказывает горячии клавиши для программы при удержании</p>
+
+<p><strong><a href="http://www.clipmenu.com/">ClipMenu</a></strong> (бесплатно) — менеджер буфера обмена. Запоминает всё, что было занесено в буфер обмена и позволяет выбрать из списка по нажатию ⌘+V</p>
+
+<p><strong><a href="http://kapeli.com/dash">Dash</a></strong> (бесплатна, но настойчиво предлагает купить ~650 рублей) – оффлайный аггрегатор документаций api по языкам и фреймворкам. Список довольно внушительный и обновляется довольно оперативно. Там документация по языкам, базам, js-фреймворкам и многому другому.</p>
+
+<p><strong><a href="http://gfx.io/">gfxCardStatus</a></strong> (бесплатно) — переключалка графических карт между дискретной и встроенной для экономии памяти.</p>
+
+<p><strong><a href="http://www.iterm2.com/">iTerm</a></strong> (бесплатно) – лучший терминал для мака.</p>
+
+<p><strong><a href="http://www.keepassx.org/">KeepassX</a></strong> (бесплатно) — продолжаю пользоватся этой программой, хотя есть более удобный 1password.</p>
+
+<p><strong><a href="https://adium.im/">Adium</a></strong> (бесплатно) — мессенджер icq, jabber</p>
+
+<p><strong><a href="http://archiverapp.com/">Archiver</a></strong> (~650 рублей) – архиватор</p>
+
+<p><strong><a href="http://www.kekaosx.com/">Keka</a></strong> (бесплатно) – архиватор</p>
+
+<p><strong><a href="http://dropbox.com">Дробпокс</a></strong>, <strong><a href="http://disk.yandex.ru">Яндекс.Диск</a></strong>, <strong><a href="http://labs.bittorrent.com/experiments/sync.html">BitTorrentSync</a></strong> (все бесплатны) &ndash; облачная синхронизация данных</p>
+
+<p><strong><a href="http://doit.im/">Doit.im</a></strong> (бесплатна с ограниченным функционалом, ~65 рублей в месяц) &ndash; менеджер задач по GTD</p>
+
+<p><strong><a href="https://www.hipchat.com/">Hipchat</a></strong> (~65 рублей с пользователя в месяц) — прикольный чат для общения между разработчиками.</p>
+
+<p><strong><a href="http://www.cocoatech.com/pathfinder/">Path finder</a></strong> (~1300 рублей) – удобный файловый менеджер, умеет открыватся вместо finder</p>
+
+<p><strong><a href="">Sequel Pro</a></strong> (бесплатно) &ndash; незаменимый менеджер MySQL</p>
+
+<p><strong><a href="http://www.jetbrains.com/">RubyMine, PhpStorm</a></strong> (платно) — лучше IDE для кода нет</p>
+
+<p><strong><a href="http://www.sublimetext.com/">Sublime Text</a></strong> &ndash; ненагруженный редактор для всего</p>
+
+<p><strong><a href="http://www.sourcetreeapp.com/">SourceTree</a></strong> (бесплатно) &ndash; отличный визуальный клиент для git</p>
+
+<p><strong><a href="https://itunes.apple.com/ua/app/transmit/id403388562?mt=12">Transmit</a></strong> (~1100 рублей) — клиент для загрузки файлов через ftp, sftp, s3.</p>
+
+<p><strong><a href="http://mplayerx.org/">MPlayerX</a></strong> (бесплатно) – отличный проигрыватель видео-файлов</p>
+
+<p><strong><a href="http://www.videolan.org/vlc/index.html">VLC</a></strong> (бесплатно) – всеядный проигрыватель видео-файлов</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
-    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <link href="http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6/"/>
     <updated>2013-03-04T19:02:00+04:00</updated>
-    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <id>http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6</id>
     <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
 
 <p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
@@ -51,9 +130,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
-    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <link href="http://www.zagirov.name/gnu-grep-faster-than-mac-os-x/"/>
     <updated>2012-11-28T19:40:00+04:00</updated>
-    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <id>http://www.zagirov.name/gnu-grep-faster-than-mac-os-x</id>
     <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep'а в 10 раз</a></p>
 
 <p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>
@@ -79,9 +158,9 @@
   
   <entry>
     <title type="html"><![CDATA[Эмуляция хоткея с участием Alt в midnight commander]]></title>
-    <link href="http://stamm.github.io/mc-alt-mac/"/>
+    <link href="http://www.zagirov.name/mc-alt-mac/"/>
     <updated>2011-12-14T19:15:00+04:00</updated>
-    <id>http://stamm.github.io/mc-alt-mac</id>
+    <id>http://www.zagirov.name/mc-alt-mac</id>
     <content type="html"><![CDATA[<p>После перехода на Mac OS X, не как не мог отвыкнуть от использования хоткеев с участием клавиши Alt.</p>
 
 <p>Нашёл наконец-то способ, как съэмулировать хоткеи в сочении с Alt. Например, чтобы сделать действие по <strong>Alt+c</strong> нужно последовательно нажать <strong>Esc</strong> и <strong>c</strong>. «А ларчик просто открывался» ©.</p>

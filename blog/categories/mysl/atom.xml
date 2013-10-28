@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mysl | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/mysl/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/mysl/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Проект в utf8, mysql-база в cp1251]]></title>
-    <link href="http://stamm.github.io/project-in-utf8-mysql-in-cp1251/"/>
+    <link href="http://www.zagirov.name/project-in-utf8-mysql-in-cp1251/"/>
     <updated>2011-02-05T16:22:00+03:00</updated>
-    <id>http://stamm.github.io/project-in-utf8-mysql-in-cp1251</id>
+    <id>http://www.zagirov.name/project-in-utf8-mysql-in-cp1251</id>
     <content type="html"><![CDATA[<p>Бывает так, что исходники проекта в utf8, а данные в базе хранятся в cp1251. Чтобы MySQL сам занимался переводом в другую кодировку, но после коннекта выполнить команды:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

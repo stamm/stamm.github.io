@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: capistrano | Блог Загирова Рустама]]></title>
+  <link href="http://www.zagirov.name/blog/categories/capistrano/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
+  <author>
+    <name><![CDATA[Загиров Рустам]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Unicorn в capistrano 3]]></title>
+    <link href="http://www.zagirov.name/capistrano3-unicorn/"/>
+    <updated>2013-10-28T17:54:00+04:00</updated>
+    <id>http://www.zagirov.name/capistrano3-unicorn</id>
+    <content type="html"><![CDATA[<p>Вышла новая версия <a href="http://www.capistranorb.com/">capistrano</a> под номером 3. Можете прочитать <a href="http://www.capistranorb.com/2013/06/01/release-announcement.html">полный анонс</a> от комманды.</p>
+
+<p>Главные изменения:</p>
+
+<ul>
+<li>Под капотом теперь <a href="https://github.com/leehambley/sshkit/">SSHKit</a>, и можно использовать разные фишки <a href="https://github.com/leehambley/sshkit/blob/master/EXAMPLES.md">dsl</a>.
+В частности появился метод test, которым можно проверить возврат и выполнить в зависимости от этого разные комманды.
+Что позволило избавится от выполнения такого: &ldquo;[ -f ] &amp;&amp; unicorn; true&rdquo;</li>
+<li>Модульность: bundler, rbenv, rvm, maintenance. Даже рельсовые assets и migration развели, можно подключать по отдельности. Идут по пути рельс: подключаешь только то, что тебе нужно.</li>
+<li>Теперь поддержка multistage из коробки</li>
+<li>Новые опции linked_files и linked_dirs</li>
+<li>Сломали &mdash;dry-run. К справедливости, это <a href="https://github.com/leehambley/sshkit/issues/39">баг</a> SSHKit, но неприятненько</li>
+</ul>
+
+
+<p>Собственно переписанные правила для unicorn'а:</p>
+
+<p>Capfile:</p>
+
+<p><code>ruby
+require 'capistrano/setup'
+require 'capistrano/deploy'
+require 'capistrano/bundler'
+Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
+</code></p>
+
+<p>deploy.rb:</p>
+
+<p>```ruby
+namespace :deploy do</p>
+
+<p>  desc &lsquo;Restart application&rsquo;
+  task :restart do</p>
+
+<pre><code>invoke 'deploy:unicorn:restart'
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>namespace :unicorn do
+  pid_path = &ldquo;#{release_path}/tmp/pids&rdquo;
+  unicorn_pid = &ldquo;#{pid_path}/unicorn.pid&rdquo;</p>
+
+<p>  def run_unicorn</p>
+
+<pre><code>execute "#{fetch(:bundle_binstubs)}/unicorn", "-c #{release_path}/config/unicorn.rb -D -E #{fetch(:stage)}"
+</code></pre>
+
+<p>  end</p>
+
+<p>  desc &lsquo;Start unicorn&rsquo;
+  task :start do</p>
+
+<pre><code>on roles(:app) do
+  run_unicorn
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  desc &lsquo;Stop unicorn&rsquo;
+  task :stop do</p>
+
+<pre><code>on roles(:app) do
+  if test "[ -f #{unicorn_pid} ]"
+    execute :kill, "-QUIT `cat #{unicorn_pid}`"
+    #execute :rm, unicorn_pid
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  task :force_stop do</p>
+
+<p>  desc &lsquo;Restart unicorn&rsquo;
+  task :restart do</p>
+
+<pre><code>on roles(:app) do
+  if test "[ -f #{unicorn_pid} ]"
+    execute :kill, "-USR2 `cat #{unicorn_pid}`"
+  else
+    run_unicorn
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: nginx | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/nginx/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/nginx/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nginx: общие принципы конфигурации]]></title>
-    <link href="http://stamm.github.io/nginx-config/"/>
+    <link href="http://www.zagirov.name/nginx-config/"/>
     <updated>2011-10-30T18:59:00+04:00</updated>
-    <id>http://stamm.github.io/nginx-config</id>
+    <id>http://www.zagirov.name/nginx-config</id>
     <content type="html"><![CDATA[<p>На днях посмотрел <a href="http://video.yandex.ru/users/ibondarets/view/1/">видео с участием Игоря Сысоева</a> &ndash; отца русского nginx =)</p>
 
 <p>В выступлении Игорь говорит не о мастабировании в привычном для всех понимании (высокая нагрузка), а в плане рекомендаций к написанию конфигурации для nginx, чтобы при росте конфигурации не было проблем с его редактированием.</p>
@@ -365,9 +365,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nginx конфиги]]></title>
-    <link href="http://stamm.github.io/nginx-configs/"/>
+    <link href="http://www.zagirov.name/nginx-configs/"/>
     <updated>2011-05-06T18:36:00+04:00</updated>
-    <id>http://stamm.github.io/nginx-configs</id>
+    <id>http://www.zagirov.name/nginx-configs</id>
     <content type="html"><![CDATA[<p>В интернете довольно много можно выложено конфигов nginx под различные веб-приложения. Но в большинстве из них используются if совместно с rewrite, что достойно <a href="http://sysoev.ru/nginx/docs/faq.html">всяческого порицания</a> по словам автора nginx Игоря Сысоева. Выложу используемые мной конфиги для различных систем (redmine, chive)</p>
 
 <h2>Redmine:</h2>
@@ -715,9 +715,9 @@
   
   <entry>
     <title type="html"><![CDATA[Правильная отдача заголовков при технических работах на сайте]]></title>
-    <link href="http://stamm.github.io/correct-return-header-on-service/"/>
+    <link href="http://www.zagirov.name/correct-return-header-on-service/"/>
     <updated>2011-03-01T01:35:00+03:00</updated>
-    <id>http://stamm.github.io/correct-return-header-on-service</id>
+    <id>http://www.zagirov.name/correct-return-header-on-service</id>
     <content type="html"><![CDATA[<p>Есть ситуация: проводятся какие-то технические работы на сайте и нужно сайт правильно закрыть. Это нужно чтобы поисковики знали, что сайт не доступен, а не добавляли страницы в индекс или помечали страницы как удалённые.</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -753,9 +753,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
-    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <link href="http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
     <updated>2010-07-28T01:14:00+04:00</updated>
-    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <id>http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
     <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
 
 <p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>

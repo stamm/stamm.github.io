@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: rails | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/rails/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Как установить ruby 2.0.0-p0]]></title>
-    <link href="http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0/"/>
+    <link href="http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0/"/>
     <updated>2013-02-24T18:56:00+04:00</updated>
-    <id>http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0</id>
+    <id>http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0</id>
     <content type="html"><![CDATA[<p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
 
 <p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
@@ -26,6 +26,9 @@
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>Error running &lsquo;env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure &mdash;disable-install-doc &mdash;prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 &mdash;with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite &mdash;disable-shared&rsquo;, please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log
 </span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<!-- more -->
+
 
 <p>Или ошибка при запуске bundle install:</p>
 

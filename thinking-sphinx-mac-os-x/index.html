@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Бага thinking-sphinx в Mac OS X - Блог Загирова Рустама</title>
+  <meta name="author" content="Загиров Рустам">
+
+  
+  <meta name="description" content="Возникла ошибка при использовании thinking-sphinx под Mac OS X. Убил полдня на её решение. Надеюсь этот пост поможет быстрей справиться с этим багом &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.zagirov.name/thinking-sphinx-mac-os-x">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/rss/" rel="alternate" title="Блог Загирова Рустама" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-15241274-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Блог Загирова Рустама</a></h1>
+  
+    <h2>Около-интернетные заметки</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/rss/" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.zagirov.name" />
+    <input class="search" type="text" name="q" results="0" placeholder="Поиск"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Блог</a></li>
+  <li><a href="/blog/archives">Архив</a></li>
+  <li><a href="/blog/categories">Метки</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Бага Thinking-sphinx в Mac OS X</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-18T18:33:00+04:00" pubdate data-updated="true">2013-09-18</time>
+        
+         | <a href="#disqus_thread">Комментарии</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Возникла ошибка при использовании thinking-sphinx под Mac OS X. Убил полдня на её решение. Надеюсь этот пост поможет быстрей справиться с этим багом таким же как и я программистам, которые используют методику google driven development.</p>
+
+<p>Эта ошибка воспроизводилась на Mac OS X 10.8.4, thinking-sphinx 3.0.5, и sphinx 2.0.9.</p>
+
+<p>Началось всё с этой ошибки:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>undefined method `inject' for nil:NilClass</span></code></pre></td></tr></table></div></figure>
+
+
+<p>И стектрейсом</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:49:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:14:in `block in call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:13:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/geographer.rb:11:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/sphinxql.rb:13:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/stale_id_filter.rb:10:in `call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/runner.rb:31:in `call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/builder.rb:102:in `call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/search.rb:65:in `populate'</span></code></pre></td></tr></table></div></figure>
+
+
+<p>В логах было только видно, что запрос исполняется.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Query (36.6ms)  SELECT * FROM `index` WHERE MATCH('телеФон*')</span></code></pre></td></tr></table></div></figure>
+
+
+<p>После копаний оказалось, что thinking-sphinx выполняет сразу два запроса: собственно запрос на получение данных из сфинкса и запрос «SHOW META».</p>
+
+<p>Оказалось, что во время второго запроса, сфинкс по неизведанной причине разрывает соединение.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Retrying query "SELECT * FROM `index` WHERE MATCH('телеФон*'); SHOW META" after error: Lost connection to MySQL server during query</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Скачал beta-версию (2.1.1) sphinx&#8217;а, причём сайт при загрузке выдал мне сообщение: «Congratulations! It&rsquo;s official, you&rsquo;re a Sphinxter!!» =)</p>
+
+<p>На этой версии ошибок не было.
+Скорее всего это из-за mac, думаю, что на линуксе было бы всё нормально. Но проверять этот вариант уже нет времени.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Автор <span class="fn">Загиров Рустам</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-09-18T18:33:00+04:00" pubdate data-updated="true">2013-09-18</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/sphinx/'>sphinx</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.zagirov.name/thinking-sphinx-mac-os-x/" data-via="" data-counturl="http://www.zagirov.name/thinking-sphinx-mac-os-x/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/macos-update-mysql2-mysql-5-dot-6/" title="Previous Post: Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6">&laquo; Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      
+      
+        <a class="basic-alignment right" href="/mac-environments/" title="Next Post: Софт на Mac OS X">Софт на Mac OS X &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Комментарии</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Недавнее</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/capistrano3-unicorn/">Unicorn в Capistrano 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/mac-environments/">Софт на Mac OS X</a>
+      </li>
+    
+      <li class="post">
+        <a href="/thinking-sphinx-mac-os-x/">Бага Thinking-sphinx в Mac OS X</a>
+      </li>
+    
+      <li class="post">
+        <a href="/macos-update-mysql2-mysql-5-dot-6/">Обновление Gem Mysql2 на MacOS X при обновлении MySQL до 5.6</a>
+      </li>
+    
+      <li class="post">
+        <a href="/how-to-install-ruby-2-dot-0-0-p0/">Как установить Ruby 2.0.0-p0</a>
+      </li>
+    
+  </ul>
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2010-2013 — Загиров Рустам. 
+  <span class="credit"><a href="http://octopress.org">Octopress</a> помогает в создании блога</span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'zagirov';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.zagirov.name/thinking-sphinx-mac-os-x/';
+        var disqus_url = 'http://www.zagirov.name/thinking-sphinx-mac-os-x/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (d, w, c) {
+        (w[c] = w[c] || []).push(function() {
+            try {
+                w.yaCounter1233706 = new Ya.Metrika({id:1233706,
+                    webvisor:true,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+            } catch(e) { }
+        });
+
+        var n = d.getElementsByTagName("script")[0],
+                s = d.createElement("script"),
+                f = function () { n.parentNode.insertBefore(s, n); };
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+        if (w.opera == "[object Opera]") {
+            d.addEventListener("DOMContentLoaded", f, false);
+        } else { f(); }
+    })(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/1233706" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+</body>
+</html>

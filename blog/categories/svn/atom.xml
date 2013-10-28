@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: svn | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/svn/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/svn/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Перенос svn-репозитария в git]]></title>
-    <link href="http://stamm.github.io/svn-to-git/"/>
+    <link href="http://www.zagirov.name/svn-to-git/"/>
     <updated>2011-04-07T18:33:00+04:00</updated>
-    <id>http://stamm.github.io/svn-to-git</id>
+    <id>http://www.zagirov.name/svn-to-git</id>
     <content type="html"><![CDATA[<p>Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)</p>
 
 <p>Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.</p>

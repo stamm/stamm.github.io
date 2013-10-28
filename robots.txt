@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://stamm.github.io/sitemap.xml 
+Sitemap: http://www.zagirov.name/sitemap.xml 

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: git | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/git/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/git/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,12 +15,15 @@
   
   <entry>
     <title type="html"><![CDATA[Ограничение прав пользователей в git]]></title>
-    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <link href="http://www.zagirov.name/restriction-access-users-in-git/"/>
     <updated>2012-10-03T19:38:00+04:00</updated>
-    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <id>http://www.zagirov.name/restriction-access-users-in-git</id>
     <content type="html"><![CDATA[<p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
 
 <p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<!-- more -->
+
 
 <p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
 
@@ -267,9 +270,9 @@
   
   <entry>
     <title type="html"><![CDATA[Перенос svn-репозитария в git]]></title>
-    <link href="http://stamm.github.io/svn-to-git/"/>
+    <link href="http://www.zagirov.name/svn-to-git/"/>
     <updated>2011-04-07T18:33:00+04:00</updated>
-    <id>http://stamm.github.io/svn-to-git</id>
+    <id>http://www.zagirov.name/svn-to-git</id>
     <content type="html"><![CDATA[<p>Если у вас есть репозиторий svn, но вы познали все прелести git и не хотите терять историю правок, то эта статья для вас ;)</p>
 
 <p>Первым этапом будет получение всех авторов, которые коммитили в svn. Для гита нужен дополнительно email коммитера.</p>
@@ -353,9 +356,9 @@
   
   <entry>
     <title type="html"><![CDATA[Непрерывная интеграция: jenkins + yii + git]]></title>
-    <link href="http://stamm.github.io/continuous-integration-jenkins-yii-git/"/>
+    <link href="http://www.zagirov.name/continuous-integration-jenkins-yii-git/"/>
     <updated>2011-03-06T18:24:00+03:00</updated>
-    <id>http://stamm.github.io/continuous-integration-jenkins-yii-git</id>
+    <id>http://www.zagirov.name/continuous-integration-jenkins-yii-git</id>
     <content type="html"><![CDATA[<p>Услышав шумиху про некую систему интеграционного тестирования hudson, который переименовали в jenkins, я захотел узнать что это и как это можно использовать. Для чего собственно он нужен? В кратце: он вытягивает последнюю версию из git/svn-репозитория и выполняет определённые действия (тестирует, выкладывает на другой сервер, делает отчёты). Всё это происходит автоматически: можно задать время, когда будет выполнятся задания. Можно почитать про <a href="http://habrahabr.ru/blogs/testing/108928/">пример использования jenkins</a>.</p>
 
 <p>Задача такая: Выполнение unit тестов для yii с отображением покрытия кода</p>

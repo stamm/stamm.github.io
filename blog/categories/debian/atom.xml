@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: debian | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/debian/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/debian/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Bacula - резервное копирование: быстро, бесплатно, без смс]]></title>
-    <link href="http://stamm.github.io/bacula-backup/"/>
+    <link href="http://www.zagirov.name/bacula-backup/"/>
     <updated>2011-11-27T19:08:00+04:00</updated>
-    <id>http://stamm.github.io/bacula-backup</id>
+    <id>http://www.zagirov.name/bacula-backup</id>
     <content type="html"><![CDATA[<p>Не секрет, что админы делятся на 2 типа: кто ещё не делает бэкапы и кто их уже делает. Я совсем недавно перешёл на сторону светлых админов, хочу поделиться реально работающими конфигами. Теперь седина пропала и мои волосы вновь мягкие и шелковистые =)</p>
 
 <p>Использовать буду систему под названием <a href="http://www.bacula.org/">bacula</a>. Соответственно всё проверялось и работает под ОС GNU/Debian 6.</p>
@@ -243,8 +243,8 @@
 </span><span class='line'>  Name = Standard
 </span><span class='line'>  mailcommand = &ldquo;/usr/lib/bacula/bsmtp -h localhost -f \&rdquo;(Bacula) &lt;%r>\&ldquo; -s \"Bacula: %t %e of %c %l\&rdquo; %r"
 </span><span class='line'>  operatorcommand = &ldquo;/usr/lib/bacula/bsmtp -h localhost -f \&rdquo;(Bacula) &lt;%r>\&ldquo; -s \"Bacula: Intervention needed for %j\&rdquo; %r"
-</span><span class='line'>  mail = &lt;a href="&#x6d;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#114;&#x75;&#x73;&#116;&#97;&#109;&#x40;&#x7a;&#97;&#103;&#x69;&#x72;&#111;&#118;&#46;&#110;&#97;&#109;&#101;">&#114;&#x75;&#115;&#116;&#x61;&#109;&#x40;&#122;&#x61;&#x67;&#x69;&#114;&#111;&#x76;&#46;&#110;&#x61;&#109;&#x65;&lt;/a> = all, !skipped          &lt;br/>
-</span><span class='line'>  operator = &lt;a href="&#109;&#x61;&#105;&#108;&#116;&#111;&#58;&#x72;&#x75;&#115;&#x74;&#x61;&#109;&#64;&#122;&#97;&#x67;&#105;&#x72;&#111;&#x76;&#x2e;&#x6e;&#97;&#x6d;&#101;">&#114;&#x75;&#x73;&#116;&#x61;&#109;&#x40;&#x7a;&#97;&#103;&#x69;&#114;&#x6f;&#118;&#46;&#110;&#97;&#x6d;&#101;&lt;/a> = mount
+</span><span class='line'>  mail = &lt;a href="&#109;&#x61;&#x69;&#x6c;&#116;&#111;&#58;&#114;&#x75;&#x73;&#116;&#x61;&#109;&#x40;&#x7a;&#97;&#103;&#105;&#x72;&#111;&#x76;&#x2e;&#x6e;&#x61;&#x6d;&#x65;">&#x72;&#117;&#x73;&#x74;&#x61;&#x6d;&#x40;&#122;&#x61;&#x67;&#105;&#x72;&#x6f;&#x76;&#46;&#x6e;&#97;&#109;&#101;&lt;/a> = all, !skipped          &lt;br/>
+</span><span class='line'>  operator = &lt;a href="&#x6d;&#x61;&#105;&#x6c;&#116;&#111;&#58;&#114;&#117;&#115;&#x74;&#x61;&#x6d;&#64;&#122;&#97;&#x67;&#105;&#x72;&#x6f;&#x76;&#46;&#x6e;&#97;&#x6d;&#x65;">&#114;&#x75;&#x73;&#x74;&#x61;&#x6d;&#64;&#122;&#97;&#103;&#105;&#x72;&#111;&#118;&#x2e;&#110;&#x61;&#109;&#101;&lt;/a> = mount
 </span><span class='line'>  console = all, !skipped, !saved
 </span><span class='line'>  append = &ldquo;/var/lib/bacula/log&rdquo; = all, !skipped
 </span><span class='line'>  catalog = all
@@ -1143,9 +1143,9 @@
   
   <entry>
     <title type="html"><![CDATA[Установить текстовый редактор по-умолчанию]]></title>
-    <link href="http://stamm.github.io/default-text-editor/"/>
+    <link href="http://www.zagirov.name/default-text-editor/"/>
     <updated>2011-03-12T18:32:00+03:00</updated>
-    <id>http://stamm.github.io/default-text-editor</id>
+    <id>http://www.zagirov.name/default-text-editor</id>
     <content type="html"><![CDATA[<p>Установить mcedit текстовым редактором по-умолчанию в системе:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1160,9 +1160,9 @@
   
   <entry>
     <title type="html"><![CDATA[MySQL запросы через консоль]]></title>
-    <link href="http://stamm.github.io/mysql-query-console/"/>
+    <link href="http://www.zagirov.name/mysql-query-console/"/>
     <updated>2010-09-14T14:05:00+04:00</updated>
-    <id>http://stamm.github.io/mysql-query-console</id>
+    <id>http://www.zagirov.name/mysql-query-console</id>
     <content type="html"><![CDATA[<p>Обнаружил очень простой способ выполнения MySQL запросов в Debian. Причём без указания логина и пароля. В Debian'е создаётся системный пользователь debian-sys-maint, от которого и будут идти запросы. Например выборка:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1177,9 +1177,9 @@
   
   <entry>
     <title type="html"><![CDATA[Apt: управление приоритетами пакетов из stable, testing, unstable, experimental]]></title>
-    <link href="http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental/"/>
+    <link href="http://www.zagirov.name/apt-pinning-packages-stable-testing-unstable-experimental/"/>
     <updated>2010-08-20T01:22:00+04:00</updated>
-    <id>http://stamm.github.io/apt-pinning-packages-stable-testing-unstable-experimental</id>
+    <id>http://www.zagirov.name/apt-pinning-packages-stable-testing-unstable-experimental</id>
     <content type="html"><![CDATA[<p>Есть несколько &ldquo;виртуальных&rdquo; релизов у debian: stable &ndash; на текущий момент это 5 версия (lenny), testing &ndash; squeeze (когда он будет выпущен, то перейдёт в релиз stable). Unstable и experimental &ndash; экспериментальные релизы, не для продакшена!. Пакет проходит путь из experimental => unstable => testing => stable. Иногда бывают ситуации, когда нужно установить пакеты поновее. Можно, конечно, скачать отдельно deb-пакет и установить его, но в этом случае одни минусы: возможно требуются удовлетворения зависимостей и лишаемся обновлений. А можно рулить приоритетами пакетов в зависимости от релиза (stable, testing, unstable, experimental).</p>
 
 <p>Создаём файлы в /etc/apt/sources.list.d</p>
@@ -1260,9 +1260,9 @@
   
   <entry>
     <title type="html"><![CDATA[Debian. Часть 4. Настройка веб-сервера: nginx, apache, mysql, postgresql ]]></title>
-    <link href="http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
+    <link href="http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql/"/>
     <updated>2010-07-28T01:14:00+04:00</updated>
-    <id>http://stamm.github.io/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
+    <id>http://www.zagirov.name/debian-4-configure-web-server-nginx-apache-mysql-postgresql</id>
     <content type="html"><![CDATA[<p>У меня работает связка nginx &ndash;> apache2 + mysql + postgresql. Поставим memcached, APC (кэшер для php), и несколько модулей для php5.</p>
 
 <p>Для того, чтобы nginx проксировал через локальный адрес (192.168.1.254, например), необходимо добавить в bind наш домен. Это ещё пригодиться для доступа из локальной сети, чтобы запросы не шли через «внешку», а также для однозначной идентификации того, что заходят из «доверенной» сети. Добавляем в файл /etc/bind/named.conf.local наш домен:</p>

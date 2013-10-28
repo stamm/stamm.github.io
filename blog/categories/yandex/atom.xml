@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: yandex | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/yandex/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/yandex/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,12 +15,15 @@
   
   <entry>
     <title type="html"><![CDATA[Яндекс.танк — инструмент нагрузочного тестирования]]></title>
-    <link href="http://stamm.github.io/yandex-tank-load-testing/"/>
+    <link href="http://www.zagirov.name/yandex-tank-load-testing/"/>
     <updated>2012-08-02T19:30:00+04:00</updated>
-    <id>http://stamm.github.io/yandex-tank-load-testing</id>
+    <id>http://www.zagirov.name/yandex-tank-load-testing</id>
     <content type="html"><![CDATA[<p>28 июля на <a href="http://events.yandex.ru/events/yasubbotnik/msk-jul-2012/">я.субботнике</a> был <a href="http://events.yandex.ru/talks/268/">представлен</a> новый инструмент для нагрузочного тестирования Яндекс.танк. Это внутреняя разработка яндекса, которая наконец-то вышла в свет. Видел я этот танк ещё на YaC 2011, когда были соревнования по конфигурированию nginx.</p>
 
 <p>Это консольный инструмент, пока не имеющий графического интерфейса, но дающий довольно полную картину в этой самой консоли.</p>
+
+<!-- more -->
+
 
 <p>Вот сам интерфейс:</p>
 
@@ -114,9 +117,9 @@
   
   <entry>
     <title type="html"><![CDATA[Настройка exim на почту для доменов от Яндекса (pdd.yandex.ru)]]></title>
-    <link href="http://stamm.github.io/exim-pdd-yandex-ru/"/>
+    <link href="http://www.zagirov.name/exim-pdd-yandex-ru/"/>
     <updated>2011-09-18T18:44:00+04:00</updated>
-    <id>http://stamm.github.io/exim-pdd-yandex-ru</id>
+    <id>http://www.zagirov.name/exim-pdd-yandex-ru</id>
     <content type="html"><![CDATA[<p>Настраиваем отправку почты с нашего сервера через почту для доменов от Яндекса.</p>
 
 <p>Для примера, используем домен zagirov.name.</p>
@@ -150,7 +153,7 @@
 <p>Почтовый сервер яндекс ругается, что нужно заполненное поле FROM. Прописываем его в файле <strong>/etc/exim4/conf.d/rewrite/00_exim4-config_header</strong>:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite &lt;em>@&lt;/em> &lt;a href="&#x6d;&#97;&#105;&#108;&#116;&#x6f;&#x3a;&#110;&#x6f;&#x2d;&#x72;&#x65;&#x70;&#108;&#121;&#64;&#x7a;&#x61;&#x67;&#x69;&#x72;&#x6f;&#118;&#x2e;&#x6e;&#97;&#x6d;&#101;">&#x6e;&#x6f;&#x2d;&#114;&#x65;&#x70;&#108;&#x79;&#x40;&#x7a;&#x61;&#103;&#x69;&#114;&#x6f;&#118;&#46;&#x6e;&#97;&#109;&#101;&lt;/a> Ffr</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+</pre></td><td class='code'><pre><code class=''><span class='line'>begin rewrite &lt;em>@&lt;/em> &lt;a href="&#x6d;&#97;&#x69;&#108;&#116;&#111;&#x3a;&#x6e;&#111;&#45;&#x72;&#101;&#x70;&#108;&#121;&#64;&#x7a;&#97;&#103;&#105;&#114;&#111;&#x76;&#46;&#x6e;&#97;&#109;&#x65;">&#x6e;&#111;&#45;&#x72;&#x65;&#112;&#x6c;&#x79;&#64;&#122;&#97;&#103;&#105;&#114;&#111;&#x76;&#46;&#x6e;&#97;&#x6d;&#x65;&lt;/a> Ffr</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 ]]></content>
   </entry>
   

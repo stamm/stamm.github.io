@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: mongodb | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/mongodb/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/mongodb/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Удаление данных из коллекции в Mongodb без блокировки]]></title>
-    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <link href="http://www.zagirov.name/remove-data-from-mongo-without-blocking/"/>
     <updated>2012-09-07T19:35:00+04:00</updated>
-    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <id>http://www.zagirov.name/remove-data-from-mongo-without-blocking</id>
     <content type="html"><![CDATA[<p>Задача: удалять устаревшие данные из большой коллекции монги. Можно пойти в лоб и удалять так:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -27,6 +27,9 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>В этом случае возникнет блокировка, и запросы на чтение будут очень долго выполняется. А система устроена таким образом, что постоянно вставлять и обновлять данные из этой коллекции.</p>
+
+<!-- more -->
+
 
 <p>Удаление с указанием лимита в монге не существует, поэтому приходиться писать свои велосипеды.</p>
 

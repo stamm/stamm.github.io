@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: redmine | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/redmine/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/redmine/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Организация рабочего потока: Phpstorm, Redmine, Changelists]]></title>
-    <link href="http://stamm.github.io/phpstorm-redmine-changelist-workflow/"/>
+    <link href="http://www.zagirov.name/phpstorm-redmine-changelist-workflow/"/>
     <updated>2011-10-23T18:53:00+04:00</updated>
-    <id>http://stamm.github.io/phpstorm-redmine-changelist-workflow</id>
+    <id>http://www.zagirov.name/phpstorm-redmine-changelist-workflow</id>
     <content type="html"><![CDATA[<p>Сегодня я покажу как у меня получается сделать работу удобной с использованием Phpstorm, Redmine, Teamcity.</p>
 
 <ul>

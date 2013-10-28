@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: grep | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/grep/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/grep/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ускорение скорости работы grep в Mac OS X]]></title>
-    <link href="http://stamm.github.io/gnu-grep-faster-than-mac-os-x/"/>
+    <link href="http://www.zagirov.name/gnu-grep-faster-than-mac-os-x/"/>
     <updated>2012-11-28T19:40:00+04:00</updated>
-    <id>http://stamm.github.io/gnu-grep-faster-than-mac-os-x</id>
+    <id>http://www.zagirov.name/gnu-grep-faster-than-mac-os-x</id>
     <content type="html"><![CDATA[<p>На монитор попала статья о том, что <a href="http://jlebar.com/2012/11/28/GNU_grep_is_10x_faster_than_Mac_grep.html">grep от gnu быстрее стандартного маковского grep'а в 10 раз</a></p>
 
 <p>Решил проверить у себя. На файле, размером в 720 Мб grep стал быстрей в 36 раз! Неплохо.</p>

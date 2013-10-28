@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: dev | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/dev/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/dev/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,12 +15,15 @@
   
   <entry>
     <title type="html"><![CDATA[Ограничение прав пользователей в git]]></title>
-    <link href="http://stamm.github.io/remove-data-from-mongo-without-blocking/"/>
+    <link href="http://www.zagirov.name/restriction-access-users-in-git/"/>
     <updated>2012-10-03T19:38:00+04:00</updated>
-    <id>http://stamm.github.io/remove-data-from-mongo-without-blocking</id>
+    <id>http://www.zagirov.name/restriction-access-users-in-git</id>
     <content type="html"><![CDATA[<p>Бывали ситуации, когда сделали какой-то внерелизный автономный функционал или просто быстрый хотфикс, а в мастере один из коллег уже успел чего изменить, что ещё не протестировано. А это нарушает одно из правил — в мастере должен быть только стабильный код. Поэтому код в мастер не должен попадать непротестированным.</p>
 
 <p>Почему он это сделал — это другой вопрос: просто не переключил ветку или намеряно. Или к джуниору подбежал директор или менеджер и сказал, что нужно быстро исправить. Тут нужно бить такого программиста по рукам, но лучше предупредить болезнь, чем лечить её =)</p>
+
+<!-- more -->
+
 
 <p>Ситуация вторая: есть тестировщики, которые пишут автоматические тесты, которые не отделимы от проекта, соответственно им нужно дать право только на конкретную папку, где находятся тесты, чтобы они случайно не сделали изменения в других файлах.</p>
 

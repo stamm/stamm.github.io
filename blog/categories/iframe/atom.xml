@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: iframe | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/iframe/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/iframe/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Редирект при вставки сайта через iframe]]></title>
-    <link href="http://stamm.github.io/redirect-iframe/"/>
+    <link href="http://www.zagirov.name/redirect-iframe/"/>
     <updated>2012-02-02T19:17:00+04:00</updated>
-    <id>http://stamm.github.io/redirect-iframe</id>
+    <id>http://www.zagirov.name/redirect-iframe</id>
     <content type="html"><![CDATA[<p>Довольно долго бился c запрещением вставки сайта в iframe с указанием белого списка сайтов, которые могу это сделать</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>

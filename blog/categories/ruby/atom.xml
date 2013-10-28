@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ruby | Блог Загирова Рустама]]></title>
-  <link href="http://stamm.github.io/blog/categories/ruby/atom.xml" rel="self"/>
-  <link href="http://stamm.github.io/"/>
-  <updated>2013-09-15T19:59:26+04:00</updated>
-  <id>http://stamm.github.io/</id>
+  <link href="http://www.zagirov.name/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://www.zagirov.name/"/>
+  <updated>2013-10-28T18:47:23+04:00</updated>
+  <id>http://www.zagirov.name/</id>
   <author>
     <name><![CDATA[Загиров Рустам]]></name>
     
@@ -14,10 +14,162 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Unicorn в capistrano 3]]></title>
+    <link href="http://www.zagirov.name/capistrano3-unicorn/"/>
+    <updated>2013-10-28T17:54:00+04:00</updated>
+    <id>http://www.zagirov.name/capistrano3-unicorn</id>
+    <content type="html"><![CDATA[<p>Вышла новая версия <a href="http://www.capistranorb.com/">capistrano</a> под номером 3. Можете прочитать <a href="http://www.capistranorb.com/2013/06/01/release-announcement.html">полный анонс</a> от комманды.</p>
+
+<p>Главные изменения:</p>
+
+<ul>
+<li>Под капотом теперь <a href="https://github.com/leehambley/sshkit/">SSHKit</a>, и можно использовать разные фишки <a href="https://github.com/leehambley/sshkit/blob/master/EXAMPLES.md">dsl</a>.
+В частности появился метод test, которым можно проверить возврат и выполнить в зависимости от этого разные комманды.
+Что позволило избавится от выполнения такого: &ldquo;[ -f ] &amp;&amp; unicorn; true&rdquo;</li>
+<li>Модульность: bundler, rbenv, rvm, maintenance. Даже рельсовые assets и migration развели, можно подключать по отдельности. Идут по пути рельс: подключаешь только то, что тебе нужно.</li>
+<li>Теперь поддержка multistage из коробки</li>
+<li>Новые опции linked_files и linked_dirs</li>
+<li>Сломали &mdash;dry-run. К справедливости, это <a href="https://github.com/leehambley/sshkit/issues/39">баг</a> SSHKit, но неприятненько</li>
+</ul>
+
+
+<p>Собственно переписанные правила для unicorn'а:</p>
+
+<p>Capfile:</p>
+
+<p><code>ruby
+require 'capistrano/setup'
+require 'capistrano/deploy'
+require 'capistrano/bundler'
+Dir.glob('lib/capistrano/tasks/*.cap').each { |r| import r }
+</code></p>
+
+<p>deploy.rb:</p>
+
+<p>```ruby
+namespace :deploy do</p>
+
+<p>  desc &lsquo;Restart application&rsquo;
+  task :restart do</p>
+
+<pre><code>invoke 'deploy:unicorn:restart'
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>namespace :unicorn do
+  pid_path = &ldquo;#{release_path}/tmp/pids&rdquo;
+  unicorn_pid = &ldquo;#{pid_path}/unicorn.pid&rdquo;</p>
+
+<p>  def run_unicorn</p>
+
+<pre><code>execute "#{fetch(:bundle_binstubs)}/unicorn", "-c #{release_path}/config/unicorn.rb -D -E #{fetch(:stage)}"
+</code></pre>
+
+<p>  end</p>
+
+<p>  desc &lsquo;Start unicorn&rsquo;
+  task :start do</p>
+
+<pre><code>on roles(:app) do
+  run_unicorn
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  desc &lsquo;Stop unicorn&rsquo;
+  task :stop do</p>
+
+<pre><code>on roles(:app) do
+  if test "[ -f #{unicorn_pid} ]"
+    execute :kill, "-QUIT `cat #{unicorn_pid}`"
+    #execute :rm, unicorn_pid
+  end
+end
+</code></pre>
+
+<p>  end</p>
+
+<p>  task :force_stop do</p>
+
+<p>  desc &lsquo;Restart unicorn&rsquo;
+  task :restart do</p>
+
+<pre><code>on roles(:app) do
+  if test "[ -f #{unicorn_pid} ]"
+    execute :kill, "-USR2 `cat #{unicorn_pid}`"
+  else
+    run_unicorn
+  end
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Бага thinking-sphinx в Mac OS X]]></title>
+    <link href="http://www.zagirov.name/thinking-sphinx-mac-os-x/"/>
+    <updated>2013-09-18T18:33:00+04:00</updated>
+    <id>http://www.zagirov.name/thinking-sphinx-mac-os-x</id>
+    <content type="html"><![CDATA[<p>Возникла ошибка при использовании thinking-sphinx под Mac OS X. Убил полдня на её решение. Надеюсь этот пост поможет быстрей справиться с этим багом таким же как и я программистам, которые используют методику google driven development.</p>
+
+<p>Эта ошибка воспроизводилась на Mac OS X 10.8.4, thinking-sphinx 3.0.5, и sphinx 2.0.9.</p>
+
+<p>Началось всё с этой ошибки:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>undefined method `inject' for nil:NilClass</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>И стектрейсом
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:49:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:14:in&lt;/code>block in call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/inquirer.rb:13:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/geographer.rb:11:in&lt;/code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/sphinxql.rb:13:in &lt;code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/middlewares/stale_id_filter.rb:10:in&lt;/code>call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/runner.rb:31:in &lt;code>call'
+</span><span class='line'>(gem) middleware-0.1.0/lib/middleware/builder.rb:102:in&lt;/code>call'
+</span><span class='line'>(gem) thinking-sphinx-3.0.5/lib/thinking_sphinx/search.rb:65:in `populate'</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>В логах было только видно, что запрос исполняется.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Query (36.6ms)  SELECT * FROM &lt;code>index&lt;/code> WHERE MATCH(&lsquo;телеФон*&rsquo;)</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>После копаний оказалось, что thinking-sphinx выполняет сразу два запроса: собственно запрос на получение данных из сфинкса и запрос «SHOW META».</p>
+
+<p>Оказалось, что во время второго запроса, сфинкс по неизведанной причине разрывает соединение.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Sphinx Retrying query &ldquo;SELECT * FROM &lt;code>index&lt;/code> WHERE MATCH(&lsquo;телеФон*&rsquo;); SHOW META&rdquo; after error: Lost connection to MySQL server during query</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Скачал beta-версию (2.1.1) sphinx'а, причём сайт при загрузке выдал мне сообщение: «Congratulations! It&rsquo;s official, you&rsquo;re a Sphinxter!!» =)</p>
+
+<p>На этой версии ошибок не было.
+Скорее всего это из-за mac, думаю, что на линуксе было бы всё нормально. Но проверять этот вариант уже нет времени.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Обновление gem mysql2 на MacOS X при обновлении MySQL до 5.6]]></title>
-    <link href="http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6/"/>
+    <link href="http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6/"/>
     <updated>2013-03-04T19:02:00+04:00</updated>
-    <id>http://stamm.github.io/macos-update-mysql2-mysql-5-dot-6</id>
+    <id>http://www.zagirov.name/macos-update-mysql2-mysql-5-dot-6</id>
     <content type="html"><![CDATA[<p>На MacOS X в homebrew появился MySQL 5.6.10.</p>
 
 <p>Поэтому при обновлении MySQL будет выскакивать ошибка о несоответствии библиотек:</p>
@@ -51,9 +203,9 @@
   
   <entry>
     <title type="html"><![CDATA[Как установить ruby 2.0.0-p0]]></title>
-    <link href="http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0/"/>
+    <link href="http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0/"/>
     <updated>2013-02-24T18:56:00+04:00</updated>
-    <id>http://stamm.github.io/how-to-install-ruby-2-dot-0-0-p0</id>
+    <id>http://www.zagirov.name/how-to-install-ruby-2-dot-0-0-p0</id>
     <content type="html"><![CDATA[<p>Сегодня <a href="http://habrahabr.ru/post/170513/">вышел ruby 2.0.0</a> и я думаю <a href="https://twitter.com/dhh/status/305678189261377536">скоро</a> выйдет <a href="http://habrahabr.ru/company/engineyard/blog/170473/">rails 4</a>.</p>
 
 <p>Если у вас возникли следующие ошибки, то установка простой коммандой rvm install ruby-2.0.0-p0 не получится:</p>
@@ -62,6 +214,9 @@
 <span class='line-number'>2</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>Error running &lsquo;env CFLAGS=-O3 -march=corei7 -O2 -pipe ./configure &mdash;disable-install-doc &mdash;prefix=/Users/stamm/.rvm/rubies/ruby-2.0.0-p0 &mdash;with-opt-dir=/usr/local/opt/libyaml:/usr/local/opt/readline:/usr/local/opt/libxml2:/usr/local/opt/libxslt:/usr/local/opt/libksba:/usr/local/opt/openssl:/usr/local/opt/curl-ca-bundle:/usr/local/opt/sqlite &mdash;disable-shared&rsquo;, please read /Users/stamm/.rvm/log/ruby-2.0.0-p0/configure.log
 </span><span class='line'>There has been an error while running configure. Halting the installation.</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<!-- more -->
+
 
 <p>Или ошибка при запуске bundle install:</p>
 
@@ -90,9 +245,9 @@
   
   <entry>
     <title type="html"><![CDATA[Парад ссылок №2]]></title>
-    <link href="http://stamm.github.io/links-parade-2/"/>
+    <link href="http://www.zagirov.name/links-parade-2/"/>
     <updated>2013-02-20T19:48:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-2</id>
+    <id>http://www.zagirov.name/links-parade-2</id>
     <content type="html"><![CDATA[<h2>Yii</h2>
 
 <ul>
@@ -129,69 +284,6 @@
 <li>Забавные гифки, что называется, до слёз: <a href="http://devopsreactions.tumblr.com/">раз</a>, <a href="http://www.zombieit.net/posts/zhizn-razrabotchika-v-gif-animacijah">два</a>.</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Парад ссылок №1]]></title>
-    <link href="http://stamm.github.io/links-parade-1/"/>
-    <updated>2013-02-11T19:43:00+04:00</updated>
-    <id>http://stamm.github.io/links-parade-1</id>
-    <content type="html"><![CDATA[<p>Новая рубрика в блоге: парад ссылок. Это что-то наподобие <a href="http://addmeto.cc/">линк-блога</a>, но ориентированного на веб-разработчиков: php, js, администрирование и всё больше о ruby и рельсах. Короче всего, что мне интересно.</p>
-
-<p>Надеюсь, каждый найдёт что-то интересное.</p>
-
-<h2>Развёртывание и деплой</h2>
-
-<p>С недавних пор подсел на capistrano, оказывается есть хорошее его дополнение <a href="http://railsware.com/blog/2011/11/18/caphub-multiple-applications-deployment-with-capistrano/">caphub от компании railsware</a>, позволяющая структурировать задания для разных приложений.</p>
-
-<p>Отличный цикл статей о том, как <a href="http://leopard.in.ua/2013/01/04/chef-solo-getting-started-part-1/">начать работать с chef</a> от Алексея Васильего. Chef &ndash; это инструмент для автоматизации настроек парка серверов.</p>
-
-<h2>PHP</h2>
-
-<p><a href="https://segment.io/blog/how-to-make-async-requests-in-php/">Как сделать асинхронный запрос</a></p>
-
-<p><a href="http://nitschinger.at/Benchmarking-Cache-Transcoders-in-PHP">Сравнение упаковщиков для php</a></p>
-
-<p><a href="http://unassumingphp.com/managing-php-application-builds-with-phing/">Использование phing для собирания проекта</a>. Ребята, у кого есть возможность &ndash; используйте capistrano или rake.</p>
-
-<p><a href="https://wiki.php.net/rfc/optimizerplus">Новый опкэшер в PHP 5.5.0</a>. Обратите внимание на <a href="https://docs.google.com/spreadsheet/ccc?key=0Agw0hgqCxf0cdEZsdm1yNjd3amJReG05MzJYSF9USGc#gid=0">табличку сравнения</a>: неплохой прирост.</p>
-
-<p><a href="http://phpmaster.com/php-as-a-service-fortrabbit/">Php как сервис</a>.</p>
-
-<h2>Ruby, RoR</h2>
-
-<p>Начался новый <a href="http://www.rwpod.com/">подкаст rwpod от того же Алексея Васильего и ко</a>. Хороший подкаст, аккумулирующий новости не только из ruby-сообщества, но и веб-новостей. Пока нет харкорных тем, но я думаю, всё впереди.</p>
-
-<p><a href="http://habrahabr.ru/company/JetBrains/blog/168655/">Вышел RubyMine5</a>. Прошу обратить внимание на видео о его возможностей.</p>
-
-<p>У кого есть свои скрипты-помошники, предлагаю переехать на rake. Возникали проблемы с <a href="http://www.scottw.com/zsh-rake-parameters">zsh</a>, <a href="http://viget.com/extend/protip-passing-parameters-to-your-rake-tasks">передачи параметра в задачу</a>. Вцелом хороший инструмент не только для ruby разработчиков.</p>
-
-<p>Должна быть интересная <a href="http://securingrails.com/">книга по устранению уязвимостей в rails-приложении</a>. Обязательно посмотрите ролик.</p>
-
-<p>Узнайте, <a href="http://ablogaboutcode.com/2012/05/03/benchmark-your-bundle/">сколько же времени загружаются ваши гемы</a>.</p>
-
-<h2>Javascript</h2>
-
-<p><a href="http://www.jsdb.io/">JsDB &ndash; каталог js-библиотек</a></p>
-
-<p><a href="http://casperjs.org/">CasperJs &ndash; тестирование js и не только</a>. Использует PhantomJS.</p>
-
-<p><a href="https://github.com/unconed/MathBox.js">Рисуем сложные графики</a>. <a href="http://acko.net/blog/making-mathbox/">Демки</a>.</p>
-
-<h2>Разное</h2>
-
-<p><a href="http://kapeli.com/">Dash &ndash; Offline-документация для macos</a> по многочисленным языкам и фреймворкам: php, yii, ruby, gems, ror, javascript, backbone, mongodb, postgresql, mysql и это далеко не весь перечень. Однозначно в повседневное использование!</p>
-
-<p><a href="https://www.cheapssls.com/comodo-ssl-certificates/positivessl.html?years=5">Очень дешёвые SSL-сертификаты</a>. Например, на 5 лет за $25.</p>
-
-<p><a href="http://sphinxsearch.com/blog/2013/02/07/sphinx-2-1-json-attributes/">Поддержка JSON-атрибутов в sphinx 2.1</a>. Sphinx не отстаёт <a href="http://www.postgresql.org/docs/9.2/static/functions-json.html">от postgresql</a>.</p>
-
-<p><a href="http://zachholman.com/spark/">Spark &ndash; интересная визуализация небольших данных</a>. Скарливаем ему ряд значений: spark 0 30 55 80 33 150, и получаем ▁▂▃▅▂▇</p>
-
-<p><a href="http://www.codeschool.com/">Очень крутое обучение от codeschool</a>. Схема такая: вам показывают мини-лекцию, потом вы должны выполнить задание, т.е. писать код прямо в браузуере и он проходит проверку. Также у ребят есть скринкасты. Обучение не скучное и довольно эффективное.</p>
-
-<p>Нравиться ли вам такая рубрика? Продолжать?</p>
 ]]></content>
   </entry>
   
