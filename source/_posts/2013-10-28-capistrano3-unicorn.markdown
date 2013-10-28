@@ -21,6 +21,7 @@ categories:
 * Новые опции linked_files и linked_dirs
 * Сломали --dry-run. К справедливости, это [баг](https://github.com/leehambley/sshkit/issues/39) SSHKit, но неприятненько
 
+<!-- more -->
 
 Собственно переписанные правила для unicorn'а:
 
