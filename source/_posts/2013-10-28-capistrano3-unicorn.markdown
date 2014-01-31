@@ -41,7 +41,7 @@ namespace :deploy do
 
   desc 'Restart application'
   task :restart do
-    invoke 'deploy:unicorn:restart'
+    invoke 'unicorn:restart'
   end
 end
 
