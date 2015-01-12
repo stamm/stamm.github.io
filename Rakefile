@@ -53,6 +53,7 @@ task :generate do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "## Generating Site with Jekyll"
   system "compass compile --css-dir #{source_dir}/stylesheets"
+  Rake::Task["combine"].invoke
   system "jekyll"
 end
 
@@ -390,3 +391,15 @@ task :list do
   puts "Tasks: #{(Rake::Task.tasks - [Rake::Task[:list]]).join(', ')}"
   puts "(type rake -T for more detail)\n\n"
 end
+
+
+
+desc "Combine JS"
+task :combine_js do
+  puts "## Combining JS"
+  scripts_dir = "#{source_dir}/javascripts"
+  system "cat #{scripts_dir}/modernizr-2.8.3.js #{scripts_dir}/libs/jquery-2.1.3.min.js #{scripts_dir}/octopress.js > #{scripts_dir}/all.js"
+end
+
+desc "Meta combine"
+task :combine => [:combine_js]
