@@ -1,0 +1,13 @@
+baseURL = "/"
+title = "Блог Загирова Рустама"
+relativeURLs = true
+canonifyURLs = true
+languageCode = "ru"
+defaultContentLanguage = "ru"
+googleAnalytics = "UA-15241274-1"
+[Params]
+  Author = "Zagirov Rustam"
+  disqusShortname = "Stamm"
+  GitHubUser = "stamm"
+  Description = "Около-интернетные записки от Рустам Загирова"
+
