@@ -5,9 +5,12 @@ canonifyURLs = true
 languageCode = "ru"
 defaultContentLanguage = "ru"
 googleAnalytics = "UA-15241274-1"
+theme = "minos"
 [Params]
   Author = "Zagirov Rustam"
   disqusShortname = "Stamm"
   GitHubUser = "stamm"
   Description = "Около-интернетные записки от Рустам Загирова"
+  smartToc = true
+  noPostNavigation = true
 
